@@ -8,6 +8,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./', import.meta.url)),
+      // server-only throws in non-RSC contexts; alias to a no-op for unit tests.
+      'server-only': fileURLToPath(
+        new URL('./__tests__/_helpers/server-only-shim.ts', import.meta.url),
+      ),
     },
   },
   test: {

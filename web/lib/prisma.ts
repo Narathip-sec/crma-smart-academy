@@ -3,19 +3,35 @@ import 'server-only'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '@prisma/client'
 
-const url = process.env.DATABASE_URL
+// Lazy singleton. Prisma 7 requires a driver adapter at construction
+// time, but we don't want module import to fail in unit tests that
+// never run a query (those tests pass a mock via dependency injection,
+// e.g. `createAudit({ prisma: mock })`). The Proxy below defers
+// construction until the first property access.
 
-if (!url && process.env.NODE_ENV === 'production') {
-  throw new Error('DATABASE_URL is required in production')
+const globalForPrisma = globalThis as unknown as { _prismaSingleton?: PrismaClient }
+
+function buildClient(): PrismaClient {
+  const url = process.env.DATABASE_URL
+  if (!url) {
+    throw new Error(
+      'DATABASE_URL is required. In unit tests, inject a mock prisma via the lib factories instead of using the singleton.',
+    )
+  }
+  return new PrismaClient({ adapter: new PrismaPg({ connectionString: url }) })
 }
 
-const adapter = url ? new PrismaPg({ connectionString: url }) : null
-
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient }
-
-export const prisma: PrismaClient =
-  globalForPrisma.prisma ?? (adapter ? new PrismaClient({ adapter }) : new PrismaClient())
-
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma
+function getClient(): PrismaClient {
+  if (globalForPrisma._prismaSingleton) return globalForPrisma._prismaSingleton
+  const client = buildClient()
+  if (process.env.NODE_ENV !== 'production') {
+    globalForPrisma._prismaSingleton = client
+  }
+  return client
 }
+
+export const prisma: PrismaClient = new Proxy({} as PrismaClient, {
+  get(_target, prop, receiver) {
+    return Reflect.get(getClient(), prop, receiver)
+  },
+})
