@@ -1,4 +1,7 @@
+import { LiffSignInButton } from '@/components/auth/LiffSignInButton'
+
 import type { Metadata } from 'next'
+
 
 export const metadata: Metadata = {
   title: 'Sign in · CRMA Smart Academy',
@@ -30,22 +33,12 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           </p>
         </header>
 
-        <button
-          type="button"
-          disabled
-          aria-disabled="true"
-          data-testid="login-line-button"
-          className="w-full rounded-xl bg-emerald-500 px-4 py-3 text-base font-semibold text-white opacity-60"
-        >
-          Sign in with LINE
-        </button>
+        <LiffSignInButton returnTo={safeReturn} />
 
         <p className="text-xs text-slate-500" data-testid="login-phase-note">
-          The LINE sign-in flow lands in Phase 2b. This page is the Phase 2a chassis: it documents
-          the contract and the middleware redirect target.
+          The LINE callback ships in Phase 2b. Email OTP arrives in Phase 2c and TOTP enrolment in
+          Phase 2d.
         </p>
-
-        <input type="hidden" name="return" value={safeReturn} />
       </section>
     </main>
   )
