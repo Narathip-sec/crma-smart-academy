@@ -18,19 +18,19 @@ Out of scope for Phase 1: any LIFF code, any LINE API code, any auth code, any U
 
 ## 1. Decision lock-in (resolved up-front)
 
-| # | Decision | Value | Source |
-|---|---|---|---|
-| 1 | Package manager | **pnpm** (v9+) | User decision 2026-05-19 |
-| 2 | Node version | **22 LTS** (engines pin in `package.json`) | User decision 2026-05-19 |
-| 3 | Workspace layout | flat `web/` subdir (not monorepo) | `MIGRATION_LIFF.md §3` |
-| 4 | TypeScript | 5.4, `strict: true`, `noUncheckedIndexedAccess: true` | `README.md §3` |
-| 5 | Styling | Tailwind v4 (CSS-first, no `tailwind.config.ts` needed) + class-variance-authority | `README.md §3` |
-| 6 | DB driver | Prisma 5 → PostgreSQL; placeholder `DATABASE_URL` until Phase 2 | `README.md §3` |
-| 7 | Test runner | Vitest + `@testing-library/react` + `@testing-library/jest-dom` + `jsdom` | `MIGRATION_LIFF.md §13` |
-| 8 | E2E | Playwright (Chromium + WebKit; LINE webview UA configured but no LIFF code yet) | `MIGRATION_LIFF.md §13` |
-| 9 | Lint/format | ESLint (Next preset + import order) + Prettier | implicit Next 15 default |
-| 10 | Git hooks | Husky + lint-staged (pre-commit: typecheck + lint changed) | superpowers DoD |
-| 11 | CI | GitHub Actions (`.github/workflows/ci.yml`) | `MIGRATION_LIFF.md §12` |
+| #   | Decision         | Value                                                                              | Source                   |
+| --- | ---------------- | ---------------------------------------------------------------------------------- | ------------------------ |
+| 1   | Package manager  | **pnpm** (v9+)                                                                     | User decision 2026-05-19 |
+| 2   | Node version     | **22 LTS** (engines pin in `package.json`)                                         | User decision 2026-05-19 |
+| 3   | Workspace layout | flat `web/` subdir (not monorepo)                                                  | `MIGRATION_LIFF.md §3`   |
+| 4   | TypeScript       | 5.4, `strict: true`, `noUncheckedIndexedAccess: true`                              | `README.md §3`           |
+| 5   | Styling          | Tailwind v4 (CSS-first, no `tailwind.config.ts` needed) + class-variance-authority | `README.md §3`           |
+| 6   | DB driver        | Prisma 5 → PostgreSQL; placeholder `DATABASE_URL` until Phase 2                    | `README.md §3`           |
+| 7   | Test runner      | Vitest + `@testing-library/react` + `@testing-library/jest-dom` + `jsdom`          | `MIGRATION_LIFF.md §13`  |
+| 8   | E2E              | Playwright (Chromium + WebKit; LINE webview UA configured but no LIFF code yet)    | `MIGRATION_LIFF.md §13`  |
+| 9   | Lint/format      | ESLint (Next preset + import order) + Prettier                                     | implicit Next 15 default |
+| 10  | Git hooks        | Husky + lint-staged (pre-commit: typecheck + lint changed)                         | superpowers DoD          |
+| 11  | CI               | GitHub Actions (`.github/workflows/ci.yml`)                                        | `MIGRATION_LIFF.md §12`  |
 
 Open forks deferred (not needed Phase 1): `§1 row 7` (realtime), `§1 row 12` (Vercel Blob).
 
@@ -80,13 +80,15 @@ Open forks deferred (not needed Phase 1): `§1 row 7` (realtime), `§1 row 12` (
 Each step is one atomic commit. Order matters — earlier steps unblock later ones.
 
 ### Step 3.1 — pnpm workspace root
+
 - Create `pnpm-workspace.yaml` with `packages: ["web"]`.
 - Create `web/` dir.
 - Commit: `chore(phase1): init pnpm workspace`
 
 ### Step 3.2 — Next 15 + TS strict scaffold
+
 - `cd web && pnpm create next-app@latest . --ts --app --tailwind --eslint --src-dir=false --import-alias="@/*" --no-turbopack` (non-interactive flags).
-  *(If interactive prompts surface, abort and hand-write `package.json` per Appendix A — non-interactive run is mandatory.)*
+  _(If interactive prompts surface, abort and hand-write `package.json` per Appendix A — non-interactive run is mandatory.)_
 - Patch `tsconfig.json`:
   - `"strict": true`
   - `"noUncheckedIndexedAccess": true`
@@ -99,6 +101,7 @@ Each step is one atomic commit. Order matters — earlier steps unblock later on
 - Commit: `chore(phase1): scaffold Next 15 + TS strict`
 
 ### Step 3.3 — Tailwind v4 CSS-first
+
 - Tailwind v4 uses `@import "tailwindcss";` in `globals.css` (no `tailwind.config.ts` required for stock).
 - `postcss.config.mjs`: `{ plugins: { '@tailwindcss/postcss': {} } }`.
 - Replace `app/page.tsx` body with `<main className="grid min-h-dvh place-items-center bg-slate-50 text-slate-900"><h1 className="text-2xl font-semibold">Phase 1 chassis OK</h1></main>`.
@@ -106,6 +109,7 @@ Each step is one atomic commit. Order matters — earlier steps unblock later on
 - Commit: `chore(phase1): tailwind v4 + dvh placeholder`
 
 ### Step 3.4 — Vitest + RTL
+
 - Install: `vitest @vitejs/plugin-react @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom`.
 - `vitest.config.ts`:
   ```ts
@@ -137,11 +141,13 @@ Each step is one atomic commit. Order matters — earlier steps unblock later on
 - Commit: `chore(phase1): vitest + RTL smoke`
 
 ### Step 3.5 — Playwright + LINE webview UA
+
 - Install: `@playwright/test`, then `pnpm exec playwright install chromium webkit`.
 - `playwright.config.ts`:
   ```ts
   import { defineConfig, devices } from '@playwright/test'
-  const LINE_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Line/13.0.0'
+  const LINE_UA =
+    'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Line/13.0.0'
   export default defineConfig({
     testDir: './e2e',
     fullyParallel: true,
@@ -151,7 +157,10 @@ Each step is one atomic commit. Order matters — earlier steps unblock later on
     use: { baseURL: 'http://localhost:3000', trace: 'on-first-retry' },
     projects: [
       { name: 'line-ios', use: { ...devices['iPhone 14'], userAgent: LINE_UA } },
-      { name: 'line-android', use: { ...devices['Pixel 7'], userAgent: LINE_UA.replace('iPhone', 'Linux; Android 14') } },
+      {
+        name: 'line-android',
+        use: { ...devices['Pixel 7'], userAgent: LINE_UA.replace('iPhone', 'Linux; Android 14') },
+      },
       { name: 'safari', use: { ...devices['Desktop Safari'] } },
     ],
     webServer: {
@@ -174,6 +183,7 @@ Each step is one atomic commit. Order matters — earlier steps unblock later on
 - Commit: `chore(phase1): playwright + LINE webview UA matrix`
 
 ### Step 3.6 — Prisma 5 init (schema-only)
+
 - Install: `prisma @prisma/client`.
 - `web/prisma/schema.prisma`:
   ```prisma
@@ -202,12 +212,14 @@ Each step is one atomic commit. Order matters — earlier steps unblock later on
 - Commit: `chore(phase1): prisma 5 init (schema-only)`
 
 ### Step 3.7 — ESLint + Prettier + import order
+
 - Verify Next ESLint preset present; add `eslint-plugin-import` + `eslint-plugin-unused-imports`.
 - `.prettierrc`: `{ "semi": false, "singleQuote": true, "trailingComma": "all", "printWidth": 100 }`.
 - `pnpm lint` must pass.
 - Commit: `chore(phase1): eslint + prettier`
 
 ### Step 3.8 — Husky + lint-staged
+
 - Install: `husky lint-staged`.
 - `package.json`:
   ```json
@@ -220,6 +232,7 @@ Each step is one atomic commit. Order matters — earlier steps unblock later on
 - Commit: `chore(phase1): husky + lint-staged pre-commit`
 
 ### Step 3.9 — CI workflow
+
 - `.github/workflows/ci.yml`:
   ```yaml
   name: ci
@@ -249,6 +262,7 @@ Each step is one atomic commit. Order matters — earlier steps unblock later on
 - Commit: `ci(phase1): typecheck + lint + vitest + playwright`
 
 ### Step 3.10 — README progress tracker mirror
+
 - `README.md §6`: Phase 1 row → `2026-05-XX | Phase 1 — Bootstrap web/ | Next 15 · Tailwind v4 · Prisma · Vitest · Playwright · CI green.`
 - `README_TH.md §6`: same row in Thai (bilingual parity rule).
 - Commit: `docs(phase1): mark phase 1 done in progress tracker`
@@ -274,7 +288,7 @@ If any of these sneak in during execution, abort that commit and split.
 
 Phase 1 is mostly chassis — true red-green-refactor applies only to Steps 3.4 and 3.5 (Vitest + Playwright). Pattern:
 
-1. Write the failing test against the *intended* state (placeholder heading).
+1. Write the failing test against the _intended_ state (placeholder heading).
 2. The Step 3.3 placeholder already satisfies it → green on arrival.
 3. This pins the contract: any future regression that breaks the placeholder fails CI.
 
@@ -284,14 +298,14 @@ For chassis-only commits (Steps 3.1–3.3, 3.6–3.9), DoD is `pnpm typecheck &&
 
 ## 6. Risks specific to Phase 1
 
-| Risk | Mitigation |
-|---|---|
-| `create-next-app` interactive prompts hang Windows shell | Use all flags shown in Step 3.2; if prompted, fall back to Appendix A handwritten config. |
-| Tailwind v4 PostCSS plugin churn | Pin `@tailwindcss/postcss` exact version in lockfile. |
-| Prisma `binaryTargets` on Windows dev → Linux CI mismatch | Add `binaryTargets = ["native", "linux-musl-openssl-3.0.x"]` to generator block if CI complains. Defer until red. |
-| Playwright browser download in CI (slow) | Cache via `actions/cache` keyed on `playwright` version — defer to Phase 2 if Phase 1 CI runs ≤ 5 min. |
-| Husky pre-commit blocks WIP commits | Document `git commit --no-verify` is **forbidden** per CLAUDE.md; if hook is wrong, fix the hook. |
-| LINE webview UA test passes on Chromium but real LIFF differs | Phase 1 only smoke-tests UA injection works; real LIFF behavior is Phase 2. |
+| Risk                                                          | Mitigation                                                                                                        |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `create-next-app` interactive prompts hang Windows shell      | Use all flags shown in Step 3.2; if prompted, fall back to Appendix A handwritten config.                         |
+| Tailwind v4 PostCSS plugin churn                              | Pin `@tailwindcss/postcss` exact version in lockfile.                                                             |
+| Prisma `binaryTargets` on Windows dev → Linux CI mismatch     | Add `binaryTargets = ["native", "linux-musl-openssl-3.0.x"]` to generator block if CI complains. Defer until red. |
+| Playwright browser download in CI (slow)                      | Cache via `actions/cache` keyed on `playwright` version — defer to Phase 2 if Phase 1 CI runs ≤ 5 min.            |
+| Husky pre-commit blocks WIP commits                           | Document `git commit --no-verify` is **forbidden** per CLAUDE.md; if hook is wrong, fix the hook.                 |
+| LINE webview UA test passes on Chromium but real LIFF differs | Phase 1 only smoke-tests UA injection works; real LIFF behavior is Phase 2.                                       |
 
 ---
 
