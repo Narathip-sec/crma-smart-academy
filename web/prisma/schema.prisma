@@ -1,5 +1,6 @@
-// CRMA Smart Academy — Prisma schema (Phase 1: header only)
-// Models land in Phase 2 (auth) and onward per MIGRATION_LIFF.md §5.
+// CRMA Smart Academy — Prisma schema
+// Phase 2a: User + Role + RefreshToken + AuditLog (auth foundation).
+// URL is configured in prisma.config.ts; runtime uses @prisma/adapter-pg.
 
 generator client {
   provider = "prisma-client-js"
@@ -7,4 +8,83 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+// =========================
+// Auth / users (Phase 2a)
+// =========================
+
+/// Cadet, instructor, officer, or admin.
+/// `email` must end with @crma.ac.th — regex enforced at app layer in Phase 2c
+/// when email OTP wiring lands; column stays plain text until pgcrypto helper
+/// (lib/crypto.ts) is wired in 2c.
+model User {
+  id            String    @id @default(cuid())
+  cadetId       String    @unique
+  email         String    @unique
+  emailVerified DateTime?
+  lineUserId    String?   @unique
+  displayName   String
+  avatarUrl     String?
+  role          Role      @default(CADET)
+  company       String?
+  year          Int?
+  /// Encrypted at app layer when TOTP enrols (Phase 2d). Nullable until enrolled.
+  totpSecret    String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  refreshTokens RefreshToken[]
+  auditLogs     AuditLog[]
+
+  @@index([role])
+}
+
+enum Role {
+  CADET
+  INSTRUCTOR
+  OFFICER
+  ADMIN
+}
+
+/// One row per active session per device. tokenHash is sha256(refreshJwt) — never raw token.
+/// deviceFp gates TOTP re-prompt on new device (Phase 2d).
+model RefreshToken {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String    @unique
+  deviceFp   String
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  lastUsedAt DateTime  @default(now())
+
+  @@index([userId, expiresAt])
+  @@index([tokenHash])
+}
+
+/// Append-only audit trail. Every API mutation writes one row.
+/// Partitioning + cold-storage rotation is a Phase 10 hardening task.
+model AuditLog {
+  id        String      @id @default(cuid())
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  resource  String
+  result    AuditResult @default(ALLOW)
+  ip        String?
+  userAgent String?
+  metadata  Json?
+  createdAt DateTime    @default(now())
+
+  @@index([userId, createdAt])
+  @@index([resource, createdAt])
+  @@index([action, createdAt])
+}
+
+enum AuditResult {
+  ALLOW
+  DENY
+  ERROR
 }
