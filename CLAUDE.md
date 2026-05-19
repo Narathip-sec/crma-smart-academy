@@ -17,7 +17,7 @@ Predecessor mobile codebase frozen at `C:\palm\NarathipOS\CRMA Smart academy mob
 
 Phases gated. Do not skip ahead.
 
-1. Bootstrap `web/` — Next 15 · Tailwind v4 · Prisma · Vitest · Playwright · CI green.
+1. Bootstrap `web/` — Next 16 · Tailwind v4 · Prisma · Vitest · Playwright · CI green.
 2. Auth — LIFF → `@crma.ac.th` email OTP → TOTP → JWT cookie middleware → RBAC → AuditLog.
 3. App shell — `IphoneFrame` · `AppHeader` · `BottomNav` · `TabStore ↔ ?tab=` sync.
 4–8. View ports (Home, ClassSchedule, Health, Activity, Service/Grades/Me).
@@ -28,7 +28,7 @@ Each phase = superpowers loop: brainstorming → writing-plans → TDD → cross
 
 ## Locked stack (do not re-pick)
 
-Next.js 15 App Router (Node runtime for Prisma) · TS 5.4 strict + `noUncheckedIndexedAccess` · Tailwind v4 + CVA · Zustand 5 (slices: tab · schedule · health · activity) · next-intl (TH default) · Prisma 5 → Supabase Postgres `ap-southeast-1` · LIFF + email OTP + TOTP + jose JWT in httpOnly Secure cookie · Vercel Blob · LINE Messaging API · Vercel Cron + Inngest · Brevo SMTP · Sentry · Vitest + RTL + Playwright (LINE webview UA) + `next-test-api-route` · Vercel deploy.
+Next.js 16 App Router (Node runtime for Prisma) · TS 5 strict + `noUncheckedIndexedAccess` · Tailwind v4 + CVA · Zustand 5 (slices: tab · schedule · health · activity) · next-intl (TH default) · Prisma 5 → Supabase Postgres `ap-southeast-1` · LIFF + email OTP + TOTP + jose JWT in httpOnly Secure cookie · Vercel Blob · LINE Messaging API · Vercel Cron + Inngest · Brevo SMTP · Sentry · Vitest + RTL + Playwright (LINE webview UA) + `next-test-api-route` · Vercel deploy.
 
 ## Routing contract (do not break)
 

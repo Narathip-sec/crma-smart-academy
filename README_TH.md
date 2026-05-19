@@ -64,8 +64,8 @@ LINE Official Account ของ CRMA
 
 ### Tech stack (LOCKED 2026-05-19)
 
-- **Framework:** Next.js 15 (App Router, Node runtime สำหรับ Prisma)
-- **ภาษา:** TypeScript 5.4 strict + `noUncheckedIndexedAccess`
+- **Framework:** Next.js 16 (App Router, Node runtime สำหรับ Prisma)
+- **ภาษา:** TypeScript 5 strict + `noUncheckedIndexedAccess`
 - **Styling:** Tailwind v4 + class-variance-authority (token เหมือนแอปมือถือ)
 - **State:** Zustand 5 (slices: tab · schedule · health · activity)
 - **สัญญา routing:** สตริง `activeTab` ตัวเดียวสลับวิว — เหมือน prototype มือถือ
@@ -127,7 +127,7 @@ LINE Official Account ของ CRMA
 | ---------- | ------------------------------------------------ | ----------------------------------------------------------------------- |
 | 2026-05-19 | Seed repo                                        | `README.md`, `README_TH.md`, `EXPORT.html`, `PLAN.html`, `MIGRATION_LIFF.md` มาจาก session โปรเจ็กต์เดิม |
 | _pending_  | `/init` + ติดตั้ง SKILL.md                       | วาง `PLAN.html §1` ลงใน `.claude/skills/crma-web/SKILL.md`             |
-| _pending_  | Phase 1 — Bootstrap `web/`                       | Next.js 15 · Tailwind v4 · Prisma · Vitest · Playwright · CI ผ่าน      |
+| _pending_  | Phase 1 — Bootstrap `web/`                       | Next.js 16 · Tailwind v4 · Prisma · Vitest · Playwright · CI ผ่าน      |
 | _pending_  | Phase 2 — รากฐาน Auth                            | LIFF · LINE callback · email OTP · TOTP · middleware · RBAC · AuditLog |
 | _pending_  | Phase 3 — App shell                              | IphoneFrame · AppHeader · BottomNav · TabStore ↔ URL sync              |
 | _pending_  | Phase 4 — HomeView                               | 6 component · API stub · fixtures                                       |
