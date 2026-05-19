@@ -159,7 +159,7 @@ Single codebase forward; mobile <span class="str">`app/`</span> is frozen refere
 <span class="kw">## Routing contract</span>
 Preserve mobile-app pattern: single <span class="str">activeTab</span> string drives a switch.
 Web mirrors via <span class="str">?tab=home|class_schedule|health|activity|service|grades|me</span> backed by
-Zustand <span class="str">useTabStore</span>. No nested route layouts. BottomNav mutates store, store syncs URL.
+Zustand <span class="str">useTabStore</span>. No nested route layouts. AdaptiveNav mutates store, store syncs URL.
 
 <span class="kw">## Definition of done per phase</span>
 - All new components have testIDs matching mobile (<span class="str">service.link.${id}</span>, …).
@@ -258,15 +258,13 @@ Zustand <span class="str">useTabStore</span>. No nested route layouts. BottomNav
 
   <h3>2.4 Layout intent</h3>
   <div class="grid cols-3">
-    <div class="card"><h4>iPhone-aspect frame</h4>
-      <p>402×874 max, <code>rounded-[3rem]</code>, <code>overflow-hidden</code>.
-        Center on desktop with dynamic-island mockup. Full-bleed inside LINE webview.</p></div>
+    <div class="card"><h4>Responsive AppShell</h4>
+      <p>Full-width production shell across phone, tablet, and desktop. No fixed phone frame around real app pages.</p></div>
     <div class="card"><h4>Sticky AppHeader</h4>
       <p>Back / centered CRMA mark / bell + settings. <code>sticky top-0 z-30</code>.
         Bell amber-dot driven by SWR poll on <code>/api/notifications/unread</code>.</p></div>
-    <div class="card"><h4>BottomNav</h4>
-      <p><code>fixed bottom-0 z-40 rounded-t-[2.5rem]</code>. 5 icons.
-        Active = <code>scale-110 bg-amber-400</code>. Mutates Zustand tab store, syncs URL.</p></div>
+    <div class="card"><h4>AdaptiveNav</h4>
+      <p>Bottom nav on phones, rail/sidebar on wider screens. Mutates Zustand tab store, syncs URL.</p></div>
   </div>
 
   <h3>2.5 Reference frame (HomeView)</h3>
@@ -311,7 +309,7 @@ Zustand <span class="str">useTabStore</span>. No nested route layouts. BottomNav
 │  │  ├─ verify-email/page.tsx
 │  │  └─ enrol-totp/page.tsx
 │  ├─ (app)/
-│  │  ├─ layout.tsx                    <span style="color:#94A3B8">// IphoneFrame + AppHeader + BottomNav</span>
+│  │  ├─ layout.tsx                    <span style="color:#94A3B8">// Responsive AppShell + AppHeader + adaptive nav</span>
 │  │  ├─ page.tsx                      <span style="color:#94A3B8">// reads ?tab=, renders view</span>
 │  │  └─ views/
 │  │     ├─ HomeView.tsx
@@ -335,7 +333,7 @@ Zustand <span class="str">useTabStore</span>. No nested route layouts. BottomNav
 │     ├─ notifications/unread/route.ts
 │     └─ webhook/line/route.ts
 ├─ components/                         <span style="color:#94A3B8">// ports of app/src/components/* (DOM versions)</span>
-│  ├─ ui/{IphoneFrame,AppHeader,BottomNav,TopTabs}.tsx
+│  ├─ ui/{AppShell,AppHeader,AdaptiveNav,BottomNav,TopTabs}.tsx
 │  ├─ home/{ProfileBanner,HeroCarousel,QuickServicesGrid,NewsEventTabs,SmartInsightsRow}.tsx
 │  ├─ class/{DaySwitcher,SemesterPill,ClassCard,WeeklyViewButton,WeeklyViewModal}.tsx
 │  ├─ health/{StreakBadge,WeekCalendarStrip,StepsCard,CaloriesCard,MealCard,ActivityCard,StravaConnectButton,WearableCard}.tsx
@@ -384,19 +382,19 @@ Zustand <span class="str">useTabStore</span>. No nested route layouts. BottomNav
   );
 }</pre>
 
-  <h3>3.2 App-shell layout (iPhone frame + nav)</h3>
+  <h3>3.2 Responsive app-shell layout (all devices)</h3>
 <pre><span class="com">// app/(app)/layout.tsx</span>
-<span class="kw">import</span> { IphoneFrame } <span class="kw">from</span> <span class="str">"@/components/ui/IphoneFrame"</span>;
+<span class="kw">import</span> { AppShell } <span class="kw">from</span> <span class="str">"@/components/ui/AppShell"</span>;
 <span class="kw">import</span> { AppHeader } <span class="kw">from</span> <span class="str">"@/components/ui/AppHeader"</span>;
-<span class="kw">import</span> { BottomNav } <span class="kw">from</span> <span class="str">"@/components/ui/BottomNav"</span>;
+<span class="kw">import</span> { AdaptiveNav } <span class="kw">from</span> <span class="str">"@/components/ui/AdaptiveNav"</span>;
 
 <span class="kw">export default function</span> AppLayout({ children }: { children: <span class="ty">React.ReactNode</span> }) {
   <span class="kw">return</span> (
-    &lt;IphoneFrame&gt;
+    &lt;AppShell&gt;
       &lt;AppHeader /&gt;
-      &lt;main className=<span class="str">"flex-1 overflow-y-auto pb-28 scrollbar-hide"</span>&gt;{children}&lt;/main&gt;
-      &lt;BottomNav /&gt;
-    &lt;/IphoneFrame&gt;
+      &lt;main className=<span class="str">"min-w-0 flex-1 overflow-y-auto pb-24 md:pb-8"</span>&gt;{children}&lt;/main&gt;
+      &lt;AdaptiveNav /&gt;
+    &lt;/AppShell&gt;
   );
 }</pre>
 </section>
@@ -810,7 +808,7 @@ datasource db { provider <span class="kw">=</span> <span class="str">"postgresql
     <tbody>
       <tr><td>1</td><td>Bootstrap <code>web/</code></td><td>Next 15 + Tailwind v4 + Prisma + Vitest + Playwright + CI green</td></tr>
       <tr><td>2</td><td>Auth foundation</td><td>LIFF init · LINE callback · email OTP · TOTP · session middleware · RBAC · AuditLog. 30+ tests</td></tr>
-      <tr><td>3</td><td>App shell</td><td>IphoneFrame · AppHeader · BottomNav · TabStore ↔ URL sync. Visual snapshots match references/*.png</td></tr>
+      <tr><td>3</td><td>Responsive app shell</td><td>AppShell · AppHeader · adaptive nav · TabStore ↔ URL sync. Visual snapshots cover phone, tablet, and desktop.</td></tr>
       <tr><td>4</td><td>HomeView</td><td>Port all 6 home components · API stubs return fixture data. 55+ tests</td></tr>
       <tr><td>5</td><td>ClassScheduleView</td><td>DaySwitcher · SemesterPill (dialog) · ClassCard · schedule API + Prisma. 42+ tests</td></tr>
       <tr><td>6</td><td>HealthView</td><td>Streak · WeekCalendar · Steps/Calories · MealCard/ActivityCard · Strava stub. 50+ tests</td></tr>

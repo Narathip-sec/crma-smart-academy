@@ -129,7 +129,7 @@ Updated after each completed milestone in the superpowers loop (brainstorming �
 | 2026-05-19 | `/init` + CLAUDE.md                              | Per-repo Claude Code guidance landed; SKILL.md install deferred to Phase 2 prep. |
 | 2026-05-19 | Phase 1 — Bootstrap `web/`                       | Next.js 16 · React 19 · TS 5 strict · Tailwind v4 · Prisma 7 · Vitest 4 · Playwright 1.60 · Husky + lint-staged · CI wired. Lock updated: Next 15→16, Prisma 5→7. |
 | _pending_  | Phase 2 — Auth foundation                        | LIFF · LINE callback · email OTP · TOTP · middleware · RBAC · AuditLog. |
-| _pending_  | Phase 3 — App shell                              | IphoneFrame · AppHeader · BottomNav · TabStore ↔ URL sync.          |
+| _pending_  | Phase 3 — Responsive app shell                   | AppShell · AppHeader · adaptive nav · TabStore ↔ URL sync across phone, tablet, and desktop. |
 | _pending_  | Phase 4 — HomeView                               | 6 components · API stubs · fixtures.                                |
 | _pending_  | Phase 5 — ClassScheduleView                      | DaySwitcher · SemesterPill · ClassCard · schedule API.              |
 | _pending_  | Phase 6 — HealthView                             | Streak · WeekCalendar · Steps · Calories · Meal · Activity · Strava. |

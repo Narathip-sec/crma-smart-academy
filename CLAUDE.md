@@ -4,12 +4,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repo state (2026-05-19)
 
-Pre-bootstrap. No `web/` workspace yet. Tracked artifacts are specs only:
+Synced by Codex at 2026-05-19 17:10 +07:00 after Claude Code hit a rate limit.
 
-- `README.md` / `README_TH.md` — bilingual project charter (must stay mirrored per commit).
-- `MIGRATION_LIFF.md` — 16-section migration design (mobile RN → LIFF web). §1 has 14 forks; rows 4, 5, 7, 12 still open.
-- `PLAN.html` — `/init` plan (SKILL.md, moodboard, Prisma, auth flow, 4 sample components, 10 TDD phases).
-- `EXPORT.html` — snapshot of predecessor mobile repo.
+Current state:
+
+- Phase 1 Bootstrap is complete and committed through `docs(phase1): mark Phase 1 complete + sync stack lock`.
+- `web/` exists with Next.js 16, React 19, TypeScript strict mode, Tailwind v4, Prisma 7, Vitest, Playwright, Husky, lint-staged, and GitHub Actions CI.
+- Phase 2a Auth Foundations has started. `web/prisma/schema.prisma` already contains the auth/audit subset: `User`, `Role`, `RefreshToken`, `AuditLog`, and `AuditResult`.
+- Phase 2a is not complete yet. Missing work includes Prisma adapter package/runtime wire-up, `lib/session.ts`, `lib/rbac.ts`, `lib/audit.ts`, `middleware.ts`, login shell, CI Postgres migration flow, tests, and bilingual README completion notes.
+- `PROGRESS.html` is the standalone project progression dashboard. Open it directly in a browser to see the current phase map without starting the app.
+
+Tracked source artifacts:
+
+- `README.md` / `README_TH.md` - bilingual project charter (must stay mirrored per commit).
+- `MIGRATION_LIFF.md` - 16-section migration design (mobile RN -> LIFF web). Section 1 has 14 forks; rows 4, 5, 7, 12 still open.
+- `PLAN.html` - `/init` plan (SKILL.md, moodboard, Prisma, auth flow, 4 sample components, 10 TDD phases).
+- `EXPORT.html` - snapshot of predecessor mobile repo.
+- `web/plans/Bootstrap.md` - Phase 1 execution plan; implementation is already done.
+- `web/plans/Phase2a-Auth.md` - current Phase 2a execution plan.
 
 Predecessor mobile codebase frozen at `C:\palm\NarathipOS\CRMA Smart academy mobile app`. Read-only reference for 1:1 component port, fixtures, prototype spec, RN tests.
 
@@ -19,7 +31,7 @@ Phases gated. Do not skip ahead.
 
 1. Bootstrap `web/` — Next 16 · Tailwind v4 · Prisma · Vitest · Playwright · CI green.
 2. Auth — LIFF → `@crma.ac.th` email OTP → TOTP → JWT cookie middleware → RBAC → AuditLog.
-3. App shell — `IphoneFrame` · `AppHeader` · `BottomNav` · `TabStore ↔ ?tab=` sync.
+3. Responsive app shell — `AppShell` · `AppHeader` · adaptive nav · `TabStore ↔ ?tab=` sync across phone, tablet, and desktop. Do not build production UI inside a fixed `IphoneFrame`.
 4–8. View ports (Home, ClassSchedule, Health, Activity, Service/Grades/Me).
 9. LINE Messaging push + Vercel Cron.
 10. Hardening — PDPA, audit export, pen-test, Lighthouse budget.
@@ -32,7 +44,7 @@ Next.js 16 App Router (Node runtime for Prisma) · TS 5 strict + `noUncheckedInd
 
 ## Routing contract (do not break)
 
-Single `activeTab` string drives view switch. URL `?tab=` backed by Zustand `useTabStore`. **No nested route layouts.** `app/(app)/page.tsx` reads `activeTab` and renders from a `VIEWS` map (see `MIGRATION_LIFF.md §7`). BottomNav mutates store directly; same testIDs as mobile prototype.
+Single `activeTab` string drives view switch. URL `?tab=` backed by Zustand `useTabStore`. **No nested route layouts.** `app/(app)/page.tsx` reads `activeTab` and renders from a `VIEWS` map (see `MIGRATION_LIFF.md §7`). `AdaptiveNav` mutates store directly; phone mode uses bottom nav, wider screens use rail/sidebar navigation.
 
 ## Hard constraints (auto-reject violating diffs)
 

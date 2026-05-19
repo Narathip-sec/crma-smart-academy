@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CRMA Smart Academy Progress</title>
+    <style>
+      :root {
+        --paper: #f4efe4;
+        --paper-strong: #fffaf0;
+        --ink: #17211d;
+        --muted: #5c665f;
+        --line: #d7cbb7;
+        --pine: #15533f;
+        --pine-2: #0d372b;
+        --brass: #b98221;
+        --rust: #a9452d;
+        --sky: #346d9c;
+        --shadow: 0 18px 50px rgba(23, 33, 29, 0.13);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          linear-gradient(90deg, rgba(23, 33, 29, 0.045) 1px, transparent 1px) 0 0 / 44px
+            44px,
+          linear-gradient(180deg, rgba(23, 33, 29, 0.045) 1px, transparent 1px) 0 0 / 44px
+            44px,
+          var(--paper);
+        color: var(--ink);
+        font-family:
+          Aptos,
+          "Segoe UI",
+          sans-serif;
+        letter-spacing: 0;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .page {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .hero {
+        position: relative;
+        padding: 36px 0 22px;
+        border-bottom: 1px solid rgba(23, 33, 29, 0.2);
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
+        gap: 28px;
+        align-items: end;
+      }
+
+      .eyebrow {
+        width: fit-content;
+        padding: 7px 10px;
+        border: 1px solid rgba(21, 83, 63, 0.3);
+        background: rgba(255, 250, 240, 0.68);
+        color: var(--pine-2);
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        font-family:
+          Bahnschrift,
+          "Aptos Display",
+          "Segoe UI",
+          sans-serif;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
+      h1 {
+        margin-top: 18px;
+        max-width: 780px;
+        font-size: 3.4rem;
+        line-height: 0.98;
+      }
+
+      .hero-copy {
+        max-width: 700px;
+        margin: 18px 0 0;
+        color: var(--muted);
+        font-size: 1rem;
+        line-height: 1.65;
+      }
+
+      .hero-side {
+        border-left: 5px solid var(--pine);
+        background: rgba(255, 250, 240, 0.74);
+        padding: 18px;
+        box-shadow: var(--shadow);
+      }
+
+      .score-label {
+        color: var(--muted);
+        font-size: 0.8rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .score {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        margin-top: 8px;
+      }
+
+      .score strong {
+        font-family:
+          Bahnschrift,
+          "Aptos Display",
+          sans-serif;
+        font-size: 3rem;
+        line-height: 1;
+      }
+
+      .score span {
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .score-track {
+        position: relative;
+        height: 12px;
+        margin: 18px 0 12px;
+        background: #dfd3bf;
+        overflow: hidden;
+      }
+
+      .score-track::before {
+        content: "";
+        display: block;
+        width: 10%;
+        height: 100%;
+        background: linear-gradient(90deg, var(--pine), var(--brass));
+      }
+
+      .status-strip {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1px;
+        margin-top: 22px;
+        background: var(--line);
+        border: 1px solid var(--line);
+      }
+
+      .metric {
+        background: var(--paper-strong);
+        padding: 18px;
+      }
+
+      .metric .label {
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .metric .value {
+        display: block;
+        margin-top: 7px;
+        color: var(--ink);
+        font-size: 1.05rem;
+        font-weight: 800;
+      }
+
+      .band {
+        padding: 30px 0;
+      }
+
+      .section-title {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      .section-title p {
+        max-width: 620px;
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .sync-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .sync-box,
+      .phase-card,
+      .check-row,
+      .source-row {
+        border: 1px solid rgba(23, 33, 29, 0.16);
+        border-radius: 8px;
+        background: rgba(255, 250, 240, 0.82);
+      }
+
+      .sync-box {
+        padding: 18px;
+        min-height: 170px;
+      }
+
+      .sync-box h3 {
+        margin-bottom: 12px;
+        font-size: 1.08rem;
+      }
+
+      .sync-box ul,
+      .check-row ul {
+        margin: 0;
+        padding-left: 19px;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .filter-button {
+        min-height: 40px;
+        border: 1px solid rgba(23, 33, 29, 0.18);
+        border-radius: 999px;
+        background: rgba(255, 250, 240, 0.86);
+        color: var(--ink);
+        padding: 0 14px;
+        font: inherit;
+        font-size: 0.9rem;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .filter-button[aria-pressed="true"] {
+        background: var(--pine);
+        color: white;
+      }
+
+      .phase-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .phase-card {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 16px;
+        padding: 16px;
+      }
+
+      .phase-number {
+        display: grid;
+        place-items: center;
+        width: 54px;
+        height: 54px;
+        border: 2px solid currentColor;
+        border-radius: 50%;
+        font-family:
+          Bahnschrift,
+          "Aptos Display",
+          sans-serif;
+        font-size: 1.12rem;
+        font-weight: 800;
+      }
+
+      .phase-card[data-status="complete"] .phase-number {
+        color: var(--pine);
+      }
+
+      .phase-card[data-status="active"] .phase-number {
+        color: var(--brass);
+      }
+
+      .phase-card[data-status="pending"] .phase-number {
+        color: var(--muted);
+      }
+
+      .phase-card h3 {
+        font-size: 1.05rem;
+      }
+
+      .phase-card p {
+        margin: 8px 0 12px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+      }
+
+      .tag {
+        border-radius: 999px;
+        padding: 5px 8px;
+        background: #ebe0cd;
+        color: var(--pine-2);
+        font-size: 0.76rem;
+        font-weight: 800;
+      }
+
+      .tag.done {
+        background: rgba(21, 83, 63, 0.14);
+        color: var(--pine);
+      }
+
+      .tag.active {
+        background: rgba(185, 130, 33, 0.2);
+        color: #69440b;
+      }
+
+      .tag.blocked {
+        background: rgba(169, 69, 45, 0.15);
+        color: var(--rust);
+      }
+
+      .checklist {
+        display: grid;
+        gap: 10px;
+      }
+
+      .check-row {
+        display: grid;
+        grid-template-columns: 150px minmax(0, 1fr) auto;
+        gap: 14px;
+        align-items: center;
+        padding: 14px;
+      }
+
+      .step-code {
+        font-family:
+          "Cascadia Code",
+          Consolas,
+          monospace;
+        font-size: 0.88rem;
+        font-weight: 800;
+      }
+
+      .step-body strong {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .step-body span {
+        display: block;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .pill {
+        min-width: 96px;
+        border-radius: 999px;
+        padding: 8px 10px;
+        text-align: center;
+        font-size: 0.78rem;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .pill.done {
+        background: rgba(21, 83, 63, 0.14);
+        color: var(--pine);
+      }
+
+      .pill.active {
+        background: rgba(185, 130, 33, 0.22);
+        color: #69440b;
+      }
+
+      .pill.pending {
+        background: rgba(52, 109, 156, 0.14);
+        color: var(--sky);
+      }
+
+      .sources {
+        display: grid;
+        gap: 10px;
+      }
+
+      .source-row {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 14px;
+        padding: 14px;
+      }
+
+      code {
+        font-family:
+          "Cascadia Code",
+          Consolas,
+          monospace;
+        font-size: 0.9em;
+      }
+
+      .footer {
+        padding: 24px 0 42px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 900px) {
+        .hero-grid,
+        .sync-grid,
+        .phase-grid,
+        .status-strip {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          font-size: 2.5rem;
+        }
+
+        .check-row,
+        .source-row {
+          grid-template-columns: 1fr;
+        }
+
+        .pill {
+          width: fit-content;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .page {
+          width: min(100% - 20px, 1180px);
+        }
+
+        .hero {
+          padding-top: 22px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        .phase-card {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="page hero-grid">
+        <div>
+          <div class="eyebrow">Codex and Claude Code sync</div>
+          <h1>CRMA Smart Academy Progress</h1>
+          <p class="hero-copy">
+            Snapshot from the local repository after Claude Code hit a rate limit. The tracker favors
+            concrete repo evidence: committed files, plans, tests, and the current schema.
+          </p>
+        </div>
+        <aside class="hero-side" aria-label="Overall roadmap progress">
+          <div class="score-label">Roadmap completion</div>
+          <div class="score"><strong>1/10</strong><span>phases complete</span></div>
+          <div class="score-track" aria-hidden="true"></div>
+          <p class="hero-copy">
+            Phase 1 is complete. Phase 2a has started with the auth and audit Prisma schema.
+          </p>
+        </aside>
+      </div>
+      <div class="page status-strip" aria-label="Current status metrics">
+        <div class="metric">
+          <span class="label">Current phase</span>
+          <span class="value">Phase 2a - Auth Foundations</span>
+        </div>
+        <div class="metric">
+          <span class="label">Last sync</span>
+          <span class="value">2026-05-19 17:10 +07:00</span>
+        </div>
+        <div class="metric">
+          <span class="label">Git head</span>
+          <span class="value"><code>4f027ee</code> on <code>master</code></span>
+        </div>
+        <div class="metric">
+          <span class="label">Workspace note</span>
+          <span class="value"><code>Web.docx</code> is untracked</span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="page band" aria-labelledby="sync-title">
+        <div class="section-title">
+          <div>
+            <h2 id="sync-title">Sync State</h2>
+          </div>
+          <p>
+            Claude should resume from Phase 2a, not from the older pre-bootstrap note that was in
+            <code>CLAUDE.md</code>.
+          </p>
+        </div>
+        <div class="sync-grid">
+          <article class="sync-box">
+            <h3>Done</h3>
+            <ul>
+              <li>Root workspace and <code>web/</code> app scaffolded.</li>
+              <li>Next.js 16, TypeScript strict, Tailwind v4, Prisma 7 wired.</li>
+              <li>Vitest, Playwright, linting, formatting, hooks, and CI present.</li>
+              <li>Phase 2a Prisma auth/audit schema committed.</li>
+            </ul>
+          </article>
+          <article class="sync-box">
+            <h3>In Progress</h3>
+            <ul>
+              <li>Phase 2a provider-agnostic auth foundation.</li>
+              <li>Schema exists; runtime libraries and route gates are still pending.</li>
+              <li>Migration file generation is deferred until DB provisioning is ready.</li>
+            </ul>
+          </article>
+          <article class="sync-box">
+            <h3>Next</h3>
+            <ul>
+              <li>Install and wire <code>@prisma/adapter-pg</code> and <code>pg</code>.</li>
+              <li>Add TDD coverage for sessions, RBAC, audit writer, and middleware.</li>
+              <li>Only mark Phase 2a complete after tests and README parity are green.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="page band" aria-labelledby="roadmap-title">
+        <div class="section-title">
+          <div>
+            <h2 id="roadmap-title">Phase Board</h2>
+          </div>
+          <div class="filters" role="group" aria-label="Filter phases">
+            <button class="filter-button" type="button" data-filter="all" aria-pressed="true">All</button>
+            <button class="filter-button" type="button" data-filter="complete">Done</button>
+            <button class="filter-button" type="button" data-filter="active">Active</button>
+            <button class="filter-button" type="button" data-filter="pending">Pending</button>
+          </div>
+        </div>
+
+        <div class="phase-grid">
+          <article class="phase-card" data-status="complete">
+            <div class="phase-number">1</div>
+            <div>
+              <h3>Bootstrap <code>web/</code></h3>
+              <p>Validated chassis for the LIFF web rewrite: app scaffold, CI, tests, Prisma header, and docs.</p>
+              <div class="tag-row">
+                <span class="tag done">Complete</span>
+                <span class="tag">Next 16</span>
+                <span class="tag">Playwright</span>
+                <span class="tag">Vitest</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="phase-card" data-status="active">
+            <div class="phase-number">2</div>
+            <div>
+              <h3>Auth Foundations</h3>
+              <p>LIFF, email OTP, TOTP, JWT cookies, RBAC, and audit logging. Current slice: Phase 2a.</p>
+              <div class="tag-row">
+                <span class="tag active">Active</span>
+                <span class="tag done">Schema landed</span>
+                <span class="tag blocked">Runtime pending</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="phase-card" data-status="pending">
+            <div class="phase-number">3</div>
+            <div>
+              <h3>Responsive App Shell</h3>
+              <p><code>AppShell</code>, <code>AppHeader</code>, adaptive navigation, and tab URL sync across phone, tablet, and desktop.</p>
+              <div class="tag-row">
+                <span class="tag">Pending</span>
+                <span class="tag">Zustand</span>
+                <span class="tag">All devices</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="phase-card" data-status="pending">
+            <div class="phase-number">4</div>
+            <div>
+              <h3>Home View</h3>
+              <p>Home dashboard components, API stubs, fixtures, and prototype parity.</p>
+              <div class="tag-row">
+                <span class="tag">Pending</span>
+                <span class="tag">Fixtures</span>
+                <span class="tag">Mobile parity</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="phase-card" data-status="pending">
+            <div class="phase-number">5</div>
+            <div>
+              <h3>Class Schedule</h3>
+              <p>Day switcher, semester pill, class cards, and schedule API contract.</p>
+              <div class="tag-row">
+                <span class="tag">Pending</span>
+                <span class="tag">Academic</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="phase-card" data-status="pending">
+            <div class="phase-number">6</div>
+            <div>
+              <h3>Health View</h3>
+              <p>Streaks, weekly calendar, steps, calories, meals, activity, and Strava surface.</p>
+              <div class="tag-row">
+                <span class="tag">Pending</span>
+                <span class="tag">PFT</span>
+                <span class="tag">Wellness</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="phase-card" data-status="pending">
+            <div class="phase-number">7</div>
+            <div>
+              <h3>Activity View</h3>
+              <p>Top tabs, event cards, RSVP writes, attendees stack, and activity calendar.</p>
+              <div class="tag-row">
+                <span class="tag">Pending</span>
+                <span class="tag">Events</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="phase-card" data-status="pending">
+            <div class="phase-number">8</div>
+            <div>
+              <h3>Service, Grades, Me</h3>
+              <p>External links through LIFF and semester-locked grade behavior.</p>
+              <div class="tag-row">
+                <span class="tag">Pending</span>
+                <span class="tag">Grades lock</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="phase-card" data-status="pending">
+            <div class="phase-number">9</div>
+            <div>
+              <h3>LINE Messaging Push</h3>
+              <p>Webhook, narrowcast worker, and Vercel Cron roster reminder.</p>
+              <div class="tag-row">
+                <span class="tag">Pending</span>
+                <span class="tag">Cron</span>
+                <span class="tag">Messaging API</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="phase-card" data-status="pending">
+            <div class="phase-number">10</div>
+            <div>
+              <h3>Hardening</h3>
+              <p>PDPA review, audit export, penetration test, Lighthouse budget, and custom domain.</p>
+              <div class="tag-row">
+                <span class="tag">Pending</span>
+                <span class="tag">Security</span>
+                <span class="tag">Performance</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="page band" aria-labelledby="phase2a-title">
+        <div class="section-title">
+          <div>
+            <h2 id="phase2a-title">Phase 2a Checklist</h2>
+          </div>
+          <p>
+            This is the handoff map for whichever agent resumes next. Status is based on current
+            files, not only commit messages.
+          </p>
+        </div>
+
+        <div class="checklist">
+          <article class="check-row">
+            <div class="step-code">5.1</div>
+            <div class="step-body">
+              <strong>Prisma schema for auth and audit</strong>
+              <span><code>User</code>, <code>Role</code>, <code>RefreshToken</code>, <code>AuditLog</code>, and <code>AuditResult</code> are in <code>web/prisma/schema.prisma</code>.</span>
+            </div>
+            <div class="pill done">Done</div>
+          </article>
+
+          <article class="check-row">
+            <div class="step-code">5.2</div>
+            <div class="step-body">
+              <strong>Prisma adapter runtime</strong>
+              <span>Commit text mentions this, but current files do not include <code>@prisma/adapter-pg</code>, <code>pg</code>, or adapter-backed <code>lib/prisma.ts</code>.</span>
+            </div>
+            <div class="pill active">Next</div>
+          </article>
+
+          <article class="check-row">
+            <div class="step-code">5.3</div>
+            <div class="step-body">
+              <strong>Session library with jose</strong>
+              <span>JWT sign/verify, refresh hash, and <code>__Host-</code> cookie tests are still pending.</span>
+            </div>
+            <div class="pill pending">Pending</div>
+          </article>
+
+          <article class="check-row">
+            <div class="step-code">5.4</div>
+            <div class="step-body">
+              <strong>RBAC role matrix</strong>
+              <span>Pure role checks and matrix tests still need to be added.</span>
+            </div>
+            <div class="pill pending">Pending</div>
+          </article>
+
+          <article class="check-row">
+            <div class="step-code">5.5</div>
+            <div class="step-body">
+              <strong>Audit writer</strong>
+              <span>Injectable audit helper and failure-swallowing tests are pending.</span>
+            </div>
+            <div class="pill pending">Pending</div>
+          </article>
+
+          <article class="check-row">
+            <div class="step-code">5.6</div>
+            <div class="step-body">
+              <strong>Auth middleware</strong>
+              <span>Cookie gate, refresh path, API mutation audit entry, and bypass tests are pending.</span>
+            </div>
+            <div class="pill pending">Pending</div>
+          </article>
+
+          <article class="check-row">
+            <div class="step-code">5.7</div>
+            <div class="step-body">
+              <strong>Login route shell</strong>
+              <span>Public login placeholder and Playwright route check are pending.</span>
+            </div>
+            <div class="pill pending">Pending</div>
+          </article>
+
+          <article class="check-row">
+            <div class="step-code">5.8</div>
+            <div class="step-body">
+              <strong>CI Postgres and migration flow</strong>
+              <span>Service container and migrate/deploy drift checks are pending. Migration files are deferred until DB provisioning.</span>
+            </div>
+            <div class="pill pending">Pending</div>
+          </article>
+
+          <article class="check-row">
+            <div class="step-code">5.9</div>
+            <div class="step-body">
+              <strong>README tracker parity</strong>
+              <span>Only update the bilingual README progress rows after Phase 2a is actually complete.</span>
+            </div>
+            <div class="pill pending">Pending</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="page band" aria-labelledby="sources-title">
+        <div class="section-title">
+          <div>
+            <h2 id="sources-title">Source Files</h2>
+          </div>
+          <p>These are the files used to build this checkpoint.</p>
+        </div>
+
+        <div class="sources">
+          <div class="source-row">
+            <strong><code>CLAUDE.md</code></strong>
+            <span>Claude Code working agreement, now synced with the current bootstrap and Phase 2a state.</span>
+          </div>
+          <div class="source-row">
+            <strong><code>README.md</code> and <code>README_TH.md</code></strong>
+            <span>Project charter and phase tracker. Phase 2 is still listed pending until the whole auth phase is complete.</span>
+          </div>
+          <div class="source-row">
+            <strong><code>web/plans/Phase2a-Auth.md</code></strong>
+            <span>Current plan for the auth foundation work.</span>
+          </div>
+          <div class="source-row">
+            <strong><code>web/prisma/schema.prisma</code></strong>
+            <span>Concrete evidence that Phase 2a schema work has landed.</span>
+          </div>
+          <div class="source-row">
+            <strong><code>git log</code></strong>
+            <span>Phase 1 commit sequence plus two Phase 2a commits, including a Claude co-authored schema commit.</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="page footer">
+      Built as a local static checkpoint. Open this file directly or commit it with the next sync update.
+    </footer>
+
+    <script>
+      const buttons = Array.from(document.querySelectorAll(".filter-button"));
+      const cards = Array.from(document.querySelectorAll(".phase-card"));
+
+      for (const button of buttons) {
+        button.addEventListener("click", () => {
+          const filter = button.dataset.filter;
+          for (const item of buttons) {
+            item.setAttribute("aria-pressed", String(item === button));
+          }
+          for (const card of cards) {
+            const show = filter === "all" || card.dataset.status === filter;
+            card.hidden = !show;
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

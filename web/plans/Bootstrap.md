@@ -275,7 +275,7 @@ Each step is one atomic commit. Order matters — earlier steps unblock later on
 - ❌ No real Prisma models beyond schema header (Phase 2).
 - ❌ No `app/(public)` / `app/(app)` route groups (Phase 3).
 - ❌ No Zustand store, no `useTabStore` (Phase 3).
-- ❌ No `IphoneFrame` / `BottomNav` / `AppHeader` (Phase 3).
+- ❌ No `AppShell` / `AdaptiveNav` / `BottomNav` / `AppHeader` (Phase 3).
 - ❌ No fixtures port from mobile (Phase 4+).
 - ❌ No middleware, no JWT, no audit log (Phase 2).
 - ❌ No Vercel deploy yet (do after CI green to avoid red preview spam).

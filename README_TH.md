@@ -129,7 +129,7 @@ LINE Official Account ของ CRMA
 | 2026-05-19 | `/init` + CLAUDE.md                              | วาง guidance ต่อ repo สำหรับ Claude Code · เลื่อน SKILL.md ไปก่อน Phase 2 |
 | 2026-05-19 | Phase 1 — Bootstrap `web/`                       | Next.js 16 · React 19 · TS 5 strict · Tailwind v4 · Prisma 7 · Vitest 4 · Playwright 1.60 · Husky + lint-staged · CI wired · อัปเดต lock: Next 15→16, Prisma 5→7 |
 | _pending_  | Phase 2 — รากฐาน Auth                            | LIFF · LINE callback · email OTP · TOTP · middleware · RBAC · AuditLog |
-| _pending_  | Phase 3 — App shell                              | IphoneFrame · AppHeader · BottomNav · TabStore ↔ URL sync              |
+| _pending_  | Phase 3 — Responsive app shell                   | AppShell · AppHeader · adaptive nav · TabStore ↔ URL sync สำหรับมือถือ แท็บเล็ต และเดสก์ท็อป |
 | _pending_  | Phase 4 — HomeView                               | 6 component · API stub · fixtures                                       |
 | _pending_  | Phase 5 — ClassScheduleView                      | DaySwitcher · SemesterPill · ClassCard · API schedule                  |
 | _pending_  | Phase 6 — HealthView                             | Streak · WeekCalendar · Steps · Calories · Meal · Activity · Strava   |

@@ -33,7 +33,7 @@ Treat each as a fork to confirm before writing PLAN.md.
 
 | # | Fork | Recommended | Why |
 |---|---|---|---|
-| 1 | LIFF size | **Full** (3:4 not used — go Tall) | Matches iPhone-aspect prototype |
+| 1 | LIFF size | **Full responsive** (phone, tablet, desktop) | Keeps mobile prototype feel without locking production UI to an iPhone frame |
 | 2 | Auth flow | LINE Login → email verify `@crma.ac.th` → TOTP enrol | Lowest friction, still 2FA |
 | 3 | Session | JWT in `httpOnly` cookie, 1h access + 30d refresh | LIFF webview cookies survive |
 | 4 | DB host | **Supabase Postgres** (region `ap-southeast-1` SG) or **Neon** SG | Closest to TH; data-sovereignty caveat documented |
@@ -93,7 +93,7 @@ web/
 │  │  ├─ login/page.tsx
 │  │  └─ link-cadet/page.tsx
 │  ├─ (app)/
-│  │  ├─ layout.tsx              ← iPhone-aspect frame + BottomNav + AppHeader
+│  │  ├─ layout.tsx              ← responsive AppShell + AppHeader + adaptive nav
 │  │  ├─ page.tsx                ← reads ?tab=, renders view
 │  │  └─ me/page.tsx
 │  ├─ api/
@@ -112,7 +112,7 @@ web/
 │  ├─ health/      (StreakBadge, WeekCalendarStrip, …)
 │  ├─ activity/    (TopTabs, EventCard, PromoBanner, …)
 │  ├─ service/     (ServiceLink, ServiceGroupCard)
-│  ├─ ui/          (AppHeader, BottomNav, IphoneFrame)
+│  ├─ ui/          (AppShell, AppHeader, AdaptiveNav, BottomNav)
 │  └─ i18n/
 ├─ lib/
 │  ├─ prisma.ts
@@ -353,7 +353,7 @@ export default function Page() {
 }
 ```
 
-`useTabStore` syncs `activeTab ↔ ?tab=` via `useRouter().replace()` and reads `useSearchParams()` on mount. BottomNav still mutates the store directly — same testIDs.
+`useTabStore` syncs `activeTab ↔ ?tab=` via `useRouter().replace()` and reads `useSearchParams()` on mount. `AdaptiveNav` mutates the store directly; phone mode uses `BottomNav`, wider screens use rail/sidebar navigation.
 
 ---
 
@@ -461,7 +461,7 @@ Definition-of-done unchanged: `tsc --noEmit` clean, all tests green, audit log r
 |---|---|---|
 | 1 | Bootstrap `web/` workspace | Next 15, Tailwind, Prisma, ESLint, Vitest, Playwright, CI |
 | 2 | Auth foundation | LIFF init, LINE callback, email OTP, TOTP, session middleware, RBAC, AuditLog |
-| 3 | Layout shell | IphoneFrame, AppHeader, BottomNav, tab store ↔ URL sync |
+| 3 | Responsive app shell | AppShell, AppHeader, adaptive nav, tab store ↔ URL sync across phone, tablet, and desktop |
 | 4 | HomeView port | All 6 home components + fixtures; API stubs return fixture data |
 | 5 | ClassScheduleView port | DaySwitcher, SemesterPill (dialog), ClassCard, schedule API |
 | 6 | HealthView port | Streak, calendar, stats, MealCard, ActivityCard, Strava stub |
