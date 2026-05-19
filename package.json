@@ -1,0 +1,24 @@
+{
+  "name": "crma-smart-academy",
+  "private": true,
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=9"
+  },
+  "scripts": {
+    "prepare": "husky",
+    "web": "pnpm --filter crma-smart-academy-web"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.10"
+  },
+  "lint-staged": {
+    "web/**/*.{ts,tsx,mjs,cjs,js}": [
+      "prettier --write",
+      "eslint --fix --no-warn-ignored"
+    ],
+    "web/**/*.{json,md,css}": ["prettier --write"]
+  }
+}
