@@ -1,8 +1,18 @@
-import { createHash, randomUUID } from 'node:crypto'
-
 import { jwtVerify, SignJWT } from 'jose'
 
 import type { Role } from '@prisma/client'
+
+// Web Crypto only — this module also runs in Edge middleware where
+// `node:crypto` is unavailable. Use the global `crypto` (SubtleCrypto +
+// randomUUID), both present in Node 22 and the Edge runtime.
+
+async function sha256Hex(input: string): Promise<string> {
+  const data = new TextEncoder().encode(input)
+  const buf = await crypto.subtle.digest('SHA-256', data)
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+}
 
 export type SessionPayload = {
   sub: string
@@ -45,7 +55,7 @@ async function sign(
     .setAudience(audience)
     .setIssuedAt()
     .setExpirationTime(`${ttlSeconds}s`)
-    .setJti(randomUUID())
+    .setJti(crypto.randomUUID())
     .sign(getSecret())
 }
 
@@ -81,7 +91,7 @@ export async function signRefreshToken(
   payload: SessionPayload,
 ): Promise<{ token: string; hash: string; expiresAt: Date }> {
   const token = await sign(payload, REFRESH_AUDIENCE, REFRESH_TTL_SECONDS)
-  const hash = createHash('sha256').update(token).digest('hex')
+  const hash = await sha256Hex(token)
   const expiresAt = new Date(Date.now() + REFRESH_TTL_SECONDS * 1000)
   return { token, hash, expiresAt }
 }
