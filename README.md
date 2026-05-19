@@ -71,7 +71,7 @@ single source of truth.
 - **Routing contract:** single `activeTab` string drives view switch — mirrors mobile prototype.
   URL `?tab=` backed by Zustand store; no nested route layouts.
 - **i18n:** next-intl (TH default, EN fallback)
-- **ORM:** Prisma 5 → PostgreSQL
+- **ORM:** Prisma 7 → PostgreSQL (datasource URL in `prisma.config.ts`, runtime via driver adapter)
 - **DB host:** Supabase Postgres, region `ap-southeast-1` (Singapore) — sovereignty caveat documented
 - **Auth:** LINE Login (LIFF) → `@crma.ac.th` email OTP → TOTP 2FA enrol → JWT (jose) in httpOnly Secure cookie
 - **Storage:** Vercel Blob (sovereignty caveat) for avatars + complaint photos
@@ -126,8 +126,8 @@ Updated after each completed milestone in the superpowers loop (brainstorming �
 | Date       | Milestone                                        | Notes                                                                |
 | ---------- | ------------------------------------------------ | -------------------------------------------------------------------- |
 | 2026-05-19 | Repo seeded                                      | `README.md`, `README_TH.md`, `EXPORT.html`, `PLAN.html`, `MIGRATION_LIFF.md` from predecessor session. |
-| _pending_  | `/init` + SKILL.md install                       | Drop `PLAN.html §1` into `.claude/skills/crma-web/SKILL.md`.        |
-| _pending_  | Phase 1 — Bootstrap `web/`                       | Next.js 16 · Tailwind v4 · Prisma · Vitest · Playwright · CI green. |
+| 2026-05-19 | `/init` + CLAUDE.md                              | Per-repo Claude Code guidance landed; SKILL.md install deferred to Phase 2 prep. |
+| 2026-05-19 | Phase 1 — Bootstrap `web/`                       | Next.js 16 · React 19 · TS 5 strict · Tailwind v4 · Prisma 7 · Vitest 4 · Playwright 1.60 · Husky + lint-staged · CI wired. Lock updated: Next 15→16, Prisma 5→7. |
 | _pending_  | Phase 2 — Auth foundation                        | LIFF · LINE callback · email OTP · TOTP · middleware · RBAC · AuditLog. |
 | _pending_  | Phase 3 — App shell                              | IphoneFrame · AppHeader · BottomNav · TabStore ↔ URL sync.          |
 | _pending_  | Phase 4 — HomeView                               | 6 components · API stubs · fixtures.                                |

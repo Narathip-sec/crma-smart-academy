@@ -71,7 +71,7 @@ LINE Official Account ของ CRMA
 - **สัญญา routing:** สตริง `activeTab` ตัวเดียวสลับวิว — เหมือน prototype มือถือ
   URL `?tab=` ผูกกับ Zustand store ไม่มี nested route layout
 - **i18n:** next-intl (TH default, EN fallback)
-- **ORM:** Prisma 5 → PostgreSQL
+- **ORM:** Prisma 7 → PostgreSQL (datasource URL อยู่ที่ `prisma.config.ts`, runtime ใช้ driver adapter)
 - **DB host:** Supabase Postgres ภูมิภาค `ap-southeast-1` (สิงคโปร์) — บันทึก gap เรื่องอธิปไตยข้อมูล
 - **Auth:** LINE Login (LIFF) → email OTP โดเมน `@crma.ac.th` → TOTP 2FA → JWT (jose) ใน cookie httpOnly Secure
 - **Storage:** Vercel Blob (มี caveat เรื่อง sovereignty) สำหรับอวาตาร์ + รูปร้องเรียน
@@ -126,8 +126,8 @@ LINE Official Account ของ CRMA
 | วันที่     | Milestone                                        | หมายเหตุ                                                                |
 | ---------- | ------------------------------------------------ | ----------------------------------------------------------------------- |
 | 2026-05-19 | Seed repo                                        | `README.md`, `README_TH.md`, `EXPORT.html`, `PLAN.html`, `MIGRATION_LIFF.md` มาจาก session โปรเจ็กต์เดิม |
-| _pending_  | `/init` + ติดตั้ง SKILL.md                       | วาง `PLAN.html §1` ลงใน `.claude/skills/crma-web/SKILL.md`             |
-| _pending_  | Phase 1 — Bootstrap `web/`                       | Next.js 16 · Tailwind v4 · Prisma · Vitest · Playwright · CI ผ่าน      |
+| 2026-05-19 | `/init` + CLAUDE.md                              | วาง guidance ต่อ repo สำหรับ Claude Code · เลื่อน SKILL.md ไปก่อน Phase 2 |
+| 2026-05-19 | Phase 1 — Bootstrap `web/`                       | Next.js 16 · React 19 · TS 5 strict · Tailwind v4 · Prisma 7 · Vitest 4 · Playwright 1.60 · Husky + lint-staged · CI wired · อัปเดต lock: Next 15→16, Prisma 5→7 |
 | _pending_  | Phase 2 — รากฐาน Auth                            | LIFF · LINE callback · email OTP · TOTP · middleware · RBAC · AuditLog |
 | _pending_  | Phase 3 — App shell                              | IphoneFrame · AppHeader · BottomNav · TabStore ↔ URL sync              |
 | _pending_  | Phase 4 — HomeView                               | 6 component · API stub · fixtures                                       |

@@ -28,7 +28,7 @@ Each phase = superpowers loop: brainstorming → writing-plans → TDD → cross
 
 ## Locked stack (do not re-pick)
 
-Next.js 16 App Router (Node runtime for Prisma) · TS 5 strict + `noUncheckedIndexedAccess` · Tailwind v4 + CVA · Zustand 5 (slices: tab · schedule · health · activity) · next-intl (TH default) · Prisma 5 → Supabase Postgres `ap-southeast-1` · LIFF + email OTP + TOTP + jose JWT in httpOnly Secure cookie · Vercel Blob · LINE Messaging API · Vercel Cron + Inngest · Brevo SMTP · Sentry · Vitest + RTL + Playwright (LINE webview UA) + `next-test-api-route` · Vercel deploy.
+Next.js 16 App Router (Node runtime for Prisma) · TS 5 strict + `noUncheckedIndexedAccess` · Tailwind v4 + CVA · Zustand 5 (slices: tab · schedule · health · activity) · next-intl (TH default) · Prisma 7 (datasource URL in `prisma.config.ts`, runtime via driver adapter) → Supabase Postgres `ap-southeast-1` · LIFF + email OTP + TOTP + jose JWT in httpOnly Secure cookie · Vercel Blob · LINE Messaging API · Vercel Cron + Inngest · Brevo SMTP · Sentry · Vitest + RTL + Playwright (LINE webview UA) + `next-test-api-route` · Vercel deploy.
 
 ## Routing contract (do not break)
 
@@ -71,4 +71,23 @@ Single `activeTab` string drives view switch. URL `?tab=` backed by Zustand `use
 
 ## Build / test commands
 
-None yet — `web/` workspace not bootstrapped. After Phase 1, commands will live under `web/package.json` (`pnpm dev`, `pnpm test`, `pnpm test:e2e`, `pnpm typecheck`, `prisma migrate dev`). Update this section when Phase 1 lands.
+Workspace root has `package.json` (Husky + lint-staged only). All app commands run inside `web/` via `corepack pnpm <script>`:
+
+| Command | Purpose |
+|---|---|
+| `corepack pnpm dev` | Next dev server (turbopack) |
+| `corepack pnpm build` | Production build |
+| `corepack pnpm start` | Serve production build |
+| `corepack pnpm typecheck` | `tsc --noEmit` with strict + `noUncheckedIndexedAccess` |
+| `corepack pnpm lint` | ESLint (Next preset + import-order + unused-imports) |
+| `corepack pnpm format` | Prettier write |
+| `corepack pnpm test` | Vitest watch |
+| `corepack pnpm test:run` | Vitest CI mode |
+| `corepack pnpm test:e2e` | Playwright (line-ios · line-android · safari) |
+| `corepack pnpm test:e2e:ui` | Playwright UI mode |
+| `corepack pnpm prisma generate` | Re-emit Prisma client |
+| `corepack pnpm prisma:migrate` | Local migrate dev |
+
+CI runs `pnpm install --frozen-lockfile` from workspace root, then everything inside `web/`. See `.github/workflows/ci.yml`. Pre-commit hook runs `lint-staged` + `typecheck`.
+
+Local pnpm via `corepack pnpm` — no global pnpm install needed (Node 22 ships corepack). To use bare `pnpm`, run `corepack enable` in an admin PowerShell once.
