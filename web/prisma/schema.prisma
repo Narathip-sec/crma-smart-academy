@@ -1,0 +1,10 @@
+// CRMA Smart Academy — Prisma schema (Phase 1: header only)
+// Models land in Phase 2 (auth) and onward per MIGRATION_LIFF.md §5.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
