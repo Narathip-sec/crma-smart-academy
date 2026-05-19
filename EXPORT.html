@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CRMA Smart Academy — Project Export</title>
+<style>
+  :root{
+    --canvas:#F8FAFC; --surface:#FFFFFF; --ink:#0F172A; --inkSoft:#475569;
+    --accent:#F59E0B; --accentSoft:#FBBF24; --rose:#F43F5E; --blue:#3B82F6;
+    --orange:#F97316; --hairline:#F1F5F9; --slate-900:#0F172A; --slate-100:#F1F5F9;
+    --slate-50:#F8FAFC; --emerald:#047857; --amber-50:#FFFBEB;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--canvas);color:var(--ink);
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+  a{color:var(--blue)}
+  code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  pre{background:#0F172A;color:#E2E8F0;padding:14px 16px;border-radius:12px;
+    overflow:auto;font-size:12.5px;line-height:1.55}
+  pre .kw{color:#F59E0B}
+  pre .str{color:#FBBF24}
+  pre .com{color:#64748B;font-style:italic}
+  header.hero{background:linear-gradient(135deg,#0F172A 0%,#1E293B 100%);
+    color:#fff;padding:48px 32px;border-bottom:4px solid var(--accent)}
+  header.hero h1{margin:0;font-size:34px;letter-spacing:-.02em}
+  header.hero p.tag{margin:8px 0 0;color:#FBBF24;font-weight:600}
+  header.hero p.sub{margin:14px 0 0;color:#CBD5E1;max-width:720px}
+  .container{max-width:1180px;margin:0 auto;padding:32px}
+  section{margin:40px 0}
+  h2{font-size:22px;letter-spacing:-.01em;margin:0 0 16px;
+    padding-bottom:8px;border-bottom:1px solid var(--hairline)}
+  h3{font-size:16px;margin:18px 0 8px;color:var(--inkSoft);
+    text-transform:uppercase;letter-spacing:.08em}
+  .grid{display:grid;gap:16px}
+  .grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .grid.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  @media (max-width:780px){.grid.cols-2,.grid.cols-3,.grid.cols-4{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--hairline);border-radius:16px;
+    padding:18px 20px;box-shadow:0 8px 30px rgba(0,0,0,.04)}
+  .card h4{margin:0 0 6px;font-size:14px;color:var(--ink)}
+  .card p{margin:0;color:var(--inkSoft);font-size:13.5px}
+  .pill{display:inline-block;padding:3px 10px;border-radius:999px;
+    background:var(--slate-100);color:var(--ink);font-size:11.5px;
+    font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-right:6px}
+  .pill.amber{background:#FEF3C7;color:#92400E}
+  .pill.rose{background:#FFE4E6;color:#9F1239}
+  .pill.blue{background:#DBEAFE;color:#1E3A8A}
+  .pill.green{background:#D1FAE5;color:#065F46}
+  .pill.slate{background:#E2E8F0;color:#1E293B}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{padding:8px 10px;text-align:left;vertical-align:top;
+    border-bottom:1px solid var(--hairline)}
+  th{background:var(--slate-50);font-weight:700;color:var(--inkSoft);
+    text-transform:uppercase;font-size:11.5px;letter-spacing:.06em}
+  .swatch{display:inline-block;width:18px;height:18px;border-radius:6px;
+    border:1px solid rgba(0,0,0,.08);vertical-align:middle;margin-right:6px}
+  .phone{background:#0F172A;border-radius:42px;padding:14px 10px 18px;
+    width:312px;color:#fff;margin:0 auto;
+    box-shadow:0 20px 60px rgba(15,23,42,.25)}
+  .phone .screen{background:var(--canvas);color:var(--ink);border-radius:28px;
+    padding:14px;min-height:480px;font-size:12.5px}
+  .phone .bn{display:flex;justify-content:space-around;background:#fff;
+    border-radius:20px;padding:8px 6px;margin-top:10px;
+    box-shadow:0 -2px 12px rgba(0,0,0,.04)}
+  .phone .bn span{font-size:10px;color:var(--inkSoft);padding:4px 8px;border-radius:999px}
+  .phone .bn span.act{background:var(--accent);color:#fff;font-weight:700}
+  .nb{background:#FEF3C7;border-left:4px solid var(--accent);
+    padding:12px 16px;border-radius:8px;margin:12px 0;font-size:13.5px}
+  .ascii{background:#0F172A;color:#E2E8F0;padding:18px 20px;border-radius:12px;
+    font-family:ui-monospace,Consolas,monospace;font-size:12px;
+    line-height:1.45;white-space:pre;overflow:auto}
+  footer{border-top:1px solid var(--hairline);padding:24px 32px;
+    color:var(--inkSoft);font-size:12.5px;text-align:center}
+  .kpi{font-size:32px;font-weight:800;color:var(--accent);line-height:1}
+  .kpi-label{font-size:11.5px;color:var(--inkSoft);text-transform:uppercase;
+    letter-spacing:.08em;margin-top:4px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="pill amber">v0 · Project Snapshot · 2026-05-19</span>
+  <h1>CRMA Smart Academy</h1>
+  <p class="tag">Digital platform for cadets at Chulachomklao Royal Military Academy</p>
+  <p class="sub">Consolidates class schedule, military training, daily life management, announcements, grades,
+    and AI-assisted fitness coaching into one app. Originally Expo + React Native; now pivoting to LIFF web
+    app (Next.js + Prisma + PostgreSQL on Vercel). This document is the full handoff context for a fresh
+    Claude session.</p>
+</header>
+
+<div class="container">
+
+<section>
+  <h2>1 · Objectives</h2>
+  <div class="grid cols-2">
+    <div class="card">
+      <h4>Problem</h4>
+      <p>Cadets juggle fragmented systems for schedules, training, grades, mess hall, duty rosters,
+        announcements. Paper-heavy, low transparency, no central feedback loop with units.</p>
+    </div>
+    <div class="card">
+      <h4>Solution</h4>
+      <p>One mobile-first app: schedules, PFT results + AI coaching, mess hall menus, duty rosters
+        (RBAC-gated), event creation, group chats, grades (past semesters only), portfolio.</p>
+    </div>
+    <div class="card">
+      <h4>Primary users</h4>
+      <p><span class="pill">Cadets</span> <span class="pill slate">Instructors</span>
+        <span class="pill slate">Officers</span> <span class="pill slate">Registrar</span></p>
+    </div>
+    <div class="card">
+      <h4>North-star metric</h4>
+      <p>% of cadet workflows that no longer require paper / multiple logins.
+        Secondary: time-to-acknowledge urgent announcements.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>2 · Hard Constraints</h2>
+  <div class="grid cols-2">
+    <div class="card"><h4>🚫 LMS scope-out</h4><p>Assignment submission stays on external Moodle
+      <code>https://lms.crma.ac.th/moodle/my/</code>. Do not rebuild submission flow.</p></div>
+    <div class="card"><h4>🔒 Current-semester grades LOCKED</h4>
+      <p>Only past completed semesters viewable. Enforce in data layer, not UI.</p></div>
+    <div class="card"><h4>👮 Duty roster RBAC</h4>
+      <p>Roster mutations gated by rank/role. Cadets read-only, Officers+ can edit.</p></div>
+    <div class="card"><h4>🔑 Auth gate</h4>
+      <p>2FA required. <code>@crma.ac.th</code> email allow-list. Linked to cadet ID. No social login.</p></div>
+    <div class="card"><h4>🇹🇭 Data sovereignty</h4>
+      <p>Storage must reside in Thailand data centers. Rules out US-only managed services for primary data.</p></div>
+    <div class="card"><h4>📋 PDPA + RTA classification</h4>
+      <p>All access actions audit-logged. Compliance with PDPA B.E. 2562 + Royal Thai Army data rules.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>3 · Locked Tech Stack</h2>
+  <div class="grid cols-2">
+    <div class="card">
+      <h3>Mobile (current — `app/`)</h3>
+      <p>
+        <span class="pill blue">Expo SDK 52</span>
+        <span class="pill blue">React Native 0.76</span>
+        <span class="pill">TypeScript 5.3 strict</span><br/>
+        <span class="pill">NativeWind (Tailwind)</span>
+        <span class="pill">Zustand 5</span>
+        <span class="pill">Supabase</span>
+        <span class="pill">expo-notifications</span><br/>
+        <span class="pill">lucide-react-native</span>
+        <span class="pill">react-native-reanimated 3</span>
+        <span class="pill">Jest + RNTL</span>
+      </p>
+    </div>
+    <div class="card">
+      <h3>Web LIFF (target — `web/`)</h3>
+      <p>
+        <span class="pill amber">Next.js 15 App Router</span>
+        <span class="pill amber">Prisma</span>
+        <span class="pill amber">PostgreSQL</span>
+        <span class="pill amber">Vercel</span><br/>
+        <span class="pill">LINE LIFF SDK</span>
+        <span class="pill">@crma.ac.th OTP</span>
+        <span class="pill">TOTP 2FA</span><br/>
+        <span class="pill">Tailwind v4</span>
+        <span class="pill">Zustand 5 (port)</span>
+        <span class="pill">next-intl TH/EN</span>
+        <span class="pill">Vitest + Playwright</span>
+      </p>
+    </div>
+  </div>
+  <p class="nb"><strong>Routing contract preserved:</strong> single <code>activeTab</code> string drives view
+    rendering — same as prototype. Web mirrors via <code>?tab=</code> URL param backed by Zustand.</p>
+</section>
+
+<section>
+  <h2>4 · Design System</h2>
+  <div class="grid cols-2">
+    <div class="card">
+      <h3>Palette</h3>
+      <p><span class="swatch" style="background:#0F172A"></span><code>slate-900</code> ink / bold bg</p>
+      <p><span class="swatch" style="background:#F8FAFC"></span><code>slate-50</code> canvas</p>
+      <p><span class="swatch" style="background:#F1F5F9"></span><code>slate-100</code> hairline / surface alt</p>
+      <p><span class="swatch" style="background:#F59E0B"></span><code>amber-500</code> accent / active</p>
+      <p><span class="swatch" style="background:#FBBF24"></span><code>amber-400</code> accent soft</p>
+      <p><span class="swatch" style="background:#F43F5E"></span><code>rose-500</code> sign-out / alerts</p>
+      <p><span class="swatch" style="background:#3B82F6"></span><code>blue-500</code> stats</p>
+      <p><span class="swatch" style="background:#F97316"></span><code>orange-500</code> stats</p>
+    </div>
+    <div class="card">
+      <h3>Type, shape, motion</h3>
+      <p><strong>Display:</strong> <code>font-display font-bold</code> headings</p>
+      <p><strong>Body:</strong> default sans, <code>tracking-wider uppercase</code> meta-labels</p>
+      <p><strong>Radii:</strong> <code>rounded-2xl</code> · <code>rounded-3xl</code> · <code>rounded-full</code></p>
+      <p><strong>Shadow:</strong> <code>shadow-[0_8px_30px_rgb(0,0,0,0.04)]</code> · <code>border-slate-100</code></p>
+      <p><strong>Icons:</strong> <code>lucide-react</code> @ 16 / 20 / 24</p>
+      <p><strong>Container:</strong> iPhone aspect 402×874, <code>rounded-[3rem]</code>, <code>overflow-hidden</code></p>
+      <p><strong>Entry anim:</strong> <code>animate-in fade-in slide-in-from-bottom-4 duration-500</code></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>5 · Screens (state-driven `activeTab`)</h2>
+  <div class="grid cols-3">
+
+    <div class="card">
+      <h4>A · HomeView</h4>
+      <p class="pill amber">activeTab=home</p>
+      <p>Profile banner · hero carousel (3s) · 4 quick services · News/Events tabs · Smart Insights row.</p>
+    </div>
+    <div class="card">
+      <h4>B · ClassScheduleView</h4>
+      <p class="pill amber">activeTab=class_schedule</p>
+      <p>Semester pill (action-sheet) · MON–FRI switcher · class cards w/ color bar · Weekly View FAB.</p>
+    </div>
+    <div class="card">
+      <h4>C · HealthView (Health AI)</h4>
+      <p class="pill amber">activeTab=health</p>
+      <p>Streak badge · Summary/Services top-tabs · week calendar · Steps/Calories cards · Meal+Activity logs · Strava connect.</p>
+    </div>
+    <div class="card">
+      <h4>D · ActivityView</h4>
+      <p class="pill amber">activeTab=activity</p>
+      <p>Dismissible promo banner · Events/Groups tabs · search + filter pills · event cards (FREE only) · Create FAB.</p>
+    </div>
+    <div class="card">
+      <h4>E · ServiceView</h4>
+      <p class="pill amber">activeTab=service</p>
+      <p>9-item flat list of internal/external links · CRMA Library group card · chevron vs external-link icon.</p>
+    </div>
+    <div class="card">
+      <h4>F · GradesView</h4>
+      <p class="pill slate">internal (from Service)</p>
+      <p>Native semester select · dark term-GPA / GPAX banner · course rows (code · title · credits / grade).
+        Current semester locked.</p>
+    </div>
+    <div class="card">
+      <h4>G · MeView</h4>
+      <p class="pill amber">activeTab=me</p>
+      <p>Rotated avatar · cadet ID · Company / Major / DOB / Email block · rose Sign Out button.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>6 · Phone Mockup (HomeView shape)</h2>
+  <div class="phone">
+    <div style="height:18px;display:flex;justify-content:center">
+      <div style="width:90px;height:18px;background:#000;border-radius:999px"></div>
+    </div>
+    <div class="screen">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="width:24px;height:24px;background:var(--slate-100);border-radius:8px"></div>
+        <strong>CRMA</strong>
+        <div style="display:flex;gap:6px">
+          <div style="width:24px;height:24px;background:var(--slate-100);border-radius:8px"></div>
+          <div style="width:24px;height:24px;background:var(--slate-100);border-radius:8px"></div>
+        </div>
+      </div>
+      <div style="margin-top:12px;display:flex;align-items:center;gap:10px;
+        background:#fff;border-radius:18px;padding:10px;
+        box-shadow:0 8px 30px rgba(0,0,0,.04)">
+        <div style="width:36px;height:36px;border-radius:999px;background:var(--amber-50);
+          display:flex;align-items:center;justify-content:center;color:var(--accent);
+          font-weight:800">NC</div>
+        <div>
+          <div style="font-weight:800;font-size:13px">Narathip Chetjai</div>
+          <div style="color:var(--inkSoft);font-size:11px">Cadet · 3rd Year</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;background:var(--slate-900);color:#fff;
+        border-radius:18px;padding:14px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;
+          background:var(--accent);opacity:.25;filter:blur(30px);border-radius:999px"></div>
+        <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--accentSoft)">Hero · slide 1/3</div>
+        <div style="font-weight:800;font-size:14px;margin-top:6px">PT Test Friday 0530</div>
+        <div style="font-size:11px;color:#CBD5E1;margin-top:4px">Tap for details →</div>
+      </div>
+      <div style="margin-top:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+        <div style="background:#fff;border-radius:14px;padding:8px;text-align:center;font-size:10px;
+          box-shadow:0 8px 30px rgba(0,0,0,.04)">📅 Class</div>
+        <div style="background:#fff;border-radius:14px;padding:8px;text-align:center;font-size:10px;
+          box-shadow:0 8px 30px rgba(0,0,0,.04)">🍱 Meal</div>
+        <div style="background:#fff;border-radius:14px;padding:8px;text-align:center;font-size:10px;
+          box-shadow:0 8px 30px rgba(0,0,0,.04)">💪 Health</div>
+        <div style="background:#fff;border-radius:14px;padding:8px;text-align:center;font-size:10px;
+          box-shadow:0 8px 30px rgba(0,0,0,.04)">🪖 ID</div>
+      </div>
+      <div style="margin-top:14px;font-size:11px;color:var(--inkSoft);
+        text-transform:uppercase;letter-spacing:.08em">News · Events</div>
+      <div style="margin-top:6px;background:#fff;border-radius:14px;padding:10px;
+        box-shadow:0 8px 30px rgba(0,0,0,.04);font-size:11px">
+        <strong>Battalion brief — 1830</strong>
+        <div style="color:var(--inkSoft)">Field exercise rehearsal recap and assignments…</div>
+      </div>
+    </div>
+    <div class="bn">
+      <span class="act">Home</span><span>Class</span><span>Health</span>
+      <span>Activity</span><span>Service</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>7 · Architecture (LIFF target)</h2>
+  <div class="ascii">┌────────────────────────────────────────────────────────────────┐
+│  LINE App (cadet phone)                                        │
+│  └─ Rich-menu → LIFF URL → LIFF SDK (liff.init, liff.login)    │
+└──────────────────┬─────────────────────────────────────────────┘
+                   │ HTTPS (Vercel edge)
+                   ▼
+┌────────────────────────────────────────────────────────────────┐
+│  Next.js 15 App Router (Vercel · region sin1)                  │
+│  ├─ app/(public)/login            → LINE OAuth bounce          │
+│  ├─ app/(app)/page.tsx?tab=…      → HomeView / ClassSchedule…  │
+│  ├─ app/api/auth/line/callback    → verify ID token → JWT      │
+│  ├─ app/api/auth/email-otp        → @crma.ac.th gate           │
+│  ├─ app/api/auth/totp             → enrol + verify             │
+│  ├─ app/api/[resource]/route.ts   → Prisma + RBAC + AuditLog   │
+│  └─ middleware.ts                 → session + audit            │
+└──────────────────┬─────────────────────────────────────────────┘
+                   │ Prisma (TCP, pgbouncer)
+                   ▼
+┌────────────────────────────────────────────────────────────────┐
+│  PostgreSQL (Supabase SG / Neon SG / TH-host TBD)              │
+│  └─ pgcrypto encryption · audit triggers                       │
+└────────────────────────────────────────────────────────────────┘
+                   ▲
+                   │ Vercel Cron (hourly)
+┌──────────────────┴─────────────────────────────────────────────┐
+│  LINE Messaging API ← push (announcements, roster reminders)   │
+└────────────────────────────────────────────────────────────────┘</div>
+</section>
+
+<section>
+  <h2>8 · Component Inventory</h2>
+  <p>30 RN components shipped in <code>app/src/components</code>. Each has a 1:1 web port target.</p>
+  <div class="grid cols-4">
+    <div class="card"><h4>Layout</h4><p>AppHeader · BottomNav · TopTabs</p></div>
+    <div class="card"><h4>Home (6)</h4><p>ProfileBanner · HeroCarousel · QuickServicesGrid · SmartInsightsRow · NewsEventTabs</p></div>
+    <div class="card"><h4>Class (6)</h4><p>DaySwitcher · SemesterPill · ClassCard · WeeklyViewButton · WeeklyViewModal</p></div>
+    <div class="card"><h4>Health (9)</h4><p>StreakBadge · WeekCalendarStrip · StepsCard · CaloriesCard · MealCard · ActivityCard · StravaConnectButton · WearableCard</p></div>
+    <div class="card"><h4>Activity (7)</h4><p>PromoBanner · SearchBar · FilterPillsRow · EventCard · AttendeesStack · CreateActivityFAB · GroupPlaceholderCard</p></div>
+    <div class="card"><h4>Service (2)</h4><p>ServiceLink · ServiceGroupCard</p></div>
+    <div class="card"><h4>Stores</h4><p>tabStore · scheduleStore · healthStore · activityStore</p></div>
+    <div class="card"><h4>Libs</h4><p>rbac · supabase · courseTypeColor · formatMilTime · weekCalendarDays</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>9 · Sample Code (port-ready)</h2>
+
+  <h3>9.1 · ServiceLink component (RN → port to web)</h3>
+<pre><span class="com">// app/src/components/ServiceLink.tsx — discriminated by kind</span>
+<span class="kw">export</span> <span class="kw">type</span> ServiceKind <span class="kw">=</span> <span class="str">"internal"</span> <span class="kw">|</span> <span class="str">"external"</span>;
+
+<span class="kw">export interface</span> ServiceLinkProps {
+  id: <span class="str">string</span>; kind: ServiceKind; labelKey: <span class="str">string</span>;
+  icon: LucideIcon; iconBg: <span class="str">string</span>; iconColor?: <span class="str">string</span>;
+  onPress: () <span class="kw">=&gt;</span> <span class="str">void</span>;
+}
+
+<span class="kw">export function</span> ServiceLink({ id, kind, labelKey, icon: Icon, iconBg, onPress }) {
+  <span class="kw">const</span> { t } <span class="kw">=</span> useTranslation();
+  <span class="kw">return</span> (
+    &lt;Pressable testID={<span class="str">`service.link.${id}`</span>} onPress={onPress}
+      className=<span class="str">"mb-3 flex-row items-center rounded-2xl border border-slate-100 bg-white p-4"</span>&gt;
+      &lt;View className={<span class="str">`h-10 w-10 items-center justify-center rounded-xl ${iconBg}`</span>}&gt;
+        &lt;Icon size={20} color={iconColor ?? <span class="str">"#0F172A"</span>} /&gt;
+      &lt;/View&gt;
+      &lt;Text className=<span class="str">"ml-3 flex-1 text-base font-bold text-slate-900"</span>&gt;{t(labelKey)}&lt;/Text&gt;
+      {kind === <span class="str">"internal"</span> ? &lt;ChevronRight /&gt; : &lt;ExternalLink /&gt;}
+    &lt;/Pressable&gt;
+  );
+}</pre>
+
+  <h3>9.2 · Zustand tab store (preserve for web)</h3>
+<pre><span class="com">// app/src/state/tabStore.ts — single source of truth for view routing</span>
+<span class="kw">import</span> { create } <span class="kw">from</span> <span class="str">"zustand"</span>;
+<span class="kw">import type</span> { TabKey } <span class="kw">from</span> <span class="str">"@/navigation/tabs"</span>;
+
+<span class="kw">export const</span> useTabStore <span class="kw">=</span> create&lt;TabState&gt;((set) <span class="kw">=&gt;</span> ({
+  activeTab: <span class="str">"home"</span>,
+  setActiveTab: (activeTab) <span class="kw">=&gt;</span> set({ activeTab }),
+}));</pre>
+
+  <h3>9.3 · Services fixture (discriminated union)</h3>
+<pre><span class="com">// app/src/fixtures/services.ts — 9 items, link + group variants</span>
+<span class="kw">export type</span> ServiceItem
+  <span class="kw">=</span> { kind: <span class="str">"link"</span>;  data: ServiceLinkFixture }
+  <span class="kw">|</span> { kind: <span class="str">"group"</span>; data: ServiceGroupFixture };
+
+<span class="kw">export const</span> servicesFixture: ReadonlyArray&lt;ServiceItem&gt; <span class="kw">=</span> [
+  { kind: <span class="str">"link"</span>, data: { id: <span class="str">"grade_report"</span>, kind: <span class="str">"internal"</span>, labelKey: <span class="str">"service.grade_report.label"</span>, icon: FileBarChart, iconBg: <span class="str">"bg-emerald-50"</span> }},
+  { kind: <span class="str">"link"</span>, data: { id: <span class="str">"e_book"</span>,       kind: <span class="str">"external"</span>, labelKey: <span class="str">"service.e_book.label"</span>,       icon: Book,         iconBg: <span class="str">"bg-slate-100"</span> }},
+  <span class="com">/* … 6 more links … */</span>
+  { kind: <span class="str">"group"</span>, data: { id: <span class="str">"crma_library"</span>, labelKey: <span class="str">"service.crma_library.label"</span>, icon: Book,
+    children: [
+      { id: <span class="str">"web_opac_search"</span>, labelKey: <span class="str">"service.web_opac_search.label"</span> },
+      { id: <span class="str">"cu_e_library"</span>,    labelKey: <span class="str">"service.cu_e_library.label"</span> }]}}];</pre>
+</section>
+
+<section>
+  <h2>10 · Test Coverage Today</h2>
+  <div class="grid cols-4">
+    <div class="card"><div class="kpi">212</div><div class="kpi-label">total tests</div></div>
+    <div class="card"><div class="kpi">49</div><div class="kpi-label">suites</div></div>
+    <div class="card"><div class="kpi">100%</div><div class="kpi-label">green</div></div>
+    <div class="card"><div class="kpi">strict</div><div class="kpi-label">tsc --noEmit</div></div>
+  </div>
+  <p class="nb">Tests follow the superpowers loop: brainstorming → writing-plans → TDD → review → commit.
+    Each feature lives under <code>app/plans/&lt;Feature&gt;.{brainstorm,md}</code>.</p>
+</section>
+
+<section>
+  <h2>11 · Progress Timeline</h2>
+  <table>
+    <thead><tr><th>Date</th><th>Milestone</th><th>Tests</th></tr></thead>
+    <tbody>
+      <tr><td>2026-05-18</td><td><code>/init</code> repo bootstrap + GSD install</td><td>—</td></tr>
+      <tr><td>2026-05-18</td><td>Tech stack locked (Expo + RN + NativeWind + Supabase)</td><td>—</td></tr>
+      <tr><td>2026-05-18</td><td>Skeleton scaffold (5 tabs · RBAC guards)</td><td>—</td></tr>
+      <tr><td>2026-05-18</td><td>HomeView: brainstorm → plan → TDD → commit</td><td>57</td></tr>
+      <tr><td>2026-05-18</td><td>ClassScheduleView green</td><td>100</td></tr>
+      <tr><td>2026-05-18</td><td>HealthView green</td><td>151</td></tr>
+      <tr><td>2026-05-19</td><td>ActivityView green</td><td>187</td></tr>
+      <tr><td>2026-05-19</td><td>ServiceView planned (TDD pending)</td><td>212 target</td></tr>
+      <tr><td>2026-05-19</td><td>Migration design (LIFF + Next.js + Prisma + Vercel) drafted</td><td>—</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>12 · Open Forks (must lock before /init of web project)</h2>
+  <table>
+    <thead><tr><th>#</th><th>Fork</th><th>Default</th><th>Why it matters</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>LIFF size</td><td>Tall (full screen)</td><td>Matches iPhone-aspect prototype frame</td></tr>
+      <tr><td>2</td><td>DB host region</td><td>Supabase SG / Neon SG / TH self-host</td><td>Data sovereignty — TH preferred</td></tr>
+      <tr><td>3</td><td>Push channel</td><td>LINE Messaging API broadcast</td><td>Replaces FCM/APNs since LIFF runs in LINE</td></tr>
+      <tr><td>4</td><td>Realtime</td><td>SWR polling → Pusher only if needed</td><td>Cost vs latency trade-off</td></tr>
+      <tr><td>5</td><td>File upload provider</td><td>Vercel Blob (TH-residency caveat)</td><td>Complaint photos, avatars</td></tr>
+      <tr><td>6</td><td>Email-OTP transport</td><td>SMTP via Brevo / Resend / SES</td><td>Must deliver to <code>@crma.ac.th</code> reliably</td></tr>
+      <tr><td>7</td><td>Background jobs</td><td>Vercel Cron + Inngest</td><td>Roster reminders, audit batching</td></tr>
+      <tr><td>8</td><td>Observability</td><td>Vercel Analytics + Sentry</td><td>Required for audit + perf SLO</td></tr>
+      <tr><td>9</td><td>Mobile codebase fate</td><td>Freeze as reference</td><td>Do not dual-maintain</td></tr>
+      <tr><td>10</td><td>i18n default locale</td><td>TH (EN fallback)</td><td>Mirrors RN setup</td></tr>
+      <tr><td>11</td><td>Cross-AI peer review</td><td>Enabled per phase</td><td>Per superpowers loop</td></tr>
+      <tr><td>12</td><td>Domain</td><td><code>crma-smart-academy.vercel.app</code> → custom</td><td>LIFF endpoint URL</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>13 · Source Documents (read before designing)</h2>
+  <table>
+    <thead><tr><th>Path</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>README.md</code> / <code>README_TH.md</code></td><td>Product scope, user groups, security. Bilingual — must mirror.</td></tr>
+      <tr><td><code>prototype_spec.md</code></td><td>Visual + interaction spec. Treat as design contract.</td></tr>
+      <tr><td><code>references/*.png</code></td><td>13 annotated mockups: Home1–3, Class, Health, Health2, Activity1–3, Service1–3, Profile.</td></tr>
+      <tr><td><code>Documents/</code></td><td>Thai-language research PDFs (academic rationale, MeetUp inspiration).</td></tr>
+      <tr><td><code>MIGRATION_LIFF.md</code></td><td>Mobile → LIFF web migration design (16 sections, 14 forks).</td></tr>
+      <tr><td><code>CRMA_Smart_Academy.pptx</code></td><td>Thesis-defense deck, 29 slides bilingual.</td></tr>
+      <tr><td><code>app/plans/*.{brainstorm,md}</code></td><td>Feature-by-feature decision trees + TDD plans.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>14 · Working Agreement (carry into new project)</h2>
+  <div class="grid cols-2">
+    <div class="card"><h4>Superpowers loop</h4>
+      <p>brainstorming → writing-plans → TDD → review → commit. Update <code>README §6</code> after each milestone.
+        Mirror to <code>README_TH.md</code>.</p></div>
+    <div class="card"><h4>Caveman default</h4>
+      <p>Terse comms. Drop articles/filler/pleasantries. Code, commits, security warnings = normal prose.</p></div>
+    <div class="card"><h4>Bilingual README parity</h4>
+      <p>Every <code>README.md</code> edit mirrors to <code>README_TH.md</code>.</p></div>
+    <div class="card"><h4>Strict TS + tests</h4>
+      <p><code>tsc --noEmit</code> clean and all tests green is the DoD per phase.</p></div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  CRMA Smart Academy · project export 2026-05-19 ·
+  generated for handoff to fresh Claude <code>/init</code> session ·
+  caveman mode active · superpowers loop authoritative
+</footer>
+
+</body>
+</html>

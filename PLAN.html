@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CRMA Smart Academy Web — /init Plan</title>
+<style>
+  :root{
+    --canvas:#F8FAFC; --surface:#FFFFFF; --ink:#0F172A; --inkSoft:#475569;
+    --accent:#F59E0B; --accentSoft:#FBBF24; --rose:#F43F5E; --blue:#3B82F6;
+    --orange:#F97316; --hairline:#F1F5F9; --emerald:#10B981; --teal:#14B8A6;
+    --slate-100:#F1F5F9; --slate-50:#F8FAFC; --amber-50:#FFFBEB;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--canvas);color:var(--ink);
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+  a{color:var(--blue)}
+  code{background:var(--slate-100);padding:1px 6px;border-radius:6px;font-size:13px}
+  pre{background:#0F172A;color:#E2E8F0;padding:14px 16px;border-radius:12px;
+    overflow:auto;font-size:12.5px;line-height:1.55;margin:8px 0}
+  pre .kw{color:#F59E0B}
+  pre .str{color:#FBBF24}
+  pre .com{color:#64748B;font-style:italic}
+  pre .ty{color:#7DD3FC}
+  header.hero{background:linear-gradient(135deg,#0F172A 0%,#1E293B 100%);
+    color:#fff;padding:48px 32px;border-bottom:4px solid var(--accent)}
+  header.hero h1{margin:0;font-size:32px;letter-spacing:-.02em}
+  header.hero p.tag{margin:8px 0 0;color:#FBBF24;font-weight:700}
+  header.hero p.sub{margin:14px 0 0;color:#CBD5E1;max-width:760px}
+  .container{max-width:1180px;margin:0 auto;padding:32px}
+  section{margin:40px 0;scroll-margin-top:16px}
+  h2{font-size:22px;letter-spacing:-.01em;margin:0 0 16px;
+    padding-bottom:8px;border-bottom:1px solid var(--hairline)}
+  h3{font-size:15px;margin:18px 0 8px;color:var(--inkSoft);
+    text-transform:uppercase;letter-spacing:.08em}
+  .grid{display:grid;gap:16px}
+  .grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .grid.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  @media (max-width:780px){.grid.cols-2,.grid.cols-3,.grid.cols-4{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--hairline);border-radius:16px;
+    padding:18px 20px;box-shadow:0 8px 30px rgba(0,0,0,.04)}
+  .card h4{margin:0 0 6px;font-size:14px;color:var(--ink)}
+  .card p{margin:0;color:var(--inkSoft);font-size:13.5px}
+  .pill{display:inline-block;padding:3px 10px;border-radius:999px;
+    background:var(--slate-100);color:var(--ink);font-size:11.5px;
+    font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-right:6px}
+  .pill.amber{background:#FEF3C7;color:#92400E}
+  .pill.rose{background:#FFE4E6;color:#9F1239}
+  .pill.blue{background:#DBEAFE;color:#1E3A8A}
+  .pill.green{background:#D1FAE5;color:#065F46}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{padding:8px 10px;text-align:left;vertical-align:top;
+    border-bottom:1px solid var(--hairline)}
+  th{background:var(--slate-50);font-weight:700;color:var(--inkSoft);
+    text-transform:uppercase;font-size:11.5px;letter-spacing:.06em}
+  .swatch{display:inline-block;width:34px;height:34px;border-radius:8px;
+    border:1px solid rgba(0,0,0,.08);vertical-align:middle;margin-right:8px}
+  .toc{position:sticky;top:0;background:#0F172A;color:#fff;padding:10px 16px;
+    z-index:10;font-size:12.5px}
+  .toc a{color:#FBBF24;text-decoration:none;margin-right:14px;font-weight:600}
+  .ascii{background:#0F172A;color:#E2E8F0;padding:18px 20px;border-radius:12px;
+    font-family:ui-monospace,Consolas,monospace;font-size:12px;
+    line-height:1.45;white-space:pre;overflow:auto}
+  .mood{display:flex;gap:12px;flex-wrap:wrap}
+  .mood .chip{padding:12px 16px;border-radius:14px;font-weight:700;
+    font-size:13.5px;letter-spacing:.02em;
+    box-shadow:0 8px 30px rgba(0,0,0,.04)}
+  .typo h5{margin:0;font-size:11.5px;color:var(--inkSoft);
+    text-transform:uppercase;letter-spacing:.08em}
+  .nb{background:#FEF3C7;border-left:4px solid var(--accent);
+    padding:12px 16px;border-radius:8px;margin:12px 0;font-size:13.5px}
+  footer{border-top:1px solid var(--hairline);padding:24px 32px;
+    color:var(--inkSoft);font-size:12.5px;text-align:center}
+  details{background:#fff;border:1px solid var(--hairline);border-radius:12px;
+    padding:14px 18px;margin:10px 0}
+  details summary{cursor:pointer;font-weight:700}
+  .preview-frame{background:#0F172A;border-radius:34px;padding:16px;
+    width:300px;color:#fff;box-shadow:0 18px 50px rgba(15,23,42,.25)}
+  .preview-frame .scr{background:var(--canvas);color:var(--ink);border-radius:24px;
+    padding:14px;font-size:12px}
+</style>
+</head>
+<body>
+
+<div class="toc">
+  <strong>PLAN.html</strong> ·
+  <a href="#skill">skill.md</a>
+  <a href="#mood">moodboard</a>
+  <a href="#template">template</a>
+  <a href="#prisma">prisma</a>
+  <a href="#auth">auth logic</a>
+  <a href="#components">components</a>
+  <a href="#api">api logic</a>
+  <a href="#routing">routing</a>
+  <a href="#tdd">TDD plan</a>
+  <a href="#init">/init steps</a>
+</div>
+
+<header class="hero">
+  <span class="pill amber">v0 · /init plan · 2026-05-19 · caveman</span>
+  <h1>CRMA Smart Academy — Web (LIFF)</h1>
+  <p class="tag">Full mobile→web rewrite · Next.js 15 · Prisma · Supabase PG (SG) · Vercel · LINE LIFF</p>
+  <p class="sub">Locks confirmed: <strong>full rewrite</strong>, <strong>Supabase Postgres (SG)</strong>,
+    <strong>LINE Login → email OTP → TOTP</strong>, plan depth = <strong>skill.md + moodboard +
+    3–4 components + logic + template</strong>. Mobile <code>app/</code> frozen as reference.</p>
+</header>
+
+<div class="container">
+
+<!-- ───────────────────────────── SKILL.MD ───────────────────────────── -->
+<section id="skill">
+  <h2>1 · skill.md (drop into <code>.claude/skills/crma-web/SKILL.md</code>)</h2>
+<pre><span class="com">---
+name: crma-web-build
+description: Build the CRMA Smart Academy LIFF web app. Activates on any task
+  touching web/, prisma/, LIFF auth, or porting an app/ component to Next.js.
+  Enforces caveman + superpowers loop + bilingual README parity + RBAC + audit log.
+triggers:
+  - "port [Component] to web"
+  - "build web/"
+  - "next.js" + "crma"
+  - "LIFF" + "crma"
+  - prisma migration in crma repo
+mode: persistent
+---</span>
+
+<span class="kw"># CRMA Web — Build Skill</span>
+
+<span class="kw">## Mission</span>
+Ship a LIFF web replacement for the Expo/RN app in <span class="str">`app/`</span> with feature parity for cadets at CRMA.
+Single codebase forward; mobile <span class="str">`app/`</span> is frozen reference.
+
+<span class="kw">## Hard rules (never violate)</span>
+1. <span class="str">@crma.ac.th</span> email gate enforced server-side at <span class="str">/api/auth/email-otp</span>. Reject all other domains.
+2. TOTP 2FA enrolled on first login, verified on every new device fingerprint.
+3. Current-semester grades LOCKED at the Prisma query layer (<span class="str">Semester.isLocked</span>).
+4. Duty roster mutations RBAC-gated — Cadet read-only, Officer+ write.
+5. Every API mutation writes an <span class="str">AuditLog</span> row (userId, action, resource, ip, ua).
+6. PDPA: encrypt <span class="str">User.totpSecret</span>, <span class="str">User.email</span>, <span class="str">PFTResult.*</span>, <span class="str">Enrollment.grade</span> with pgcrypto.
+7. Caveman comms in PR descriptions, commit bodies, and chat. Code/security/commits = normal prose.
+8. Bilingual README parity: every <span class="str">README.md</span> edit mirrors to <span class="str">README_TH.md</span>.
+9. <span class="str">tsc --noEmit</span> strict + <span class="str">noUncheckedIndexedAccess</span>. All tests green = DoD per phase.
+10. Superpowers loop per feature: brainstorm → plan → TDD → review → commit.
+
+<span class="kw">## Stack (locked)</span>
+- Next.js 15 (App Router, Node runtime for Prisma)
+- TypeScript 5.4 strict
+- Tailwind v4 + class-variance-authority
+- Zustand 5 (slices: tab, schedule, health, activity)
+- Prisma 5 → PostgreSQL (Supabase, region <span class="str">ap-southeast-1</span> SG)
+- LIFF SDK v2.x (web-only mode acceptable for dev)
+- next-intl (TH default, EN fallback)
+- jose for JWT (httpOnly Secure cookies, SameSite=Lax)
+- otplib for TOTP, Brevo SMTP for email OTP
+- Vercel Cron + Inngest for jobs · Vercel Blob for files
+- Vitest + @testing-library/react + Playwright + next-test-api-route
+
+<span class="kw">## Routing contract</span>
+Preserve mobile-app pattern: single <span class="str">activeTab</span> string drives a switch.
+Web mirrors via <span class="str">?tab=home|class_schedule|health|activity|service|grades|me</span> backed by
+Zustand <span class="str">useTabStore</span>. No nested route layouts. BottomNav mutates store, store syncs URL.
+
+<span class="kw">## Definition of done per phase</span>
+- All new components have testIDs matching mobile (<span class="str">service.link.${id}</span>, …).
+- API routes enforce RBAC + write AuditLog.
+- i18n keys exist in BOTH <span class="str">messages/th.json</span> and <span class="str">messages/en.json</span>.
+- Playwright run inside LINE webview UA passes.
+- Lighthouse perf budget: LCP &lt; 2.5s on 4G throttling, CLS &lt; 0.1.
+
+<span class="kw">## Forbidden</span>
+- <span class="str">react-native-web</span> shim. Manual ports only.
+- Skipping audit log "for a quick test" — never.
+- Storing tokens in <span class="str">localStorage</span> (LINE webview evicts it).
+- Adding US-only managed services for primary data (sovereignty).
+
+<span class="kw">## When in doubt</span>
+- Read <span class="str">EXPORT.html</span> and <span class="str">MIGRATION_LIFF.md</span> at repo root.
+- Source of truth for visuals: <span class="str">prototype_spec.md</span> + <span class="str">references/*.png</span>.
+- Source of truth for data: <span class="str">app/src/fixtures/*.ts</span>.</pre>
+</section>
+
+<!-- ───────────────────────────── MOODBOARD ───────────────────────────── -->
+<section id="mood">
+  <h2>2 · Moodboard</h2>
+
+  <h3>2.1 Palette</h3>
+  <div class="grid cols-4">
+    <div class="card">
+      <span class="swatch" style="background:#0F172A"></span>
+      <strong>slate-900</strong><br/>
+      <code>#0F172A</code><br/><small>ink · hero bg · day-switcher</small>
+    </div>
+    <div class="card">
+      <span class="swatch" style="background:#F59E0B"></span>
+      <strong>amber-500</strong><br/>
+      <code>#F59E0B</code><br/><small>brand accent · active nav</small>
+    </div>
+    <div class="card">
+      <span class="swatch" style="background:#FBBF24"></span>
+      <strong>amber-400</strong><br/>
+      <code>#FBBF24</code><br/><small>hero glow · highlights</small>
+    </div>
+    <div class="card">
+      <span class="swatch" style="background:#F8FAFC"></span>
+      <strong>slate-50</strong><br/>
+      <code>#F8FAFC</code><br/><small>canvas</small>
+    </div>
+    <div class="card">
+      <span class="swatch" style="background:#F1F5F9"></span>
+      <strong>slate-100</strong><br/>
+      <code>#F1F5F9</code><br/><small>hairline / icon bg</small>
+    </div>
+    <div class="card">
+      <span class="swatch" style="background:#F43F5E"></span>
+      <strong>rose-500</strong><br/>
+      <code>#F43F5E</code><br/><small>sign-out · alerts</small>
+    </div>
+    <div class="card">
+      <span class="swatch" style="background:#3B82F6"></span>
+      <strong>blue-500</strong><br/>
+      <code>#3B82F6</code><br/><small>stats</small>
+    </div>
+    <div class="card">
+      <span class="swatch" style="background:#F97316"></span>
+      <strong>orange-500</strong><br/>
+      <code>#F97316</code><br/><small>stats</small>
+    </div>
+  </div>
+
+  <h3>2.2 Type ramp</h3>
+  <div class="card typo">
+    <div style="font-family:'Plus Jakarta Sans',system-ui;font-weight:800;font-size:28px;letter-spacing:-.02em">Display 28/-2 · headings</div>
+    <h5>font-display font-bold tracking-tight</h5>
+    <hr/>
+    <div style="font-weight:800;font-size:18px">Section 18 bold · screen titles</div>
+    <h5>font-bold</h5>
+    <hr/>
+    <div style="font-size:15px">Body 15 regular · card content</div>
+    <h5>default sans</h5>
+    <hr/>
+    <div style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--inkSoft);font-weight:700">META · 11.5 uppercase tracking-wider</div>
+    <h5>uppercase tracking-wider text-slate-500</h5>
+  </div>
+
+  <h3>2.3 Surfaces & motion</h3>
+  <div class="mood">
+    <div class="chip" style="background:#fff;border:1px solid var(--hairline);border-radius:16px">rounded-2xl · card</div>
+    <div class="chip" style="background:#fff;border:1px solid var(--hairline);border-radius:24px">rounded-3xl · hero</div>
+    <div class="chip" style="background:#fff;border:1px solid var(--hairline);border-radius:999px">rounded-full · pill</div>
+    <div class="chip" style="background:#fff;box-shadow:0 8px 30px rgba(0,0,0,.04)">soft elevation 8/30/.04</div>
+    <div class="chip" style="background:#0F172A;color:#fff;border-radius:18px">slate-900 hero bg</div>
+    <div class="chip" style="background:linear-gradient(135deg,#F59E0B,#FBBF24);color:#fff;border-radius:18px">amber accent</div>
+    <div class="chip" style="background:#FFFBEB;color:#92400E;border-radius:18px">amber-50 icon bg</div>
+    <div class="chip" style="background:#D1FAE5;color:#065F46;border-radius:18px">emerald-50 ok</div>
+    <div class="chip" style="background:#FFE4E6;color:#9F1239;border-radius:18px">rose-50 alert</div>
+  </div>
+
+  <h3>2.4 Layout intent</h3>
+  <div class="grid cols-3">
+    <div class="card"><h4>iPhone-aspect frame</h4>
+      <p>402×874 max, <code>rounded-[3rem]</code>, <code>overflow-hidden</code>.
+        Center on desktop with dynamic-island mockup. Full-bleed inside LINE webview.</p></div>
+    <div class="card"><h4>Sticky AppHeader</h4>
+      <p>Back / centered CRMA mark / bell + settings. <code>sticky top-0 z-30</code>.
+        Bell amber-dot driven by SWR poll on <code>/api/notifications/unread</code>.</p></div>
+    <div class="card"><h4>BottomNav</h4>
+      <p><code>fixed bottom-0 z-40 rounded-t-[2.5rem]</code>. 5 icons.
+        Active = <code>scale-110 bg-amber-400</code>. Mutates Zustand tab store, syncs URL.</p></div>
+  </div>
+
+  <h3>2.5 Reference frame (HomeView)</h3>
+  <div class="preview-frame">
+    <div style="height:18px;display:flex;justify-content:center">
+      <div style="width:90px;height:18px;background:#000;border-radius:999px"></div>
+    </div>
+    <div class="scr">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="width:24px;height:24px;background:var(--slate-100);border-radius:8px"></div>
+        <strong>CRMA</strong>
+        <div style="display:flex;gap:6px">
+          <div style="width:24px;height:24px;background:var(--slate-100);border-radius:8px;position:relative">
+            <span style="position:absolute;top:2px;right:2px;width:8px;height:8px;background:var(--accent);border-radius:999px"></span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px;background:var(--slate-900);color:#fff;border-radius:18px;padding:14px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:var(--accent);opacity:.25;filter:blur(30px);border-radius:999px"></div>
+        <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--accentSoft)">Hero · slide 1/3</div>
+        <div style="font-weight:800;font-size:14px;margin-top:6px">PT Test Friday 0530</div>
+      </div>
+      <div style="margin-top:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+        <div style="background:#fff;border-radius:14px;padding:8px;text-align:center;font-size:10px;box-shadow:0 8px 30px rgba(0,0,0,.04)">📅</div>
+        <div style="background:#fff;border-radius:14px;padding:8px;text-align:center;font-size:10px;box-shadow:0 8px 30px rgba(0,0,0,.04)">🍱</div>
+        <div style="background:#fff;border-radius:14px;padding:8px;text-align:center;font-size:10px;box-shadow:0 8px 30px rgba(0,0,0,.04)">💪</div>
+        <div style="background:#fff;border-radius:14px;padding:8px;text-align:center;font-size:10px;box-shadow:0 8px 30px rgba(0,0,0,.04)">🪖</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────── TEMPLATE ───────────────────────────── -->
+<section id="template">
+  <h2>3 · Next.js Template Skeleton (<code>web/</code>)</h2>
+  <div class="ascii">web/
+├─ app/
+│  ├─ layout.tsx                       <span style="color:#94A3B8">// &lt;html&gt;, fonts, LIFF init, ThemeProvider</span>
+│  ├─ globals.css                      <span style="color:#94A3B8">// Tailwind v4 + design tokens</span>
+│  ├─ (public)/
+│  │  ├─ login/page.tsx                <span style="color:#94A3B8">// LINE OAuth bounce</span>
+│  │  ├─ verify-email/page.tsx
+│  │  └─ enrol-totp/page.tsx
+│  ├─ (app)/
+│  │  ├─ layout.tsx                    <span style="color:#94A3B8">// IphoneFrame + AppHeader + BottomNav</span>
+│  │  ├─ page.tsx                      <span style="color:#94A3B8">// reads ?tab=, renders view</span>
+│  │  └─ views/
+│  │     ├─ HomeView.tsx
+│  │     ├─ ClassScheduleView.tsx
+│  │     ├─ HealthView.tsx
+│  │     ├─ ActivityView.tsx
+│  │     ├─ ServiceView.tsx
+│  │     ├─ GradesView.tsx
+│  │     └─ MeView.tsx
+│  └─ api/
+│     ├─ auth/
+│     │  ├─ line/callback/route.ts
+│     │  ├─ email-otp/route.ts
+│     │  └─ totp/route.ts
+│     ├─ schedule/route.ts
+│     ├─ health/route.ts
+│     ├─ activity/route.ts
+│     ├─ grades/route.ts
+│     ├─ roster/route.ts
+│     ├─ announcements/route.ts
+│     ├─ notifications/unread/route.ts
+│     └─ webhook/line/route.ts
+├─ components/                         <span style="color:#94A3B8">// ports of app/src/components/* (DOM versions)</span>
+│  ├─ ui/{IphoneFrame,AppHeader,BottomNav,TopTabs}.tsx
+│  ├─ home/{ProfileBanner,HeroCarousel,QuickServicesGrid,NewsEventTabs,SmartInsightsRow}.tsx
+│  ├─ class/{DaySwitcher,SemesterPill,ClassCard,WeeklyViewButton,WeeklyViewModal}.tsx
+│  ├─ health/{StreakBadge,WeekCalendarStrip,StepsCard,CaloriesCard,MealCard,ActivityCard,StravaConnectButton,WearableCard}.tsx
+│  ├─ activity/{PromoBanner,SearchBar,FilterPillsRow,EventCard,AttendeesStack,CreateActivityFAB,GroupPlaceholderCard}.tsx
+│  └─ service/{ServiceLink,ServiceGroupCard}.tsx
+├─ lib/
+│  ├─ prisma.ts
+│  ├─ liff.ts                          <span style="color:#94A3B8">// liff.init wrapper, dev-mock</span>
+│  ├─ session.ts                       <span style="color:#94A3B8">// jose JWT sign/verify, cookie helpers</span>
+│  ├─ rbac.ts
+│  ├─ audit.ts
+│  ├─ encryption.ts                    <span style="color:#94A3B8">// pgcrypto envelope</span>
+│  ├─ formatMilTime.ts
+│  ├─ courseTypeColor.ts
+│  └─ weekCalendarDays.ts
+├─ store/{useTabStore,useScheduleStore,useHealthStore,useActivityStore}.ts
+├─ fixtures/{home,schedule,health,activity,services}.ts
+├─ messages/{th,en}.json
+├─ prisma/{schema.prisma,migrations/}
+├─ public/{crma-logo.svg,…}
+├─ middleware.ts                       <span style="color:#94A3B8">// session + audit on every request</span>
+├─ next.config.mjs
+├─ tailwind.config.ts
+├─ tsconfig.json                       <span style="color:#94A3B8">// strict, noUncheckedIndexedAccess</span>
+├─ vercel.json                         <span style="color:#94A3B8">// cron jobs</span>
+├─ .env.example
+└─ package.json</div>
+
+  <h3>3.1 Root layout (LIFF init + theme)</h3>
+<pre><span class="com">// app/layout.tsx</span>
+<span class="kw">import</span> <span class="str">"./globals.css"</span>;
+<span class="kw">import</span> { LiffProvider } <span class="kw">from</span> <span class="str">"@/components/ui/LiffProvider"</span>;
+<span class="kw">import</span> { NextIntlClientProvider } <span class="kw">from</span> <span class="str">"next-intl"</span>;
+
+<span class="kw">export const</span> metadata <span class="kw">=</span> { title: <span class="str">"CRMA Smart Academy"</span> };
+
+<span class="kw">export default function</span> RootLayout({ children }: { children: <span class="ty">React.ReactNode</span> }) {
+  <span class="kw">return</span> (
+    &lt;html lang=<span class="str">"th"</span>&gt;
+      &lt;body className=<span class="str">"min-h-dvh bg-slate-200 antialiased"</span>&gt;
+        &lt;LiffProvider liffId={process.env.NEXT_PUBLIC_LIFF_ID!}&gt;
+          &lt;NextIntlClientProvider locale=<span class="str">"th"</span>&gt;{children}&lt;/NextIntlClientProvider&gt;
+        &lt;/LiffProvider&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  );
+}</pre>
+
+  <h3>3.2 App-shell layout (iPhone frame + nav)</h3>
+<pre><span class="com">// app/(app)/layout.tsx</span>
+<span class="kw">import</span> { IphoneFrame } <span class="kw">from</span> <span class="str">"@/components/ui/IphoneFrame"</span>;
+<span class="kw">import</span> { AppHeader } <span class="kw">from</span> <span class="str">"@/components/ui/AppHeader"</span>;
+<span class="kw">import</span> { BottomNav } <span class="kw">from</span> <span class="str">"@/components/ui/BottomNav"</span>;
+
+<span class="kw">export default function</span> AppLayout({ children }: { children: <span class="ty">React.ReactNode</span> }) {
+  <span class="kw">return</span> (
+    &lt;IphoneFrame&gt;
+      &lt;AppHeader /&gt;
+      &lt;main className=<span class="str">"flex-1 overflow-y-auto pb-28 scrollbar-hide"</span>&gt;{children}&lt;/main&gt;
+      &lt;BottomNav /&gt;
+    &lt;/IphoneFrame&gt;
+  );
+}</pre>
+</section>
+
+<!-- ───────────────────────────── PRISMA ───────────────────────────── -->
+<section id="prisma">
+  <h2>4 · Prisma Schema (initial cut)</h2>
+<pre><span class="com">// prisma/schema.prisma — minimum viable. Extend per phase.</span>
+generator client { provider <span class="kw">=</span> <span class="str">"prisma-client-js"</span> }
+datasource db { provider <span class="kw">=</span> <span class="str">"postgresql"</span>; url <span class="kw">=</span> env(<span class="str">"DATABASE_URL"</span>); directUrl <span class="kw">=</span> env(<span class="str">"DIRECT_URL"</span>) }
+
+<span class="kw">model</span> User {
+  id            <span class="ty">String</span>   @id @default(cuid())
+  cadetId       <span class="ty">String</span>   @unique
+  email         <span class="ty">String</span>   @unique               <span class="com">// must match @crma.ac.th</span>
+  emailVerified <span class="ty">DateTime?</span>
+  lineUserId    <span class="ty">String?</span>  @unique
+  displayName   <span class="ty">String</span>
+  avatarUrl     <span class="ty">String?</span>
+  role          <span class="ty">Role</span>     @default(CADET)
+  company       <span class="ty">String?</span>
+  year          <span class="ty">Int?</span>
+  totpSecret    <span class="ty">Bytes?</span>                         <span class="com">// pgcrypto-encrypted</span>
+  createdAt     <span class="ty">DateTime</span> @default(now())
+  updatedAt     <span class="ty">DateTime</span> @updatedAt
+  enrollments   <span class="ty">Enrollment[]</span>
+  auditLogs     <span class="ty">AuditLog[]</span>
+}
+<span class="kw">enum</span> Role { CADET INSTRUCTOR OFFICER ADMIN }
+
+<span class="kw">model</span> Semester {
+  id        <span class="ty">String</span> @id @default(cuid())
+  code      <span class="ty">String</span> @unique                       <span class="com">// "2/2568"</span>
+  isLocked  <span class="ty">Boolean</span> @default(false)               <span class="com">// current = LOCKED grades</span>
+  startsAt  <span class="ty">DateTime</span>
+  endsAt    <span class="ty">DateTime</span>
+  courses   <span class="ty">Course[]</span>
+}
+
+<span class="kw">model</span> Course {
+  id         <span class="ty">String</span> @id @default(cuid())
+  code       <span class="ty">String</span>
+  title      <span class="ty">String</span>
+  credits    <span class="ty">Int</span>
+  type       <span class="ty">CourseType</span>
+  semesterId <span class="ty">String</span>
+  semester   <span class="ty">Semester</span> @relation(fields: [semesterId], references: [id])
+  sessions   <span class="ty">ClassSession[]</span>
+  enrollments <span class="ty">Enrollment[]</span>
+}
+<span class="kw">enum</span> CourseType { LECTURE LAB MILITARY PE SEMINAR }
+
+<span class="kw">model</span> ClassSession {
+  id        <span class="ty">String</span> @id @default(cuid())
+  courseId  <span class="ty">String</span>
+  course    <span class="ty">Course</span> @relation(fields: [courseId], references: [id])
+  dayOfWeek <span class="ty">Int</span>                                  <span class="com">// 1=MON..5=FRI</span>
+  startMil  <span class="ty">String</span>                               <span class="com">// "0800"</span>
+  endMil    <span class="ty">String</span>                               <span class="com">// "1200"</span>
+  room      <span class="ty">String?</span>
+}
+
+<span class="kw">model</span> Enrollment {
+  id       <span class="ty">String</span> @id @default(cuid())
+  userId   <span class="ty">String</span>
+  courseId <span class="ty">String</span>
+  grade    <span class="ty">String?</span>                              <span class="com">// null if semester locked</span>
+  user     <span class="ty">User</span>   @relation(fields: [userId], references: [id])
+  course   <span class="ty">Course</span> @relation(fields: [courseId], references: [id])
+  @@unique([userId, courseId])
+}
+
+<span class="kw">model</span> AuditLog {
+  id        <span class="ty">String</span> @id @default(cuid())
+  userId    <span class="ty">String?</span>
+  user      <span class="ty">User?</span> @relation(fields: [userId], references: [id])
+  action    <span class="ty">String</span>                               <span class="com">// "READ:grades", "EDIT:roster"</span>
+  resource  <span class="ty">String</span>
+  ip        <span class="ty">String?</span>
+  userAgent <span class="ty">String?</span>
+  createdAt <span class="ty">DateTime</span> @default(now())
+  @@index([userId, createdAt])
+  @@index([resource, createdAt])
+}</pre>
+  <p class="nb"><strong>Sovereignty caveat:</strong> Supabase region <code>ap-southeast-1</code> = Singapore.
+    Document in <code>SECURITY.md</code> that primary data resides outside TH; mitigate via app-layer
+    encryption and audit trail; plan TH-host fallback if compliance review escalates.</p>
+</section>
+
+<!-- ───────────────────────────── AUTH ───────────────────────────── -->
+<section id="auth">
+  <h2>5 · Auth Logic (LINE → email OTP → TOTP)</h2>
+  <div class="ascii">[client]                            [server]
+  liff.init()
+  liff.login() if !logged in
+  liff.getIDToken() ─────────────────► POST /api/auth/line/callback
+                                       1. verify LINE ID token (JWKs)
+                                       2. lookup User by lineUserId
+                                          ├─ exists + verified → mint JWT
+                                          └─ new → return 202 {next: "email"}
+  POST /api/auth/email-otp/start ────► generate 6-digit OTP
+                                       email to &lt;input&gt;@crma.ac.th
+                                       REJECT if !endsWith("@crma.ac.th")
+  POST /api/auth/email-otp/verify ───► validate OTP → set emailVerified
+                                       bind lineUserId
+                                       return 202 {next: "totp"}
+  POST /api/auth/totp/enrol     ─────► generate secret (otplib)
+                                       return otpauth:// URL → QR
+  POST /api/auth/totp/verify    ─────► verify TOTP → encrypt+store secret
+                                       mint JWT (httpOnly, Secure, SameSite=Lax)
+                                       set-cookie: session=&lt;jwt&gt;</div>
+
+<pre><span class="com">// lib/session.ts — JWT helpers (jose)</span>
+<span class="kw">import</span> { SignJWT, jwtVerify } <span class="kw">from</span> <span class="str">"jose"</span>;
+
+<span class="kw">const</span> secret <span class="kw">=</span> <span class="kw">new</span> TextEncoder().encode(process.env.JWT_SECRET!);
+
+<span class="kw">export async function</span> sign(userId: <span class="ty">string</span>, role: <span class="ty">string</span>) {
+  <span class="kw">return</span> <span class="kw">await new</span> SignJWT({ sub: userId, role })
+    .setProtectedHeader({ alg: <span class="str">"HS256"</span> })
+    .setIssuedAt()
+    .setExpirationTime(<span class="str">"1h"</span>)
+    .sign(secret);
+}
+
+<span class="kw">export async function</span> verify(token: <span class="ty">string</span>) {
+  <span class="kw">const</span> { payload } <span class="kw">=</span> <span class="kw">await</span> jwtVerify(token, secret);
+  <span class="kw">return</span> payload <span class="kw">as</span> { sub: <span class="ty">string</span>; role: <span class="ty">string</span> };
+}</pre>
+
+<pre><span class="com">// app/api/auth/email-otp/start/route.ts</span>
+<span class="kw">import</span> { NextResponse } <span class="kw">from</span> <span class="str">"next/server"</span>;
+<span class="kw">import</span> { prisma } <span class="kw">from</span> <span class="str">"@/lib/prisma"</span>;
+<span class="kw">import</span> { sendOtpEmail } <span class="kw">from</span> <span class="str">"@/lib/email"</span>;
+
+<span class="kw">const</span> CRMA_DOMAIN <span class="kw">=</span> <span class="str">/^[a-z0-9._%+-]+@crma\.ac\.th$/i</span>;
+
+<span class="kw">export async function</span> POST(req: <span class="ty">Request</span>) {
+  <span class="kw">const</span> { email } <span class="kw">=</span> <span class="kw">await</span> req.json();
+  <span class="kw">if</span> (!CRMA_DOMAIN.test(email)) {
+    <span class="kw">return</span> NextResponse.json({ error: <span class="str">"domain_not_allowed"</span> }, { status: 403 });
+  }
+  <span class="kw">const</span> otp <span class="kw">=</span> <span class="ty">String</span>(Math.floor(100000 + Math.random() * 900000));
+  <span class="kw">await</span> prisma.emailOtp.create({ data: { email, otpHash: hash(otp),
+    expiresAt: <span class="kw">new</span> Date(Date.now() + 10 * 60_000) }});
+  <span class="kw">await</span> sendOtpEmail(email, otp);
+  <span class="kw">return</span> NextResponse.json({ ok: <span class="kw">true</span> });
+}</pre>
+
+<pre><span class="com">// middleware.ts — session gate + audit</span>
+<span class="kw">import</span> { NextResponse, <span class="kw">type</span> NextRequest } <span class="kw">from</span> <span class="str">"next/server"</span>;
+<span class="kw">import</span> { verify } <span class="kw">from</span> <span class="str">"@/lib/session"</span>;
+
+<span class="kw">export async function</span> middleware(req: <span class="ty">NextRequest</span>) {
+  <span class="kw">const</span> isPublic <span class="kw">=</span> req.nextUrl.pathname.startsWith(<span class="str">"/login"</span>)
+    <span class="kw">||</span> req.nextUrl.pathname.startsWith(<span class="str">"/api/auth"</span>);
+  <span class="kw">if</span> (isPublic) <span class="kw">return</span> NextResponse.next();
+
+  <span class="kw">const</span> token <span class="kw">=</span> req.cookies.get(<span class="str">"session"</span>)?.value;
+  <span class="kw">if</span> (!token) <span class="kw">return</span> NextResponse.redirect(<span class="kw">new</span> URL(<span class="str">"/login"</span>, req.url));
+  <span class="kw">try</span> { <span class="kw">await</span> verify(token); } <span class="kw">catch</span> {
+    <span class="kw">return</span> NextResponse.redirect(<span class="kw">new</span> URL(<span class="str">"/login"</span>, req.url));
+  }
+  <span class="kw">return</span> NextResponse.next();
+}
+
+<span class="kw">export const</span> config <span class="kw">=</span> { matcher: [<span class="str">"/((?!_next|favicon|public).*)"</span>] };</pre>
+</section>
+
+<!-- ───────────────────────────── COMPONENTS ───────────────────────────── -->
+<section id="components">
+  <h2>6 · Sample Components (3 vertical-slice ports + 1 new)</h2>
+
+  <details open><summary>6.1 · <code>components/ui/BottomNav.tsx</code> — port from app/src/components/BottomNav.tsx</summary>
+<pre><span class="kw">"use client"</span>;
+<span class="kw">import</span> { Home, CalendarDays, Heart, Users, LayoutGrid } <span class="kw">from</span> <span class="str">"lucide-react"</span>;
+<span class="kw">import</span> { useTabStore } <span class="kw">from</span> <span class="str">"@/store/useTabStore"</span>;
+<span class="kw">import</span> { useRouter, useSearchParams } <span class="kw">from</span> <span class="str">"next/navigation"</span>;
+<span class="kw">import</span> { useEffect } <span class="kw">from</span> <span class="str">"react"</span>;
+<span class="kw">import</span> clsx <span class="kw">from</span> <span class="str">"clsx"</span>;
+
+<span class="kw">const</span> TABS <span class="kw">=</span> [
+  { key: <span class="str">"home"</span>,           icon: Home,         label: <span class="str">"nav.home"</span> },
+  { key: <span class="str">"class_schedule"</span>, icon: CalendarDays, label: <span class="str">"nav.class"</span> },
+  { key: <span class="str">"health"</span>,         icon: Heart,        label: <span class="str">"nav.health"</span> },
+  { key: <span class="str">"activity"</span>,       icon: Users,        label: <span class="str">"nav.activity"</span> },
+  { key: <span class="str">"service"</span>,        icon: LayoutGrid,   label: <span class="str">"nav.service"</span> },
+] <span class="kw">as const</span>;
+
+<span class="kw">export function</span> BottomNav() {
+  <span class="kw">const</span> { activeTab, setActiveTab } <span class="kw">=</span> useTabStore();
+  <span class="kw">const</span> router <span class="kw">=</span> useRouter();
+  <span class="kw">const</span> sp <span class="kw">=</span> useSearchParams();
+
+  <span class="com">// keep URL in sync with store (back/forward + deep-link)</span>
+  useEffect(() <span class="kw">=&gt;</span> {
+    <span class="kw">const</span> url <span class="kw">=</span> <span class="kw">new</span> URLSearchParams(sp);
+    <span class="kw">if</span> (url.get(<span class="str">"tab"</span>) !== activeTab) {
+      url.set(<span class="str">"tab"</span>, activeTab);
+      router.replace(<span class="str">`/?${url.toString()}`</span>, { scroll: <span class="kw">false</span> });
+    }
+  }, [activeTab]);
+
+  <span class="kw">return</span> (
+    &lt;nav className=<span class="str">"absolute bottom-0 inset-x-0 z-40 bg-white rounded-t-[2.5rem]
+      flex justify-around px-2 py-3 shadow-[0_-8px_30px_rgb(0,0,0,0.04)]"</span>&gt;
+      {TABS.map(({ key, icon: Icon, label }) =&gt; {
+        <span class="kw">const</span> active <span class="kw">=</span> activeTab === key;
+        <span class="kw">return</span> (
+          &lt;button key={key} data-testid={<span class="str">`bottomnav.${key}`</span>}
+            onClick={() =&gt; setActiveTab(key)}
+            className={clsx(<span class="str">"flex flex-col items-center gap-1 rounded-2xl px-3 py-2 transition-transform"</span>,
+              active &amp;&amp; <span class="str">"bg-amber-400 scale-110 text-slate-900"</span>,
+              !active &amp;&amp; <span class="str">"text-slate-500"</span>)}&gt;
+            &lt;Icon size={20} strokeWidth={active ? 2.4 : 2} /&gt;
+          &lt;/button&gt;
+        );
+      })}
+    &lt;/nav&gt;
+  );
+}</pre>
+  </details>
+
+  <details><summary>6.2 · <code>components/service/ServiceLink.tsx</code> — port</summary>
+<pre><span class="kw">"use client"</span>;
+<span class="kw">import</span> { ChevronRight, ExternalLink, <span class="kw">type</span> LucideIcon } <span class="kw">from</span> <span class="str">"lucide-react"</span>;
+<span class="kw">import</span> { useTranslations } <span class="kw">from</span> <span class="str">"next-intl"</span>;
+
+<span class="kw">export type</span> ServiceKind <span class="kw">=</span> <span class="str">"internal"</span> <span class="kw">|</span> <span class="str">"external"</span>;
+<span class="kw">export interface</span> ServiceLinkProps {
+  id: <span class="ty">string</span>; kind: ServiceKind; labelKey: <span class="ty">string</span>;
+  icon: LucideIcon; iconBg: <span class="ty">string</span>; iconColor?: <span class="ty">string</span>;
+  onClick: () <span class="kw">=&gt;</span> <span class="ty">void</span>;
+}
+
+<span class="kw">export function</span> ServiceLink(p: ServiceLinkProps) {
+  <span class="kw">const</span> t <span class="kw">=</span> useTranslations();
+  <span class="kw">const</span> Icon <span class="kw">=</span> p.icon;
+  <span class="kw">return</span> (
+    &lt;button data-testid={<span class="str">`service.link.${p.id}`</span>} onClick={p.onClick}
+      className=<span class="str">"mb-3 w-full flex items-center rounded-2xl border border-slate-100
+        bg-white p-4 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:bg-slate-50 transition"</span>&gt;
+      &lt;span className={<span class="str">`h-10 w-10 grid place-items-center rounded-xl ${p.iconBg}`</span>}&gt;
+        &lt;Icon size={20} color={p.iconColor ?? <span class="str">"#0F172A"</span>} /&gt;
+      &lt;/span&gt;
+      &lt;span className=<span class="str">"ml-3 flex-1 text-left text-base font-bold text-slate-900"</span>&gt;
+        {t(p.labelKey)}
+      &lt;/span&gt;
+      {p.kind === <span class="str">"internal"</span>
+        ? &lt;ChevronRight size={20} className=<span class="str">"text-slate-400"</span> /&gt;
+        : &lt;ExternalLink size={18} className=<span class="str">"text-slate-400"</span> /&gt;}
+    &lt;/button&gt;
+  );
+}</pre>
+  </details>
+
+  <details><summary>6.3 · <code>components/class/ClassCard.tsx</code> — port (color-bar invariant)</summary>
+<pre><span class="kw">"use client"</span>;
+<span class="kw">import</span> { courseTypeColor } <span class="kw">from</span> <span class="str">"@/lib/courseTypeColor"</span>;
+<span class="kw">import</span> { formatMilTime } <span class="kw">from</span> <span class="str">"@/lib/formatMilTime"</span>;
+<span class="kw">import type</span> { CourseType } <span class="kw">from</span> <span class="str">"@prisma/client"</span>;
+
+<span class="kw">export interface</span> ClassCardProps {
+  id: <span class="ty">string</span>; code: <span class="ty">string</span>; section: <span class="ty">string</span>; title: <span class="ty">string</span>;
+  type: CourseType; startMil: <span class="ty">string</span>; endMil: <span class="ty">string</span>; room?: <span class="ty">string</span>;
+  onClick: () <span class="kw">=&gt;</span> <span class="ty">void</span>;
+}
+
+<span class="kw">export function</span> ClassCard(p: ClassCardProps) {
+  <span class="kw">const</span> { bar, badgeBg, badgeText } <span class="kw">=</span> courseTypeColor(p.type);
+  <span class="kw">return</span> (
+    &lt;button data-testid={<span class="str">`class.card.${p.id}`</span>} onClick={p.onClick}
+      className=<span class="str">"relative w-full text-left bg-white rounded-2xl border border-slate-100
+        p-4 pl-5 mb-3 shadow-[0_8px_30px_rgb(0,0,0,0.04)]"</span>&gt;
+      &lt;span aria-hidden className={<span class="str">`absolute left-0 top-0 bottom-0 w-2 opacity-90 rounded-l-2xl ${bar}`</span>} /&gt;
+      &lt;div className=<span class="str">"flex items-center justify-between"</span>&gt;
+        &lt;span className=<span class="str">"text-xs tracking-wider uppercase text-slate-500 font-bold"</span>&gt;
+          {p.code} · {p.section}
+        &lt;/span&gt;
+        &lt;span className={<span class="str">`text-[10px] px-2 py-0.5 rounded-full ${badgeBg} ${badgeText} font-bold uppercase`</span>}&gt;
+          {p.type}
+        &lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div className=<span class="str">"mt-1 text-sm font-bold text-slate-900"</span>&gt;{p.title}&lt;/div&gt;
+      &lt;div className=<span class="str">"mt-1 text-xs text-slate-500"</span>&gt;
+        {formatMilTime(p.startMil)} – {formatMilTime(p.endMil)}{p.room ? <span class="str">` · ${p.room}`</span> : <span class="str">""</span>}
+      &lt;/div&gt;
+    &lt;/button&gt;
+  );
+}</pre>
+  </details>
+
+  <details><summary>6.4 · <code>store/useTabStore.ts</code> — Zustand + URL sync (new)</summary>
+<pre><span class="kw">"use client"</span>;
+<span class="kw">import</span> { create } <span class="kw">from</span> <span class="str">"zustand"</span>;
+
+<span class="kw">export type</span> TabKey <span class="kw">=</span>
+  <span class="kw">|</span> <span class="str">"home"</span> <span class="kw">|</span> <span class="str">"class_schedule"</span> <span class="kw">|</span> <span class="str">"health"</span> <span class="kw">|</span> <span class="str">"activity"</span>
+  <span class="kw">|</span> <span class="str">"service"</span> <span class="kw">|</span> <span class="str">"grades"</span> <span class="kw">|</span> <span class="str">"me"</span>;
+
+<span class="kw">interface</span> TabState {
+  activeTab: TabKey;
+  setActiveTab: (t: TabKey) <span class="kw">=&gt;</span> <span class="ty">void</span>;
+}
+
+<span class="kw">export const</span> useTabStore <span class="kw">=</span> create&lt;TabState&gt;((set) <span class="kw">=&gt;</span> ({
+  activeTab: <span class="str">"home"</span>,
+  setActiveTab: (activeTab) <span class="kw">=&gt;</span> set({ activeTab }),
+}));
+
+<span class="com">// Reads URL on mount and pushes to store. Mount once at top of (app)/layout.</span>
+<span class="kw">export function</span> useTabUrlSync() {
+  <span class="kw">const</span> setActiveTab <span class="kw">=</span> useTabStore((s) <span class="kw">=&gt;</span> s.setActiveTab);
+  <span class="kw">const</span> sp <span class="kw">=</span> useSearchParams();
+  useEffect(() <span class="kw">=&gt;</span> {
+    <span class="kw">const</span> raw <span class="kw">=</span> sp.get(<span class="str">"tab"</span>) <span class="kw">as</span> TabKey <span class="kw">|</span> <span class="kw">null</span>;
+    <span class="kw">if</span> (raw) setActiveTab(raw);
+  }, [sp]);
+}</pre>
+  </details>
+</section>
+
+<!-- ───────────────────────────── API LOGIC ───────────────────────────── -->
+<section id="api">
+  <h2>7 · API Logic Pattern (RBAC + Prisma + Audit)</h2>
+<pre><span class="com">// app/api/grades/route.ts — exemplar. Mirror this shape across all routes.</span>
+<span class="kw">import</span> { NextResponse } <span class="kw">from</span> <span class="str">"next/server"</span>;
+<span class="kw">import</span> { requireSession } <span class="kw">from</span> <span class="str">"@/lib/session"</span>;
+<span class="kw">import</span> { canViewGrades } <span class="kw">from</span> <span class="str">"@/lib/rbac"</span>;
+<span class="kw">import</span> { audit } <span class="kw">from</span> <span class="str">"@/lib/audit"</span>;
+<span class="kw">import</span> { prisma } <span class="kw">from</span> <span class="str">"@/lib/prisma"</span>;
+
+<span class="kw">export async function</span> GET(req: <span class="ty">Request</span>) {
+  <span class="kw">const</span> session <span class="kw">=</span> <span class="kw">await</span> requireSession(req);
+  <span class="kw">if</span> (!canViewGrades(session.user))
+    <span class="kw">return</span> <span class="kw">new</span> NextResponse(<span class="kw">null</span>, { status: 403 });
+
+  <span class="kw">const</span> code <span class="kw">=</span> <span class="kw">new</span> URL(req.url).searchParams.get(<span class="str">"semester"</span>);
+  <span class="kw">const</span> sem <span class="kw">=</span> <span class="kw">await</span> prisma.semester.findUnique({ where: { code: code! }});
+  <span class="kw">if</span> (!sem)        <span class="kw">return</span> NextResponse.json({ error: <span class="str">"not_found"</span> }, { status: 404 });
+  <span class="kw">if</span> (sem.isLocked) <span class="kw">return</span> NextResponse.json({ error: <span class="str">"locked"</span> }, { status: 423 });
+
+  <span class="kw">const</span> rows <span class="kw">=</span> <span class="kw">await</span> prisma.enrollment.findMany({
+    where: { userId: session.user.id, course: { semesterId: sem.id }},
+    include: { course: <span class="kw">true</span> },
+  });
+  <span class="kw">await</span> audit(session.user.id, <span class="str">"READ:grades"</span>, <span class="str">`semester:${sem.code}`</span>, req);
+  <span class="kw">return</span> NextResponse.json(rows);
+}</pre>
+
+<pre><span class="com">// lib/rbac.ts — port + extend from app/src/lib/rbac.ts</span>
+<span class="kw">import type</span> { Role } <span class="kw">from</span> <span class="str">"@prisma/client"</span>;
+
+<span class="kw">export const</span> canEditRoster   <span class="kw">=</span> (u: { role: Role }) <span class="kw">=&gt;</span>
+  u.role === <span class="str">"OFFICER"</span> <span class="kw">||</span> u.role === <span class="str">"ADMIN"</span>;
+<span class="kw">export const</span> canViewGrades   <span class="kw">=</span> (u: { role: Role }) <span class="kw">=&gt;</span> <span class="kw">true</span>;
+<span class="kw">export const</span> canRecordPft    <span class="kw">=</span> (u: { role: Role }) <span class="kw">=&gt;</span>
+  u.role === <span class="str">"INSTRUCTOR"</span> <span class="kw">||</span> u.role === <span class="str">"ADMIN"</span>;
+<span class="kw">export const</span> canPushAnnouncement <span class="kw">=</span> (u: { role: Role }) <span class="kw">=&gt;</span>
+  u.role === <span class="str">"OFFICER"</span> <span class="kw">||</span> u.role === <span class="str">"ADMIN"</span> <span class="kw">||</span> u.role === <span class="str">"INSTRUCTOR"</span>;</pre>
+
+<pre><span class="com">// lib/audit.ts</span>
+<span class="kw">import</span> { prisma } <span class="kw">from</span> <span class="str">"@/lib/prisma"</span>;
+
+<span class="kw">export async function</span> audit(
+  userId: <span class="ty">string</span> <span class="kw">|</span> <span class="kw">null</span>,
+  action: <span class="ty">string</span>,
+  resource: <span class="ty">string</span>,
+  req: <span class="ty">Request</span>,
+) {
+  <span class="kw">await</span> prisma.auditLog.create({
+    data: { userId, action, resource,
+      ip: req.headers.get(<span class="str">"x-forwarded-for"</span>),
+      userAgent: req.headers.get(<span class="str">"user-agent"</span>) }
+  });
+}</pre>
+</section>
+
+<!-- ───────────────────────────── ROUTING ───────────────────────────── -->
+<section id="routing">
+  <h2>8 · Routing Contract (single page · activeTab)</h2>
+<pre><span class="com">// app/(app)/page.tsx — single-route view switcher (mirrors mobile)</span>
+<span class="kw">"use client"</span>;
+<span class="kw">import</span> { useTabStore, useTabUrlSync } <span class="kw">from</span> <span class="str">"@/store/useTabStore"</span>;
+<span class="kw">import</span> HomeView <span class="kw">from</span> <span class="str">"./views/HomeView"</span>;
+<span class="kw">import</span> ClassScheduleView <span class="kw">from</span> <span class="str">"./views/ClassScheduleView"</span>;
+<span class="kw">import</span> HealthView <span class="kw">from</span> <span class="str">"./views/HealthView"</span>;
+<span class="kw">import</span> ActivityView <span class="kw">from</span> <span class="str">"./views/ActivityView"</span>;
+<span class="kw">import</span> ServiceView <span class="kw">from</span> <span class="str">"./views/ServiceView"</span>;
+<span class="kw">import</span> GradesView <span class="kw">from</span> <span class="str">"./views/GradesView"</span>;
+<span class="kw">import</span> MeView <span class="kw">from</span> <span class="str">"./views/MeView"</span>;
+
+<span class="kw">const</span> VIEWS <span class="kw">=</span> {
+  home: HomeView, class_schedule: ClassScheduleView, health: HealthView,
+  activity: ActivityView, service: ServiceView, grades: GradesView, me: MeView,
+} <span class="kw">as const</span>;
+
+<span class="kw">export default function</span> Page() {
+  useTabUrlSync();
+  <span class="kw">const</span> activeTab <span class="kw">=</span> useTabStore((s) <span class="kw">=&gt;</span> s.activeTab);
+  <span class="kw">const</span> View <span class="kw">=</span> VIEWS[activeTab] ?? HomeView;
+  <span class="kw">return</span> &lt;div className=<span class="str">"animate-in fade-in slide-in-from-bottom-4 duration-500"</span>&gt;&lt;View /&gt;&lt;/div&gt;;
+}</pre>
+</section>
+
+<!-- ───────────────────────────── TDD PLAN ───────────────────────────── -->
+<section id="tdd">
+  <h2>9 · TDD Build Order (superpowers loop, 10 phases)</h2>
+  <table>
+    <thead><tr><th>#</th><th>Phase</th><th>DoD</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Bootstrap <code>web/</code></td><td>Next 15 + Tailwind v4 + Prisma + Vitest + Playwright + CI green</td></tr>
+      <tr><td>2</td><td>Auth foundation</td><td>LIFF init · LINE callback · email OTP · TOTP · session middleware · RBAC · AuditLog. 30+ tests</td></tr>
+      <tr><td>3</td><td>App shell</td><td>IphoneFrame · AppHeader · BottomNav · TabStore ↔ URL sync. Visual snapshots match references/*.png</td></tr>
+      <tr><td>4</td><td>HomeView</td><td>Port all 6 home components · API stubs return fixture data. 55+ tests</td></tr>
+      <tr><td>5</td><td>ClassScheduleView</td><td>DaySwitcher · SemesterPill (dialog) · ClassCard · schedule API + Prisma. 42+ tests</td></tr>
+      <tr><td>6</td><td>HealthView</td><td>Streak · WeekCalendar · Steps/Calories · MealCard/ActivityCard · Strava stub. 50+ tests</td></tr>
+      <tr><td>7</td><td>ActivityView</td><td>TopTabs · EventCard · RSVP write to DB · AttendeesStack. 36+ tests</td></tr>
+      <tr><td>8</td><td>Service + Grades + Me</td><td>External links via <code>liff.openWindow</code> · Grades API enforces semester lock. 25+ tests</td></tr>
+      <tr><td>9</td><td>Push (LINE Messaging)</td><td>Webhook · narrowcast worker · Vercel Cron roster reminder</td></tr>
+      <tr><td>10</td><td>Hardening</td><td>PDPA review · audit-log export · pen-test fixes · Lighthouse budget · custom domain</td></tr>
+    </tbody>
+  </table>
+  <p class="nb">Each phase: <code>brainstorm</code> → <code>writing-plans</code> → <code>TDD</code> →
+    cross-AI review → <code>commit</code>. Update <code>README §6</code> + <code>README_TH §6</code>
+    after each. Target cumulative ≈ 240 tests.</p>
+</section>
+
+<!-- ───────────────────────────── /INIT STEPS ───────────────────────────── -->
+<section id="init">
+  <h2>10 · How to bootstrap (fresh Claude session)</h2>
+  <ol>
+    <li>Open a new Claude Code session in repo root.</li>
+    <li>Drop <code>EXPORT.html</code> + <code>PLAN.html</code> + <code>MIGRATION_LIFF.md</code> as context.</li>
+    <li>Run <code>/init</code>. Tell Claude: <em>"Use PLAN.html §1 as the SKILL.md and §3 as the file
+      skeleton. Read EXPORT.html for project background. Start with Phase 1 (Bootstrap)."</em></li>
+    <li>Approve forks remaining in <code>MIGRATION_LIFF.md §1</code> (rows 4, 5, 7, 12).</li>
+    <li>Run <code>brainstorming</code> on Phase 1, then <code>writing-plans</code>, then TDD.</li>
+    <li>Per Phase commit cadence: commit at each TDD-green step inside the phase.</li>
+  </ol>
+  <p class="nb"><strong>One-shot prompt for Claude after /init:</strong>
+    <em>"Read PLAN.html and EXPORT.html. Confirm stack locks: Next.js 15 + Prisma + Supabase PG SG +
+    LINE Login + email OTP + TOTP. Scaffold <code>web/</code> per §3. Run Phase 1 superpowers loop —
+    brainstorm decision tree first, then writing-plans, then TDD. Caveman comms. Mirror README+README_TH."</em></p>
+</section>
+
+</div>
+
+<footer>
+  CRMA Smart Academy Web · /init plan · 2026-05-19 ·
+  drop in fresh Claude session alongside EXPORT.html ·
+  caveman + superpowers active
+</footer>
+
+</body>
+</html>

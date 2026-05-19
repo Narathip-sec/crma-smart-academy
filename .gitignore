@@ -1,0 +1,44 @@
+# Node / Next / pnpm
+node_modules/
+.next/
+out/
+.turbo/
+.vercel/
+.swc/
+dist/
+build/
+*.tsbuildinfo
+
+# Env (NEVER commit)
+.env
+.env.local
+.env.*.local
+*.pem
+
+# Prisma generated
+prisma/migrations/dev/
+.prisma/
+
+# Test artifacts
+coverage/
+playwright-report/
+test-results/
+.nyc_output/
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Claude
+.claude/settings.local.json
