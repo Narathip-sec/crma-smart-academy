@@ -13,10 +13,31 @@ jobs:
   web:
     name: web — typecheck · lint · test · e2e
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: crma_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://postgres:ci@localhost:5432/crma_ci
+      JWT_SECRET: ci-jwt-secret-must-be-at-least-32-bytes-long-aaaa
+
     defaults:
       run:
         working-directory: web
+
     steps:
       - uses: actions/checkout@v4
 
@@ -35,6 +56,9 @@ jobs:
 
       - name: Prisma generate
         run: pnpm prisma generate
+
+      - name: Prisma db push (Phase 2a: no migration files yet)
+        run: pnpm prisma db push --skip-generate --accept-data-loss
 
       - run: pnpm lint
       - run: pnpm typecheck
