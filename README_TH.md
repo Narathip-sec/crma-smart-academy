@@ -129,7 +129,7 @@ LINE Official Account ของ CRMA
 | 2026-05-19 | `/init` + CLAUDE.md                              | วาง guidance ต่อ repo สำหรับ Claude Code · เลื่อน SKILL.md ไปก่อน Phase 2 |
 | 2026-05-19 | Phase 1 — Bootstrap `web/`                       | Next.js 16 · React 19 · TS 5 strict · Tailwind v4 · Prisma 7 · Vitest 4 · Playwright 1.60 · Husky + lint-staged · CI wired · อัปเดต lock: Next 15→16, Prisma 5→7 |
 | 2026-05-19 | Phase 2a — รากฐาน Auth                          | Schema (User · Role · RefreshToken · AuditLog) · `@prisma/adapter-pg` · `lib/session.ts` (jose · 1ชม. + 30วัน · cookie `__Host-`) · `lib/rbac.ts` · `lib/audit.ts` · `middleware.ts` · `/login` shell · CI postgres service · unit 48 · e2e 3 ผ่าน |
-| _pending_  | Phase 2b — LIFF + LINE callback                  | `liff.init` · `/api/auth/line/callback` · LINE JWKs verify · ออก session |
+| 2026-05-19 | Phase 2b — LIFF + LINE callback                  | `lib/line.ts` (jose ES256 + LINE JWKs) · `/api/auth/line/callback` (branch `needs_email` · `needs_totp` · `ok` · AuditLog ทุกครั้ง) · `LiffSignInButton` client island (gate ด้วย NEXT_PUBLIC_LIFF_ID · deviceFp ด้วย Web Crypto SHA-256) · refactor `/login` · unit 63 + e2e 3 ผ่าน · ใช้งานจริงเมื่อ LIFF_ID + DATABASE_URL พร้อม |
 | _pending_  | Phase 2c — Email OTP                             | Brevo SMTP · regex โดเมน `@crma.ac.th` · `lib/crypto.ts` envelope ของ `User.email` |
 | _pending_  | Phase 2d — TOTP                                  | QR ลงทะเบียน · gate ลายนิ้วมืออุปกรณ์ · เข้ารหัส `User.totpSecret` |
 | _pending_  | Phase 3 — Responsive app shell                   | AppShell · AppHeader · adaptive nav · TabStore ↔ URL sync สำหรับมือถือ แท็บเล็ต และเดสก์ท็อป |
