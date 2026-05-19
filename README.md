@@ -128,7 +128,10 @@ Updated after each completed milestone in the superpowers loop (brainstorming �
 | 2026-05-19 | Repo seeded                                      | `README.md`, `README_TH.md`, `EXPORT.html`, `PLAN.html`, `MIGRATION_LIFF.md` from predecessor session. |
 | 2026-05-19 | `/init` + CLAUDE.md                              | Per-repo Claude Code guidance landed; SKILL.md install deferred to Phase 2 prep. |
 | 2026-05-19 | Phase 1 — Bootstrap `web/`                       | Next.js 16 · React 19 · TS 5 strict · Tailwind v4 · Prisma 7 · Vitest 4 · Playwright 1.60 · Husky + lint-staged · CI wired. Lock updated: Next 15→16, Prisma 5→7. |
-| _pending_  | Phase 2 — Auth foundation                        | LIFF · LINE callback · email OTP · TOTP · middleware · RBAC · AuditLog. |
+| 2026-05-19 | Phase 2a — Auth foundations                      | Schema (User · Role · RefreshToken · AuditLog) · `@prisma/adapter-pg` · `lib/session.ts` (jose, 1h + 30d, `__Host-` cookies) · `lib/rbac.ts` · `lib/audit.ts` · `middleware.ts` · `/login` shell · CI postgres service. 48 unit tests + 3 e2e green. |
+| _pending_  | Phase 2b — LIFF + LINE callback                  | `liff.init` · `/api/auth/line/callback` · LINE JWKs verify · session mint. |
+| _pending_  | Phase 2c — Email OTP                             | Brevo SMTP · `@crma.ac.th` regex gate · `lib/crypto.ts` envelope for `User.email`. |
+| _pending_  | Phase 2d — TOTP                                  | Enrolment QR · device fingerprint gate · `User.totpSecret` encryption. |
 | _pending_  | Phase 3 — Responsive app shell                   | AppShell · AppHeader · adaptive nav · TabStore ↔ URL sync across phone, tablet, and desktop. |
 | _pending_  | Phase 4 — HomeView                               | 6 components · API stubs · fixtures.                                |
 | _pending_  | Phase 5 — ClassScheduleView                      | DaySwitcher · SemesterPill · ClassCard · schedule API.              |
