@@ -42,3 +42,6 @@ yarn-error.log*
 
 # Claude
 .claude/settings.local.json
+
+# Office docs (one-off artifacts, not part of repo)
+*.docx
