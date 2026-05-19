@@ -1,3 +1,2 @@
 #!/usr/bin/env sh
-corepack pnpm exec lint-staged
-cd web && corepack pnpm typecheck
+corepack pnpm exec lint-staged && cd web && corepack pnpm typecheck

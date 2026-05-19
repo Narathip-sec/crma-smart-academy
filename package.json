@@ -17,7 +17,7 @@
   "lint-staged": {
     "web/**/*.{ts,tsx,mjs,cjs,js}": [
       "prettier --write",
-      "eslint --fix --no-warn-ignored"
+      "corepack pnpm --dir web exec eslint --fix --no-warn-ignored"
     ],
     "web/**/*.{json,md,css}": ["prettier --write"]
   }
