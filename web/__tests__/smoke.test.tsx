@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react'
 import { expect, test } from 'vitest'
 
-import Home from '@/app/page'
+import HomeView from '@/app/(app)/views/HomeView'
 
-test('home placeholder renders', () => {
-  render(<Home />)
-  expect(screen.getByRole('heading', { name: /phase 1 chassis ok/i })).toBeInTheDocument()
+test('HomeView stub renders', () => {
+  render(<HomeView />)
+  expect(screen.getByTestId('view-home')).toBeInTheDocument()
 })
