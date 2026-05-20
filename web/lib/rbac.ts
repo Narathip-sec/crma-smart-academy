@@ -32,3 +32,11 @@ export function canPublishAnnouncement(role: Role): boolean {
 export function canEditEnrollment(role: Role): boolean {
   return role === 'ADMIN'
 }
+
+/**
+ * Phase 10 — Audit log export is ADMIN-only (compliance review).
+ * Each export call writes its own AuditLog row tagged ADMIN:audit_export.
+ */
+export function canExportAudit(role: Role): boolean {
+  return role === 'ADMIN'
+}

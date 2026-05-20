@@ -4,6 +4,7 @@ import { describe, expect, test } from 'vitest'
 import {
   canEditEnrollment,
   canEditRoster,
+  canExportAudit,
   canPublishAnnouncement,
   canViewGrades,
   isOfficerPlus,
@@ -58,6 +59,17 @@ describe('rbac — canEditEnrollment (ADMIN only)', () => {
     ['ADMIN', true],
   ] as const)('%s -> %s', (role, expected) => {
     expect(canEditEnrollment(role)).toBe(expected)
+  })
+})
+
+describe('rbac — canExportAudit (ADMIN only)', () => {
+  test.each([
+    ['CADET', false],
+    ['INSTRUCTOR', false],
+    ['OFFICER', false],
+    ['ADMIN', true],
+  ] as const)('%s -> %s', (role, expected) => {
+    expect(canExportAudit(role)).toBe(expected)
   })
 })
 
