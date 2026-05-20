@@ -144,7 +144,7 @@ export function createLineCallbackHandler(deps: CallbackDeps) {
       res.headers.append('set-cookie', buildEnrolCookie(enrolToken))
       return res
     }
-    if (!user.totpSecret) {
+    if (!user.totpVerified) {
       await deps.audit({
         userId: user.id,
         action: 'AUTH:line_callback',

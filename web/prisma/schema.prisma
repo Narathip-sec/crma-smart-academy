@@ -35,8 +35,15 @@ model User {
   role            Role      @default(CADET)
   company         String?
   year            Int?
-  /// Encrypted at app layer when TOTP enrols (Phase 2d). Nullable until enrolled.
+  /// AES-256-GCM ciphertext of the TOTP secret (via lib/crypto.encrypt).
+  /// Plaintext base32 never persisted. Nullable until /enrol/totp/start
+  /// generates the secret.
   totpSecret      String?
+  /// Stamped by /enrol/totp/verify after the first valid 6-digit code.
+  /// LINE callback gates `needs_totp` on this field — NOT on totpSecret
+  /// presence — so a half-enrolled cadet whose /start ran but /verify
+  /// did not is still routed to needs_totp on the next sign-in.
+  totpVerified    DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 

@@ -30,6 +30,7 @@ function fakeUser(state: UserState) {
     company: null,
     year: null,
     totpSecret: state === 'enrolled' ? 'encrypted-secret' : null,
+    totpVerified: state === 'enrolled' ? new Date() : null,
     createdAt: new Date(),
     updatedAt: new Date(),
   }
