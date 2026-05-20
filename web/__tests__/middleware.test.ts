@@ -160,6 +160,17 @@ describe('middleware — enrol cookie', () => {
     const res = await middleware(build('/enrol/email', { [ENROL_COOKIE]: 'bad.token.here' }))
     expect(res.status).toBe(307)
   })
+
+  test('valid enrol cookie on /reverify/totp passes through (Phase 2e allow-list)', async () => {
+    const token = await signEnrolToken(enrolSample)
+    const res = await middleware(build('/reverify/totp', { [ENROL_COOKIE]: token }))
+    expect(res.headers.get('x-middleware-next')).toBe('1')
+  })
+
+  test('no enrol cookie on /reverify/totp → redirect to /login', async () => {
+    const res = await middleware(build('/reverify/totp'))
+    expect(res.status).toBe(307)
+  })
 })
 
 describe('middleware — config matcher', () => {

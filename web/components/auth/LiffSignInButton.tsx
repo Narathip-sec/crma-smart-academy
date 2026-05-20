@@ -3,7 +3,11 @@
 import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
 
-type CallbackResponse = { status: 'needs_email' } | { status: 'needs_totp' } | { status: 'ok' }
+type CallbackResponse =
+  | { status: 'needs_email' }
+  | { status: 'needs_totp' }
+  | { status: 'needs_reverify' }
+  | { status: 'ok' }
 
 type LiffSignInButtonProps = {
   returnTo: string
@@ -61,6 +65,10 @@ function handleBranch(body: CallbackResponse, returnTo: string): void {
   }
   if (body.status === 'needs_totp') {
     window.location.assign('/enrol/totp')
+    return
+  }
+  if (body.status === 'needs_reverify') {
+    window.location.assign('/reverify/totp')
     return
   }
 }

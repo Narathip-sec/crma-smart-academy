@@ -15,10 +15,11 @@ import {
 const PUBLIC_PREFIXES = ['/_next', '/favicon.ico', '/api/auth', '/login', '/public']
 
 // Paths that accept the enrol cookie as a pass while a cadet finishes
-// email + TOTP setup. Phase 2c covers /enrol/email; Phase 2d will add
-// /enrol/totp. /api/auth/email/* is already public (under /api/auth)
-// and enforces enrol-cookie inside the route handler.
-const ENROL_PREFIXES = ['/enrol']
+// email + TOTP setup or proves a new device. Phase 2c covers /enrol/email,
+// Phase 2d adds /enrol/totp, Phase 2e adds /reverify/totp.
+// /api/auth/email/* and /api/auth/totp/* are already public under
+// /api/auth and enforce the enrol-cookie inside the route handler.
+const ENROL_PREFIXES = ['/enrol', '/reverify']
 
 function isPublic(pathname: string): boolean {
   return PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))
