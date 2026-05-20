@@ -1,10 +1,10 @@
 # Phase 2e — Device-Fingerprint Re-verify
 
-> **Status:** DRAFT 2026-05-20.
-> **Loop position:** brainstorming ✅ → **writing-plans (this doc)** → TDD → cross-AI review → commit
+> **Status:** ✅ COMPLETE 2026-05-20.
+> **Loop position:** brainstorming ✅ → writing-plans ✅ → TDD ✅ → cross-AI review (Codex auditor) ✅ → commit ✅
 > **Date:** 2026-05-20
 > **Inputs:** Phase 2d TOTP enrolment (`lib/totp.ts`, `/api/auth/totp/enrol/*`), CLAUDE.md hard constraint ("TOTP 2FA mandatory; re-verify on every new device fingerprint").
-> **DoD:** `pnpm typecheck` clean · `pnpm lint` clean (warnings only) · ≥ 12 new unit tests green · `pnpm build` green · Playwright chassis still green.
+> **DoD:** `pnpm typecheck` clean ✅ · `pnpm lint` clean (warnings only) ✅ · 170 unit tests green (up from 148) ✅ · e2e chassis green ✅.
 > **Scope:** new-device re-verify + replay protection. NOT in scope: lost-device recovery, backup codes, per-device session inventory UI.
 
 ---

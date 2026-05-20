@@ -11,7 +11,8 @@ Current state:
 - Phase 2b LIFF + LINE callback complete (commit `d1594a1`).
 - Phase 2c Email OTP + crypto envelope complete (commit `220b1dd`). 123 unit tests green; 4 Playwright chassis specs.
 - Phase 2d TOTP enrolment complete (commit `14e200f`). 148 unit tests green; 5 Playwright chassis specs. Cadets can complete LINE → email → TOTP end-to-end against the dev/CI fallbacks.
-- Phase 2e next: device-fingerprint re-verify gate (block stale-device sessions, force TOTP re-prompt on new `deviceFp`, persist last-used TOTP step per device to block replay).
+- Phase 2e device re-verify complete (commit `a3b3db8`). 170 unit tests green; 6 Playwright chassis specs. Adds `User.lastTotpStep` replay guard, LINE callback device-known check, `/api/auth/totp/reverify` route, `/reverify/totp` page.
+- Phase 3 next: responsive app shell — `AppShell` · `AppHeader` · adaptive nav · `TabStore ↔ ?tab=` sync across phone, tablet, and desktop. See `MIGRATION_LIFF.md §7` for the `VIEWS` map contract.
 - `PROGRESS.html` is the standalone project progression dashboard. Open it directly in a browser to see the current phase map without starting the app.
 
 Tracked source artifacts:
