@@ -1,6 +1,6 @@
 # Phase 3 - Responsive App Shell
 
-> **Status:** DRAFT - supersedes older iPhone-only shell wording.
+> **Status:** ✅ COMPLETE 2026-05-20. 180 unit tests green, build 14 routes.
 > **Date:** 2026-05-19
 > **Inputs:** `README.md` progress tracker, `MIGRATION_LIFF.md` routing contract, predecessor mobile visual reference.
 > **DoD:** phone, tablet, and desktop layouts pass Playwright snapshots; `activeTab <-> ?tab=` stays stable; no production UI is locked inside a fixed iPhone frame.
