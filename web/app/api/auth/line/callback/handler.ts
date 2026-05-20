@@ -10,8 +10,10 @@ import { type LineProfile, verifyLineIdToken as defaultVerify } from '@/lib/line
 import { prisma as defaultPrisma } from '@/lib/prisma'
 import {
   buildAccessCookie,
+  buildEnrolCookie,
   buildRefreshCookie,
   signAccessToken,
+  signEnrolToken,
   signRefreshToken,
 } from '@/lib/session'
 
@@ -119,7 +121,15 @@ export function createLineCallbackHandler(deps: CallbackDeps) {
       },
     })
 
-    // Enrolment branches.
+    // Enrolment branches. Both pre-enrolment branches mint the short-lived
+    // enrol cookie that unlocks /enrol/* + /api/auth/email/* until the
+    // cadet finishes email + TOTP setup. See lib/session.ts.
+    const enrolToken = await signEnrolToken({
+      sub: user.id,
+      lineUserId: profile.lineUserId,
+      deviceFp: body.deviceFp,
+    })
+
     if (!user.emailVerified) {
       await deps.audit({
         userId: user.id,
@@ -130,7 +140,9 @@ export function createLineCallbackHandler(deps: CallbackDeps) {
         userAgent,
         metadata: { branch: 'needs_email' },
       })
-      return NextResponse.json({ status: 'needs_email' })
+      const res = NextResponse.json({ status: 'needs_email' })
+      res.headers.append('set-cookie', buildEnrolCookie(enrolToken))
+      return res
     }
     if (!user.totpSecret) {
       await deps.audit({
@@ -142,7 +154,9 @@ export function createLineCallbackHandler(deps: CallbackDeps) {
         userAgent,
         metadata: { branch: 'needs_totp' },
       })
-      return NextResponse.json({ status: 'needs_totp' })
+      const res = NextResponse.json({ status: 'needs_totp' })
+      res.headers.append('set-cookie', buildEnrolCookie(enrolToken))
+      return res
     }
 
     // Fully enroled → mint session. Email is not part of the JWT (see

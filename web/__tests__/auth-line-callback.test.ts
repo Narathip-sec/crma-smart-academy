@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 import { createLineCallbackHandler } from '@/app/api/auth/line/callback/handler'
-import { ACCESS_COOKIE, REFRESH_COOKIE } from '@/lib/session'
+import { ACCESS_COOKIE, ENROL_COOKIE, REFRESH_COOKIE } from '@/lib/session'
 
 import type { LineProfile } from '@/lib/line'
 
@@ -113,7 +113,7 @@ describe('POST /api/auth/line/callback — verification failure', () => {
 })
 
 describe('POST /api/auth/line/callback — enrolment branches', () => {
-  test('new user upsert → 200 needs_email', async () => {
+  test('new user upsert → 200 needs_email + enrol cookie (no session cookies)', async () => {
     const { handler, prisma, audit } = setup('new')
     const res = await handler(postBody({ idToken: 'good', deviceFp: 'd' }))
     expect(res.status).toBe(200)
@@ -121,17 +121,21 @@ describe('POST /api/auth/line/callback — enrolment branches', () => {
     expect(body.status).toBe('needs_email')
     expect(prisma.user.upsert).toHaveBeenCalledTimes(1)
     expect(audit).toHaveBeenCalledWith(expect.objectContaining({ result: 'ALLOW' }))
-    // No session cookies on partial enrolment.
-    expect(res.headers.get('set-cookie')).toBeFalsy()
+    const setCookie = res.headers.get('set-cookie') ?? ''
+    expect(setCookie).toContain(`${ENROL_COOKIE}=`)
+    expect(setCookie).not.toContain(`${ACCESS_COOKIE}=`)
+    expect(setCookie).not.toContain(`${REFRESH_COOKIE}=`)
   })
 
-  test('email verified but no TOTP → 200 needs_totp', async () => {
+  test('email verified but no TOTP → 200 needs_totp + enrol cookie', async () => {
     const { handler } = setup('needs_totp')
     const res = await handler(postBody({ idToken: 'good', deviceFp: 'd' }))
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body.status).toBe('needs_totp')
-    expect(res.headers.get('set-cookie')).toBeFalsy()
+    const setCookie = res.headers.get('set-cookie') ?? ''
+    expect(setCookie).toContain(`${ENROL_COOKIE}=`)
+    expect(setCookie).not.toContain(`${ACCESS_COOKIE}=`)
   })
 
   test('fully enroled → 200 ok with cookies + RefreshToken row', async () => {
