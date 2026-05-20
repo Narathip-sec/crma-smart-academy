@@ -44,6 +44,11 @@ model User {
   /// presence — so a half-enrolled cadet whose /start ran but /verify
   /// did not is still routed to needs_totp on the next sign-in.
   totpVerified    DateTime?
+  /// Phase 2e replay guard: last successfully consumed TOTP step
+  /// (floor(epochMs / 30_000) + delta). A new code must resolve to a
+  /// step strictly greater than this; otherwise the verify route 409s.
+  /// BigInt because epoch / 30 will overflow Int32 in 2038.
+  lastTotpStep    BigInt?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
