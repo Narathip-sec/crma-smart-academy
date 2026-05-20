@@ -30,11 +30,24 @@ export type SessionPayload = {
 const ISSUER = 'crma-smart-academy'
 const ACCESS_AUDIENCE = 'crma-access'
 const REFRESH_AUDIENCE = 'crma-refresh'
+const ENROL_AUDIENCE = 'crma-enrol'
 const ACCESS_TTL_SECONDS = 60 * 60 // 1h
 const REFRESH_TTL_SECONDS = 30 * 24 * 60 * 60 // 30d
+const ENROL_TTL_SECONDS = 15 * 60 // 15m
 
 export const ACCESS_COOKIE = '__Host-crma-access'
 export const REFRESH_COOKIE = '__Host-crma-refresh'
+export const ENROL_COOKIE = '__Host-crma-enrol'
+
+// Phase 2c enrolment cookie. Issued by the LINE callback when a cadet
+// finishes LINE login but still needs email + TOTP enrolment. The
+// /api/auth/email/* routes consume it and the middleware allow-list
+// recognises it as a one-shot pass for /enrol/* paths.
+export type EnrolPayload = {
+  sub: string
+  lineUserId: string
+  deviceFp: string
+}
 
 function getSecret(): Uint8Array {
   const raw = process.env.JWT_SECRET
@@ -117,4 +130,43 @@ export function buildRefreshCookie(token: string): string {
 
 export function clearAuthCookies(): string[] {
   return [`${ACCESS_COOKIE}=; ${cookieAttrs(0)}`, `${REFRESH_COOKIE}=; ${cookieAttrs(0)}`]
+}
+
+export async function signEnrolToken(payload: EnrolPayload): Promise<string> {
+  return new SignJWT({
+    lineUserId: payload.lineUserId,
+    deviceFp: payload.deviceFp,
+  })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setSubject(payload.sub)
+    .setIssuer(ISSUER)
+    .setAudience(ENROL_AUDIENCE)
+    .setIssuedAt()
+    .setExpirationTime(`${ENROL_TTL_SECONDS}s`)
+    .setJti(crypto.randomUUID())
+    .sign(getSecret())
+}
+
+export async function verifyEnrolToken(token: string): Promise<EnrolPayload> {
+  const { payload } = await jwtVerify(token, getSecret(), {
+    issuer: ISSUER,
+    audience: ENROL_AUDIENCE,
+    algorithms: ['HS256'],
+  })
+  if (typeof payload.sub !== 'string') throw new Error('invalid sub')
+  if (typeof payload.lineUserId !== 'string') throw new Error('invalid lineUserId')
+  if (typeof payload.deviceFp !== 'string') throw new Error('invalid deviceFp')
+  return {
+    sub: payload.sub,
+    lineUserId: payload.lineUserId,
+    deviceFp: payload.deviceFp,
+  }
+}
+
+export function buildEnrolCookie(token: string): string {
+  return `${ENROL_COOKIE}=${token}; ${cookieAttrs(ENROL_TTL_SECONDS)}`
+}
+
+export function clearEnrolCookie(): string {
+  return `${ENROL_COOKIE}=; ${cookieAttrs(0)}`
 }
