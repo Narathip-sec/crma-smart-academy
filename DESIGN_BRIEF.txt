@@ -1,0 +1,331 @@
+CRMA SMART ACADEMY — Design Brief
+For Claude Design / Gamma / Figma AI
+Generated: 2026-05-20
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. PRODUCT PURPOSE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Name:        CRMA Smart Academy (โรงเรียนนายร้อย)
+Type:        LINE LIFF web app (also usable standalone in browser)
+Platform:    LINE in-app webview (primary) + Safari iOS + Chrome Android + Desktop
+Users:       Cadets, Instructors, Officers, Admins at Chulachomklao Royal Military Academy, Thailand
+Language:    Thai (default) with English fallback
+Deploy:      Vercel (preview + production)
+
+Mission:
+  Consolidate fragmented CRMA cadet systems into one LINE-distributed web app.
+  Replace the previous Expo/React Native mobile app with a zero-install LIFF experience
+  accessible via the official CRMA LINE Official Account rich-menu.
+
+Core Problem Solved:
+  Cadets currently switch between: Moodle (LMS), paper schedules, separate health apps,
+  LINE group announcements, and physical grade reports. CRMA Smart Academy merges all
+  of these into one authenticated single-page experience inside LINE.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. USER GROUPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CADET (primary)
+  - Thai military academy student (male, 18–22, 4-year programme)
+  - Needs: class schedule, grade report, PFT/health tracking, activity sign-up, announcements
+  - Device: iPhone/Android inside LINE, occasionally desktop browser
+  - Language: Thai
+
+INSTRUCTOR
+  - Can view duty rosters; read-only grades; push announcements
+  - Elevated RBAC: may edit duty roster (OFFICER+ only)
+
+OFFICER / ADMIN
+  - OFFICER: duty roster mutations, broadcast push messages
+  - ADMIN: full access + audit log export + PDPA compliance tools
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. FEATURES (all 7 views)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TAB: HOME  (หน้าหลัก)
+  1. Profile Banner — avatar (initials fallback), name "Narathip Chetjai", role "นักเรียนนายร้อย ปี 3"
+                       Click → navigate to Me tab
+  2. Hero Carousel  — auto-advance 3s, dark bg-slate-900 card, amber glow decoration,
+                       badge (งานใหม่ / ประกาศ / กิจกรรม / เตือนความจำ), title, subtitle, CTA "ดูรายละเอียด"
+                       Dot indicators (active = amber wide pill, inactive = small slate dot)
+  3. Quick Services Grid — 4 dark square tiles: ตารางเรียน / มื้ออาหาร / สุขภาพ / บัตรประจำตัว
+                            Click "class" → navigate schedule tab, "health" → health tab
+  4. News & Event Tabs — Toggle between ข่าว / กิจกรรม, FeedCard with image + title + date + อ่านเพิ่มเติม
+                           "ดูทั้งหมด" button bottom-right
+  5. Smart Insights Row — 2 side-by-side cards: Physical Fitness (blue-100 bg) + Academic Load (amber-100 bg)
+                            Icon + title + 2-line body
+
+TAB: CLASS SCHEDULE  (ตารางเรียน)
+  1. Semester Pill — shows current semester "2/2568", tap to change (select/modal)
+  2. Day Switcher  — horizontal scroll of 7-day strip, active day highlighted amber
+  3. Class Card List — each card: time (military 24h format e.g. "0800–0950"), course code + title,
+                        room, instructor, colour-coded by course type (core=slate, PE=green, elective=blue, etc.)
+  4. Empty state — "ไม่มีคาบเรียนวันนี้" placeholder
+
+TAB: HEALTH  (สุขภาพ — "Health AI")
+  1. Streak Badge  — fire icon + consecutive day count
+  2. Top Sub-tabs  — "สรุป" (Summary) | "บริการ" (Services)
+  SUMMARY:
+  3. Week Calendar Strip — 7 circles Mon–Sun, green fill = completed, dashed = today, grey = future
+  4. Steps Card    — circular SVG donut chart, step count vs goal
+  5. Calories Card — burned cal breakdown: walking + lifting
+  6. Water Logger  — +/- glass counter, animated fill
+  7. Logged Activities — cards with thumbnail, name, calories, duration
+  8. Logged Meals  — thumbnail, macros (C/P/F), calories
+  SERVICES:
+  9. Wearable Links — Strava OAuth connect, Apple Health, Garmin
+
+TAB: ACTIVITY  (กิจกรรม)
+  1. CTA Banner    — "เริ่มกิจกรรมใหม่และชวนเพื่อน!" dismissible
+  2. Sub-tabs      — กิจกรรม / กลุ่ม
+  3. Search + Filter — text search, filters: วัน, ประเภท, ระยะทาง
+  4. Category Scroll — horizontal chips
+  5. Event Cards   — image, price badge, "ที่นั่งเหลือ X" badge, title, time, location,
+                       overlapping attendee avatars, Share + Heart icons
+  6. FAB           — bottom-right "สร้างกิจกรรม" (+) button
+
+TAB: SERVICE  (บริการ)  [external links via liff.openWindow]
+  Internal:
+  - Grade Report  → grades tab
+  - Academic Calendar
+  External (target="_blank"):
+  - E-Book (ebook.crma.ac.th)
+  - ประวัติโรงเรียน (History)
+  - ผู้บังคับบัญชา (Commanders)
+  - ปรัชญา (Philosophy)
+  - ห้องสมุด (Library)
+  - Web OPAC
+  - Moodle LMS
+  Each rendered as ServiceLink card with ChevronRight
+
+TAB: GRADES  (เกรด)
+  1. Semester Selector — dropdown styled as a pill, lists past semesters
+  2. Summary Card — dark slate-900 card: Term GPA + Cumulative GPAX in large numerals
+  3. Course List — per course: code, title, credits, grade letter + GPA points
+  4. Lock state  — current semester shows 🔒 LOCKED badge (HTTP 423 from API)
+
+TAB: ME  (โปรไฟล์)
+  1. Avatar — large circle, 56px, rotated effect, amber ring
+  2. Name + Cadet ID + Year/Company
+  3. LINE display name + avatar from LIFF
+  4. Edit profile (Phase 8+)
+  5. Sign out button
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. DESIGN SYSTEM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Colour Palette:
+  Primary Text / Bold BG  :  slate-900  (#0F172A)
+  Canvas / Page BG        :  slate-50   (#F8FAFC)
+  Card BG                 :  white      (#FFFFFF)
+  Muted BG / Border       :  slate-100  (#F1F5F9)
+  Muted Text              :  slate-500  (#64748B)
+  Accent / Active         :  amber-500  (#F59E0B)
+  Accent Light            :  amber-100  (#FEF3C7)
+  Accent Dark             :  amber-700  (#B45309)
+  Brand Green (CTA)       :  emerald-500 (#10B981)  [auth buttons, enrollment]
+  Fitness Icon            :  blue-600   (#2563EB)
+  Academic Icon           :  amber-700  (#B45309)
+  Danger / Alert          :  rose-500   (#F43F5E)
+
+Typography:
+  Headings   : font-bold, tracking-tight
+  Section    : text-base font-bold text-slate-900
+  Body       : text-sm text-slate-700
+  Meta/Label : text-xs text-slate-500, sometimes uppercase tracking-widest
+  Badge      : text-[10px] uppercase tracking-widest font-bold
+
+Shadows:
+  Card      : shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100
+  Simple    : shadow-sm
+  None      : transparent background sections
+
+Border Radius:
+  Cards       : rounded-2xl (16px)
+  Banners     : rounded-3xl (24px)
+  Pills/Badges: rounded-full
+  Tiles (quick services): rounded-2xl
+
+Icons:
+  Library: lucide-react (same SVG paths as predecessor's lucide-react-native)
+  Size: 16 (inline), 20 (nav small), 22 (quick tiles), 24 (nav items)
+  Stroke: 1.8–2.2 standard, 2.6 for bold arrows
+
+Navigation:
+  Phone (< 768px)   : BottomNav — fixed bottom, 5 tabs, env(safe-area-inset-bottom) padding
+                       height 56px + safe area, rounded-t-[2.5rem], white bg, border-t
+                       Active tab: text-emerald-600
+  Tablet (768–1279px): NavRail — left column 64px wide, icon-only, active = emerald-50 bg + emerald-700 text
+  Desktop (≥ 1280px) : Sidebar — 220px wide, icon + Thai label, same active styles
+
+App Header (all breakpoints):
+  Fixed top, height 56px (h-14), white bg, border-b
+  Left: "CRMA Smart Academy" font-semibold
+  Right: Avatar circle 32px (Phase 4+ real cadet data)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. LAYOUT CONTRACT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Root height: 100dvh (NOT 100vh — LINE iOS webview has dynamic chrome)
+Safe area  : env(safe-area-inset-bottom) on BottomNav, env(safe-area-inset-top) as needed
+Scroll     : AppShell main area is overflow-y-auto; each view is a scroll child, pb-28 phone
+No nested route layouts. Single ?tab= param drives all view switches.
+URL: /?tab=home | /?tab=class_schedule | /?tab=health | /?tab=activity
+      /?tab=service | /?tab=grades | /?tab=me
+Animations: views animate-in fade-in slide-in-from-bottom-4 duration-500
+
+Content padding: px-4 pt-2 pb-28 (phone), adjusted on wider screens
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. AUTH FLOW (context for designers)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+/login
+  → "Sign in with LINE" button (emerald-500, rounded-xl)
+  → only cadets with @crma.ac.th institutional email can complete enrolment
+
+/enrol/email
+  → "Verify your CRMA email" — input @crma.ac.th address → send 6-digit OTP via Brevo
+  → OTP entry form (large monospace tracking-widest input) → verify
+
+/enrol/totp
+  → "Pair your authenticator" — QR code + manual-entry base32 key
+  → 6-digit input → verify → mint session
+
+/reverify/totp  (new device only)
+  → "Verify this device" — cadet already has TOTP, just prove it on new browser
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. KEY INTERACTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- Active tab = amber accent on BottomNav/NavRail, view fade-in from bottom
+- HeroCarousel = setInterval auto-advance, dot indicator shows position
+- Day Switcher = horizontal scroll, active day amber underline or pill
+- Semester Pill = tap to open select (or dialog on mobile)
+- Week Calendar = 7 circles, green = done, dashed border = today, grey = future
+- Circular SVG progress = Steps card and Calories card
+- Water Logger = tap + to increment glasses, tap - to decrement
+- NewsEventTabs = underline indicator slides between News and Event
+- ActivityView FAB = bottom-right anchored, opens create-activity sheet
+- External links = liff.openWindow({ external: true }) on phone, target=_blank desktop
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. TECH STACK (reference for design decisions)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Next.js 16 App Router · React 19 · TypeScript 5 strict
+Tailwind v4 · class-variance-authority
+Zustand 5 (tab / schedule / health / activity slices)
+Prisma 7 → Supabase Postgres (ap-southeast-1 Singapore)
+LINE LIFF SDK 2.x · jose (JWT) · TOTP (otpauth) · AES-256-GCM (lib/crypto)
+Brevo (email OTP) · Vercel (deploy + Blob storage) · Inngest (background jobs)
+LINE Messaging API (push notifications via OA channel)
+Vitest · @testing-library/react · Playwright (LINE iOS/Android + Safari UAs)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. COMPONENT INVENTORY (built so far as of 2026-05-20)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Auth
+  LoginPage               /login                   LINE sign-in button
+  EnrolEmailForm          /enrol/email             2-stage email OTP form
+  EnrolTotpForm           /enrol/totp              QR + 6-digit verify
+  ReverifyTotpForm        /reverify/totp           Single-stage TOTP re-verify
+
+Shell
+  AppShell                wrap / layout            flex col h-dvh, header+content+nav
+  AppHeader               fixed top h-14           title + avatar
+  BottomNav               fixed bottom md:hidden   5-tab navigation
+  NavRail                 hidden md:flex            icon md / icon+label xl
+  NavIcons                inline SVGs              home/calendar/heart/bolt/user
+
+Home
+  ProfileBanner           home section 1           name/role/initials avatar/chevron
+  HeroCarousel            home section 2           auto-advance slides
+  QuickServicesGrid       home section 3           4 dark tiles
+  SmartInsightsRow        home section 4           2 insight cards
+  NewsEventTabs           home section 5           news/event tab switcher
+
+Stub Views (Phase 5-8 will fill content)
+  ClassScheduleView, HealthView, ActivityView, ServiceView, GradesView, MeView
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+10. PHASE ROADMAP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Phase 1  Bootstrap — Next.js 16, Tailwind v4, Prisma, Vitest, Playwright, CI
+✅ Phase 2a Auth Foundations — schema, session, RBAC, audit log, middleware
+✅ Phase 2b LIFF + LINE callback — lib/line.ts, /api/auth/line/callback, LiffSignInButton
+✅ Phase 2c Email OTP — lib/crypto (AES-GCM + HMAC), email OTP, EnrolEmailForm
+✅ Phase 2d TOTP Enrol — lib/totp (RFC 6238), QR generation, EnrolTotpForm
+✅ Phase 2e Device Re-verify — lastTotpStep replay guard, new-device check, ReverifyTotpForm
+✅ Phase 3  App Shell — AppShell, AppHeader, BottomNav, NavRail, useTabStore, 7 stub views
+✅ Phase 4  HomeView — ProfileBanner, HeroCarousel, QuickServicesGrid, SmartInsightsRow, NewsEventTabs
+
+🔜 Phase 5  ClassScheduleView — DaySwitcher, SemesterPill, ClassCard, schedule fixtures + API stub
+🔜 Phase 6  HealthView — WeekCalendarStrip, StepsCard (SVG donut), WaterLogger, CaloriesCard, ActivityLog
+🔜 Phase 7  ActivityView — EventCard, AttendeesStack, CategoryScroll, FAB, GroupsTab
+🔜 Phase 8  Service + Grades + Me — ServiceLink, GradeCard, MeView avatar, semester lock 423
+🔜 Phase 9  LINE Push + Cron — webhook, narrowcast, Vercel Cron roster reminder
+🔜 Phase 10 Hardening — PDPA export, audit log UI, pen-test, Lighthouse budget, bilingual HTML email
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+11. DESIGN PRINCIPLES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Mobile-first, LIFF-aware — 100dvh, safe-area insets, no fixed 390px iPhone frame around production UI
+2. Thai-first — all labels default Thai; EN fallback via next-intl
+3. Dark hero cards — slate-900 backgrounds with amber accent glow for announcement/hero areas
+4. Soft light cards — white bg, border-slate-100, shadow-sm for data/content cards
+5. Amber = active/selected — nav items, progress bars, dot indicators, CTA buttons
+6. Emerald = enrol/trust — auth CTAs, session-minted states
+7. Consistent test IDs — every interactive element carries data-testid matching predecessor
+8. No localStorage — httpOnly cookies only (LINE webview evicts localStorage)
+9. Accessibility — role="tab" aria-selected, aria-label on icon buttons, role="alert" for toasts
+10. Progressive — Phase 3-8 stub views = immediate deploy; content fills per phase without regression
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+12. DATA NOTES (for mock/prototype designers)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Sample cadet persona:
+  Name:    Narathip Chetjai (ณรธิป เชษฐ์ไจ)
+  ID:      CDT-2568-001
+  Year:    3
+  Company: กองร้อย ก
+  Role:    CADET
+  GPA:     3.42 | GPAX: 3.35
+
+Sample semester:
+  Code:    2/2568 (2025–2026 academic year, semester 2)
+  Locked:  false (past = locked)
+
+Sample class (8:00–9:50):
+  Course:  CS201 | วิทยาการคอมพิวเตอร์ประยุกต์
+  Room:    อาคาร 3 ห้อง 301
+  Type:    Core (slate-900 accent)
+  Credits: 3
+
+Sample PFT score: 87/100
+
+================================================================================
+END OF DESIGN BRIEF
+================================================================================
