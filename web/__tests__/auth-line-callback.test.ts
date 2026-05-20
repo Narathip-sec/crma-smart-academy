@@ -20,7 +20,8 @@ function fakeUser(state: UserState) {
   return {
     id: 'user_1',
     cadetId: 'CDT-001',
-    email: 'cadet@crma.ac.th',
+    emailHash: 'pre-hashed-placeholder',
+    emailCiphertext: state === 'new' ? null : 'pre-encrypted-email',
     emailVerified: state === 'new' ? null : new Date(),
     lineUserId: PROFILE.lineUserId,
     displayName: PROFILE.displayName,
@@ -68,6 +69,9 @@ function postBody(body: unknown) {
 
 beforeEach(() => {
   process.env.LINE_CHANNEL_ID = '1234567890'
+  // Crypto envelope keys for the placeholder emailHash computation.
+  process.env.HMAC_KEY = 'IBshHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs'
+  process.env.ENCRYPTION_KEY = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8'
 })
 
 describe('POST /api/auth/line/callback — input validation', () => {

@@ -5,6 +5,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
 import { audit as defaultAudit } from '@/lib/audit'
+import { hmacEmail, normaliseEmail } from '@/lib/crypto'
 import { type LineProfile, verifyLineIdToken as defaultVerify } from '@/lib/line'
 import { prisma as defaultPrisma } from '@/lib/prisma'
 import {
@@ -97,14 +98,17 @@ export function createLineCallbackHandler(deps: CallbackDeps) {
       return badJson(401, { error: 'invalid_token' })
     }
 
+    // Compute the placeholder emailHash for new users. Phase 2c verify
+    // overwrites it with the verified institutional email hash + ciphertext.
+    const placeholderEmail = normaliseEmail(`pending:${profile.lineUserId}@crma.ac.th`)
+    const placeholderEmailHash = await hmacEmail(placeholderEmail)
+
     // Upsert user keyed by lineUserId.
     const user = await deps.prisma.user.upsert({
       where: { lineUserId: profile.lineUserId },
-      // Create path: cadetId + email are placeholders that Phase 2c
-      // will overwrite during email enrolment.
       create: {
         cadetId: `pending:${profile.lineUserId}`,
-        email: `pending:${profile.lineUserId}@crma.ac.th`,
+        emailHash: placeholderEmailHash,
         lineUserId: profile.lineUserId,
         displayName: profile.displayName,
         avatarUrl: profile.picture ?? null,
@@ -141,12 +145,13 @@ export function createLineCallbackHandler(deps: CallbackDeps) {
       return NextResponse.json({ status: 'needs_totp' })
     }
 
-    // Fully enroled → mint session.
+    // Fully enroled → mint session. Email is not part of the JWT (see
+    // lib/session.ts SessionPayload comment); routes look it up + decrypt
+    // from user.emailCiphertext when needed.
     const sessionPayload = {
       sub: user.id,
       role: user.role,
       cadetId: user.cadetId,
-      email: user.email,
       deviceFp: body.deviceFp,
     }
     const access = await signAccessToken(sessionPayload)

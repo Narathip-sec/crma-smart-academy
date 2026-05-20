@@ -15,27 +15,34 @@ datasource db {
 // =========================
 
 /// Cadet, instructor, officer, or admin.
-/// `email` must end with @crma.ac.th — regex enforced at app layer in Phase 2c
-/// when email OTP wiring lands; column stays plain text until pgcrypto helper
-/// (lib/crypto.ts) is wired in 2c.
+/// Phase 2c splits the email column into two:
+///   - emailHash: HMAC-SHA-256(normalisedEmail) using HMAC_KEY env.
+///     Unique-indexed so we can look up by email without storing
+///     plaintext. Deterministic per key.
+///   - emailCiphertext: AES-256-GCM envelope of the verified email
+///     using ENCRYPTION_KEY. Nullable until Phase 2c verify completes.
+/// Both columns are managed by `lib/crypto.ts`. Pre-verify a user
+/// row carries a placeholder hash derived from the lineUserId.
 model User {
-  id            String    @id @default(cuid())
-  cadetId       String    @unique
-  email         String    @unique
-  emailVerified DateTime?
-  lineUserId    String?   @unique
-  displayName   String
-  avatarUrl     String?
-  role          Role      @default(CADET)
-  company       String?
-  year          Int?
+  id              String    @id @default(cuid())
+  cadetId         String    @unique
+  emailHash       String    @unique
+  emailCiphertext String?
+  emailVerified   DateTime?
+  lineUserId      String?   @unique
+  displayName     String
+  avatarUrl       String?
+  role            Role      @default(CADET)
+  company         String?
+  year            Int?
   /// Encrypted at app layer when TOTP enrols (Phase 2d). Nullable until enrolled.
-  totpSecret    String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  totpSecret      String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   refreshTokens RefreshToken[]
   auditLogs     AuditLog[]
+  emailOtps     EmailOtp[]
 
   @@index([role])
 }
@@ -87,4 +94,23 @@ enum AuditResult {
   ALLOW
   DENY
   ERROR
+}
+
+/// 6-digit numeric OTP issued for institutional email verification.
+/// codeHash = sha256(code); the plaintext code is never persisted.
+/// emailHash binds the OTP to the specific email the cadet entered
+/// so a re-request with a different email starts a new row.
+model EmailOtp {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  codeHash   String
+  emailHash  String
+  expiresAt  DateTime
+  attempts   Int       @default(0)
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId, createdAt])
+  @@index([emailHash, createdAt])
 }

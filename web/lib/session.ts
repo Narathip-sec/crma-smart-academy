@@ -18,9 +18,14 @@ export type SessionPayload = {
   sub: string
   role: Role
   cadetId: string
-  email: string
   deviceFp: string
 }
+
+// Note: email is intentionally absent from the session JWT. The email
+// lives encrypted in User.emailCiphertext (Phase 2c); routes that need
+// the plaintext look it up + decrypt via lib/crypto from the user row
+// fetched by `sub`. Keeping email out of the JWT shrinks the cookie
+// payload and avoids leaking PII through Set-Cookie logs.
 
 const ISSUER = 'crma-smart-academy'
 const ACCESS_AUDIENCE = 'crma-access'
@@ -46,7 +51,6 @@ async function sign(
   return new SignJWT({
     role: payload.role,
     cadetId: payload.cadetId,
-    email: payload.email,
     deviceFp: payload.deviceFp,
   })
     .setProtectedHeader({ alg: 'HS256' })
@@ -68,13 +72,11 @@ async function verify(token: string, audience: string): Promise<SessionPayload> 
   if (typeof payload.sub !== 'string') throw new Error('invalid sub')
   if (typeof payload.role !== 'string') throw new Error('invalid role')
   if (typeof payload.cadetId !== 'string') throw new Error('invalid cadetId')
-  if (typeof payload.email !== 'string') throw new Error('invalid email')
   if (typeof payload.deviceFp !== 'string') throw new Error('invalid deviceFp')
   return {
     sub: payload.sub,
     role: payload.role as Role,
     cadetId: payload.cadetId,
-    email: payload.email,
     deviceFp: payload.deviceFp,
   }
 }

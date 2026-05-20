@@ -20,7 +20,6 @@ const sample: SessionPayload = {
   sub: 'user_abc123',
   role: 'CADET',
   cadetId: 'CDT-2568-001',
-  email: 'cadet@crma.ac.th',
   deviceFp: 'devfp_xyz789',
 }
 
@@ -31,7 +30,6 @@ describe('session — access token round-trip', () => {
     expect(verified.sub).toBe(sample.sub)
     expect(verified.role).toBe(sample.role)
     expect(verified.cadetId).toBe(sample.cadetId)
-    expect(verified.email).toBe(sample.email)
     expect(verified.deviceFp).toBe(sample.deviceFp)
   })
 

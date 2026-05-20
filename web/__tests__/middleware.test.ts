@@ -15,7 +15,6 @@ const sample: SessionPayload = {
   sub: 'user_abc',
   role: 'CADET',
   cadetId: 'CDT-001',
-  email: 'cadet@crma.ac.th',
   deviceFp: 'devfp',
 }
 
