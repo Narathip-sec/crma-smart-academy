@@ -3,7 +3,8 @@ import { expect, test } from 'vitest'
 
 import HomeView from '@/app/(app)/views/HomeView'
 
-test('HomeView stub renders', () => {
+test('HomeView renders home root + profile section', () => {
   render(<HomeView />)
-  expect(screen.getByTestId('view-home')).toBeInTheDocument()
+  expect(screen.getByTestId('home.root')).toBeInTheDocument()
+  expect(screen.getByTestId('home.section.profile')).toBeInTheDocument()
 })
