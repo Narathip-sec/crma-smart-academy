@@ -1,10 +1,11 @@
 # Phase 2c — Email OTP + Crypto Envelope
 
-> **Status:** DRAFT — pending user approval before execution.
-> **Loop position:** brainstorming ✅ → **writing-plans (this doc)** → TDD → cross-AI review → commit
-> **Date:** 2026-05-19
+> **Status:** ✅ COMPLETE 2026-05-20.
+> **Loop position:** brainstorming ✅ → writing-plans ✅ → TDD ✅ → cross-AI review (Codex auditor) ✅ → commit ✅
+> **Date:** 2026-05-19 → 2026-05-20
 > **Inputs:** Phase 2a chassis, Phase 2b LINE callback, CLAUDE.md hard constraint ("PDPA encryption for `User.email`"), user decisions 2026-05-19.
-> **DoD:** `pnpm typecheck` clean, `pnpm lint` clean, ≥ 20 new unit tests green, `pnpm build` green, Playwright chassis still green.
+> **DoD:** `pnpm typecheck` clean ✅ · `pnpm lint` clean ✅ · 123 unit tests green (up from 73) ✅ · e2e chassis green ✅.
+> **Deviation note:** plan §2 omitted `EmailOtp.emailCiphertext`; added during step 8 so `/verify` can copy the ciphertext to the `User` row without re-prompting for the address. See commit `b3fb3dc`.
 
 ---
 

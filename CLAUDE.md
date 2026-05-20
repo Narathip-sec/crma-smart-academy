@@ -2,16 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Repo state (2026-05-19)
-
-Synced by Codex at 2026-05-19 17:10 +07:00 after Claude Code hit a rate limit.
+## Repo state (2026-05-20)
 
 Current state:
 
-- Phase 1 Bootstrap is complete and committed through `docs(phase1): mark Phase 1 complete + sync stack lock`.
-- `web/` exists with Next.js 16, React 19, TypeScript strict mode, Tailwind v4, Prisma 7, Vitest, Playwright, Husky, lint-staged, and GitHub Actions CI.
-- Phase 2a Auth Foundations has started. `web/prisma/schema.prisma` already contains the auth/audit subset: `User`, `Role`, `RefreshToken`, `AuditLog`, and `AuditResult`.
-- Phase 2a is not complete yet. Missing work includes Prisma adapter package/runtime wire-up, `lib/session.ts`, `lib/rbac.ts`, `lib/audit.ts`, `middleware.ts`, login shell, CI Postgres migration flow, tests, and bilingual README completion notes.
+- Phase 1 Bootstrap complete (commit `73de1f7`).
+- Phase 2a Auth Foundations complete (commit `814d3ca`).
+- Phase 2b LIFF + LINE callback complete (commit `d1594a1`).
+- Phase 2c Email OTP + crypto envelope complete (commit `220b1dd`). 123 unit tests green; 4 Playwright chassis specs.
+- Phase 2d TOTP enrolment is next: encrypt `User.totpSecret` via `lib/crypto.ts`, `/enrol/totp` page, device fingerprint gate, finish session minting from the verify route.
 - `PROGRESS.html` is the standalone project progression dashboard. Open it directly in a browser to see the current phase map without starting the app.
 
 Tracked source artifacts:
