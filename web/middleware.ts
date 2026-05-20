@@ -21,6 +21,7 @@ const PUBLIC_PREFIXES = [
   '/api/auth',
   '/api/line',
   '/api/cron',
+  '/api/debug', // TEMP: Phase 10b env-propagation diagnostic; remove after fix
   '/login',
   '/public',
 ]
