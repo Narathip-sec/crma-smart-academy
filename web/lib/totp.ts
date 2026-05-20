@@ -44,3 +44,40 @@ export function verifyCode(opts: { secret: string; code: string; account?: strin
   const delta = totp.validate({ token: opts.code, window: TOTP_WINDOW_STEPS })
   return delta !== null
 }
+
+// Floor of (timestamp / period) — the canonical TOTP step counter from
+// RFC 6238 §4.2. BigInt because the quotient overflows Int32 in 2038.
+export function currentStep(timestampMs?: number): bigint {
+  const ms = timestampMs ?? Date.now()
+  return BigInt(Math.floor(ms / (TOTP_PERIOD_SECONDS * 1000)))
+}
+
+export type ConsumeResult =
+  | { ok: true; step: bigint }
+  | { ok: false; reason: 'invalid_code' | 'replay' }
+
+// Replay-aware verify. Returns the consumed step so the caller can
+// persist it to User.lastTotpStep. A code that resolves to a step
+// less than or equal to `lastStep` is rejected with 'replay'.
+export function consumeCode(opts: {
+  secret: string
+  code: string
+  lastStep: bigint | null
+  timestampMs?: number
+  account?: string
+}): ConsumeResult {
+  if (!/^\d{6}$/.test(opts.code)) return { ok: false, reason: 'invalid_code' }
+  const totp = totpFor(opts.secret, opts.account ?? 'verify')
+  const ts = opts.timestampMs ?? Date.now()
+  const delta = totp.validate({
+    token: opts.code,
+    window: TOTP_WINDOW_STEPS,
+    timestamp: ts,
+  })
+  if (delta === null) return { ok: false, reason: 'invalid_code' }
+  const step = currentStep(ts) + BigInt(delta)
+  if (opts.lastStep !== null && step <= opts.lastStep) {
+    return { ok: false, reason: 'replay' }
+  }
+  return { ok: true, step }
+}

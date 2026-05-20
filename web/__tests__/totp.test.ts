@@ -5,6 +5,8 @@ import { describe, expect, test } from 'vitest'
 import {
   buildOtpAuthUri,
   buildQrDataUrl,
+  consumeCode,
+  currentStep,
   generateSecret,
   TOTP_ALGORITHM,
   TOTP_DIGITS,
@@ -110,6 +112,84 @@ describe('lib/totp — verifyCode', () => {
     const fiveStepsAgo = Date.now() - 5 * TOTP_PERIOD_SECONDS * 1000
     const code = totp.generate({ timestamp: fiveStepsAgo })
     expect(verifyCode({ secret, code })).toBe(false)
+  })
+})
+
+describe('lib/totp — currentStep', () => {
+  test('floor(ts / 30_000) as bigint', () => {
+    expect(currentStep(0)).toBe(0n)
+    expect(currentStep(29_999)).toBe(0n)
+    expect(currentStep(30_000)).toBe(1n)
+    expect(currentStep(60_000)).toBe(2n)
+  })
+
+  test('default arg uses Date.now()', () => {
+    const before = BigInt(Math.floor(Date.now() / 30_000))
+    const s = currentStep()
+    expect(s >= before).toBe(true)
+  })
+})
+
+describe('lib/totp — consumeCode', () => {
+  function codeAt(secret: string, timestamp: number): string {
+    const totp = new TOTP({
+      issuer: TOTP_ISSUER,
+      label: 'CDT-001',
+      algorithm: TOTP_ALGORITHM,
+      digits: TOTP_DIGITS,
+      period: TOTP_PERIOD_SECONDS,
+      secret: Secret.fromBase32(secret),
+    })
+    return totp.generate({ timestamp })
+  }
+
+  test('happy path returns the consumed step', () => {
+    const secret = generateSecret()
+    const ts = 1_800_000_000_000
+    const code = codeAt(secret, ts)
+    const result = consumeCode({ secret, code, lastStep: null, timestampMs: ts })
+    expect(result.ok).toBe(true)
+    if (result.ok) expect(result.step).toBe(BigInt(Math.floor(ts / 30_000)))
+  })
+
+  test('wrong code → invalid_code', () => {
+    const secret = generateSecret()
+    expect(consumeCode({ secret, code: '000000', lastStep: null }).ok).toBe(false)
+  })
+
+  test('malformed code (non-digit / wrong length) → invalid_code', () => {
+    const secret = generateSecret()
+    const r = consumeCode({ secret, code: 'abc', lastStep: null })
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.reason).toBe('invalid_code')
+  })
+
+  test('replay: lastStep equals consumed step → replay', () => {
+    const secret = generateSecret()
+    const ts = 1_800_000_000_000
+    const code = codeAt(secret, ts)
+    const usedStep = BigInt(Math.floor(ts / 30_000))
+    const r = consumeCode({ secret, code, lastStep: usedStep, timestampMs: ts })
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.reason).toBe('replay')
+  })
+
+  test('replay: lastStep > consumed step → replay', () => {
+    const secret = generateSecret()
+    const ts = 1_800_000_000_000
+    const code = codeAt(secret, ts)
+    const r = consumeCode({ secret, code, lastStep: 999_999_999_999n, timestampMs: ts })
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.reason).toBe('replay')
+  })
+
+  test('lastStep = step - 1 → accept (first valid code after previous)', () => {
+    const secret = generateSecret()
+    const ts = 1_800_000_000_000
+    const code = codeAt(secret, ts)
+    const usedStep = BigInt(Math.floor(ts / 30_000))
+    const r = consumeCode({ secret, code, lastStep: usedStep - 1n, timestampMs: ts })
+    expect(r.ok).toBe(true)
   })
 })
 
