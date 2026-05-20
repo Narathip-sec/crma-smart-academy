@@ -17,7 +17,8 @@ Current state:
 - Phase 5 ClassScheduleView complete (commit `6df164f`). 207 unit tests. DaySwitcher/SemesterPill/ClassCard wired to useScheduleStore. `DESIGN_BRIEF.txt` exported at repo root (12-section brief for Claude Design / Figma AI / Gamma).
 - Phase 6 HealthView complete. 230 unit tests. `fixtures/health.ts` (7-day HealthDay · ActivityType/ACTIVITY_LABEL) · `useHealthStore` (selectedDate · waterCups · add/remove/setSelectedDate resets cups) · `WeekCalendarStrip` (7-circle SVG step-progress rings) · `StepsCard` (donut SVG) · `WaterLogger` (cup icons · +/−) · `CaloriesCard` (consumed/burned/goal/net) · `ActivityLog` (per-activity icon · empty state).
 - Phase 7 ActivityView complete. 249 unit tests. `fixtures/activity.ts` (ActivityEvent · Announcement · EventCategory/AnnouncementLevel labels+colors) · `useActivityStore` (activeTab · rsvpSet Set · toggleRsvp · setTab) · `TopTabs` · `AttendeesStack` (3-avatar overlap · overflow count) · `EventCard` (category badge · RSVP aria-pressed toggle) · `AnnouncementCard` (level badge) · ActivityView assembles all.
-- Phase 8 next: Service + Grades + Me — external links via `liff.openWindow` · Grades semester-lock enforced · Me profile page.
+- Phase 8 Service+Grades+Me complete. 267 unit tests. `lib/liffOpen.ts` (LIFF isInClient / window.open fallback) · `fixtures/service.ts` (6 ServiceItem with external URLs) · `ServiceGrid` (2-col grid, onPress(url)) · `fixtures/grades.ts` (SemesterGrade, CourseGrade, GRADE_COLOR, isLocked gate) · `SemesterSelector` + `CourseGradeRow` + `LockedNotice` · `ProfileCard` + `StatsRow` + `SettingsSection` · ServiceView / GradesView (useState selectedId) / MeView all wired.
+- Phase 9 next: LINE Messaging push + Vercel Cron.
 - `PROGRESS.html` is the standalone project progression dashboard. Open it directly in a browser to see the current phase map without starting the app.
 
 Tracked source artifacts:
