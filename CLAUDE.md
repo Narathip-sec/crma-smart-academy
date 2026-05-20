@@ -15,7 +15,8 @@ Current state:
 - Phase 3 app shell complete (commit `5681c9a`). 180 unit tests green; 8 Playwright chassis specs. `useTabStore` + AppShell + AppHeader + BottomNav + NavRail + 7 view stubs + auth-guard layout. Build passes 14 routes.
 - Phase 4 HomeView complete (commit `750e475`). 193 unit tests green. ProfileBanner / HeroCarousel / QuickServicesGrid / SmartInsightsRow / NewsEventTabs ported 1:1 from predecessor using lucide-react icons + hardcoded Thai strings (next-intl swap in later phase).
 - Phase 5 ClassScheduleView complete (commit `6df164f`). 207 unit tests. DaySwitcher/SemesterPill/ClassCard wired to useScheduleStore. `DESIGN_BRIEF.txt` exported at repo root (12-section brief for Claude Design / Figma AI / Gamma).
-- Phase 6 next: HealthView — WeekCalendarStrip (7-circle SVG) · StepsCard (donut SVG) · WaterLogger · CaloriesCard · ActivityLog. See predecessor `fixtures/health.ts` and components.
+- Phase 6 HealthView complete. 230 unit tests. `fixtures/health.ts` (7-day HealthDay · ActivityType/ACTIVITY_LABEL) · `useHealthStore` (selectedDate · waterCups · add/remove/setSelectedDate resets cups) · `WeekCalendarStrip` (7-circle SVG step-progress rings) · `StepsCard` (donut SVG) · `WaterLogger` (cup icons · +/−) · `CaloriesCard` (consumed/burned/goal/net) · `ActivityLog` (per-activity icon · empty state).
+- Phase 7 next: ActivityView — TopTabs · EventCard · RSVP write · AttendeesStack.
 - `PROGRESS.html` is the standalone project progression dashboard. Open it directly in a browser to see the current phase map without starting the app.
 
 Tracked source artifacts:
