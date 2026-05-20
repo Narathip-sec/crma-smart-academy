@@ -23,11 +23,14 @@ type FakeUser = {
   role: 'CADET'
   totpSecret: string | null
   totpVerified: Date | null
+  lastTotpStep: bigint | null
 }
+
+type ConsumeResult = { ok: true; step: bigint } | { ok: false; reason: 'invalid_code' | 'replay' }
 
 function setup(opts?: {
   user?: Partial<FakeUser> | null
-  verifyCodeResult?: boolean
+  consumeResult?: ConsumeResult
   decryptThrows?: boolean
 }) {
   const audit = vi.fn().mockResolvedValue(undefined)
@@ -40,6 +43,7 @@ function setup(opts?: {
           role: 'CADET',
           totpSecret: 'ct:JBSWY3DPEHPK3PXP',
           totpVerified: null,
+          lastTotpStep: null,
           ...opts?.user,
         }
 
@@ -60,7 +64,7 @@ function setup(opts?: {
     if (opts?.decryptThrows) throw new Error('boom')
     return ct.replace(/^ct:/, '')
   })
-  const verifyCode = vi.fn(() => opts?.verifyCodeResult ?? true)
+  const consumeCode = vi.fn((): ConsumeResult => opts?.consumeResult ?? { ok: true, step: 1n })
 
   const handler = createTotpVerifyHandler({
     prisma: prisma as never,
@@ -69,10 +73,10 @@ function setup(opts?: {
       return ENROL
     }) as never,
     decrypt: decrypt as never,
-    verifyCode: verifyCode as never,
+    consumeCode: consumeCode as never,
     audit,
   })
-  return { handler, prisma, audit, decrypt, verifyCode, baseUser }
+  return { handler, prisma, audit, decrypt, consumeCode, baseUser }
 }
 
 async function postWithCookie(body: unknown, cookie?: string) {
@@ -143,9 +147,11 @@ describe('POST /api/auth/totp/enrol/verify — enrol state', () => {
 })
 
 describe('POST /api/auth/totp/enrol/verify — code outcomes', () => {
-  test('verifyCode returns false → 401 invalid_code (no totpVerified stamp, no cookies)', async () => {
+  test('consumeCode invalid_code → 401 (no totpVerified, no cookies)', async () => {
     const token = await signEnrolToken(ENROL)
-    const { handler, prisma, baseUser } = setup({ verifyCodeResult: false })
+    const { handler, prisma, baseUser } = setup({
+      consumeResult: { ok: false, reason: 'invalid_code' },
+    })
     const res = await handler(await postWithCookie({ code: '000000' }, token))
     expect(res.status).toBe(401)
     expect((await res.json()).error).toBe('invalid_code')
@@ -153,6 +159,17 @@ describe('POST /api/auth/totp/enrol/verify — code outcomes', () => {
     expect(prisma.refreshToken.create).not.toHaveBeenCalled()
     expect(baseUser.totpVerified).toBeNull()
     expect(res.headers.get('set-cookie')).toBeFalsy()
+  })
+
+  test('consumeCode replay → 409 replay (no state change)', async () => {
+    const token = await signEnrolToken(ENROL)
+    const { handler, prisma } = setup({
+      consumeResult: { ok: false, reason: 'replay' },
+    })
+    const res = await handler(await postWithCookie({ code: '123456' }, token))
+    expect(res.status).toBe(409)
+    expect((await res.json()).error).toBe('replay')
+    expect(prisma.user.update).not.toHaveBeenCalled()
   })
 
   test('decrypt throws → 500 decrypt_failed + audit ERROR', async () => {
@@ -168,15 +185,23 @@ describe('POST /api/auth/totp/enrol/verify — code outcomes', () => {
 describe('POST /api/auth/totp/enrol/verify — happy path', () => {
   test('valid code → 200 ok + totpVerified stamped + cookies minted + enrol cleared', async () => {
     const token = await signEnrolToken(ENROL)
-    const { handler, prisma, audit, decrypt, verifyCode, baseUser } = setup()
+    const { handler, prisma, audit, decrypt, consumeCode, baseUser } = setup({
+      consumeResult: { ok: true, step: 42n },
+    })
     const res = await handler(await postWithCookie({ code: '123456' }, token))
     expect(res.status).toBe(200)
     expect((await res.json()).status).toBe('ok')
 
     expect(decrypt).toHaveBeenCalledTimes(1)
-    expect(verifyCode).toHaveBeenCalledTimes(1)
+    expect(consumeCode).toHaveBeenCalledTimes(1)
     expect(prisma.user.update).toHaveBeenCalledTimes(1)
+    const upd = prisma.user.update.mock.calls[0]?.[0] as {
+      data: { totpVerified: Date; lastTotpStep: bigint }
+    }
+    expect(upd.data.totpVerified).toBeInstanceOf(Date)
+    expect(upd.data.lastTotpStep).toBe(42n)
     expect(baseUser.totpVerified).toBeInstanceOf(Date)
+    expect(baseUser.lastTotpStep).toBe(42n)
 
     expect(prisma.refreshToken.create).toHaveBeenCalledTimes(1)
     const rt = prisma.refreshToken.create.mock.calls[0]?.[0] as {

@@ -19,7 +19,7 @@ import {
   signRefreshToken,
   verifyEnrolToken as defaultVerifyEnrolToken,
 } from '@/lib/session'
-import { verifyCode as defaultVerifyCode } from '@/lib/totp'
+import { consumeCode as defaultConsumeCode } from '@/lib/totp'
 
 import type { PrismaClient } from '@prisma/client'
 
@@ -27,7 +27,7 @@ export type TotpVerifyDeps = {
   prisma: Pick<PrismaClient, 'user' | 'refreshToken'>
   verifyEnrolToken: (token: string) => Promise<EnrolPayload>
   decrypt: typeof defaultDecrypt
-  verifyCode: typeof defaultVerifyCode
+  consumeCode: typeof defaultConsumeCode
   audit: typeof defaultAudit
 }
 
@@ -131,7 +131,13 @@ export function createTotpVerifyHandler(deps: TotpVerifyDeps) {
       return json(500, { error: 'decrypt_failed' })
     }
 
-    if (!deps.verifyCode({ secret, code: body.code })) {
+    const result = deps.consumeCode({
+      secret,
+      code: body.code,
+      lastStep: user.lastTotpStep ?? null,
+    })
+    if (!result.ok) {
+      const status = result.reason === 'replay' ? 409 : 401
       await deps.audit({
         userId: user.id,
         action: 'AUTH:totp_enrol_verify',
@@ -139,14 +145,14 @@ export function createTotpVerifyHandler(deps: TotpVerifyDeps) {
         result: 'DENY',
         ip,
         userAgent,
-        metadata: { reason: 'invalid_code' },
+        metadata: { reason: result.reason },
       })
-      return json(401, { error: 'invalid_code' })
+      return json(status, { error: result.reason })
     }
 
     await deps.prisma.user.update({
       where: { id: user.id },
-      data: { totpVerified: new Date() },
+      data: { totpVerified: new Date(), lastTotpStep: result.step },
     })
 
     const sessionPayload = {
@@ -188,6 +194,6 @@ export const defaultTotpVerifyHandler = createTotpVerifyHandler({
   prisma: defaultPrisma,
   verifyEnrolToken: defaultVerifyEnrolToken,
   decrypt: defaultDecrypt,
-  verifyCode: defaultVerifyCode,
+  consumeCode: defaultConsumeCode,
   audit: defaultAudit,
 })
