@@ -13,7 +13,8 @@ Current state:
 - Phase 2d TOTP enrolment complete (commit `14e200f`). 148 unit tests green; 5 Playwright chassis specs. Cadets can complete LINE → email → TOTP end-to-end against the dev/CI fallbacks.
 - Phase 2e device re-verify complete (commit `a3b3db8`). 170 unit tests green; 6 Playwright chassis specs.
 - Phase 3 app shell complete (commit `5681c9a`). 180 unit tests green; 8 Playwright chassis specs. `useTabStore` + AppShell + AppHeader + BottomNav + NavRail + 7 view stubs + auth-guard layout. Build passes 14 routes.
-- Phase 4 next: HomeView — 6 components (ProfileBanner · HeroCarousel · QuickServicesGrid · SmartInsightsRow · NewsEventTabs) + API stub + fixtures. See `MIGRATION_LIFF.md §4` component map.
+- Phase 4 HomeView complete (commit `750e475`). 193 unit tests green. ProfileBanner / HeroCarousel / QuickServicesGrid / SmartInsightsRow / NewsEventTabs ported 1:1 from predecessor using lucide-react icons + hardcoded Thai strings (next-intl swap in later phase).
+- Phase 5 next: ClassScheduleView — DaySwitcher · SemesterPill · ClassCard + schedule fixtures + API route stub. See `MIGRATION_LIFF.md §4` component map and predecessor `fixtures/schedule.ts`.
 - `PROGRESS.html` is the standalone project progression dashboard. Open it directly in a browser to see the current phase map without starting the app.
 
 Tracked source artifacts:
