@@ -10,7 +10,8 @@ Current state:
 - Phase 2a Auth Foundations complete (commit `814d3ca`).
 - Phase 2b LIFF + LINE callback complete (commit `d1594a1`).
 - Phase 2c Email OTP + crypto envelope complete (commit `220b1dd`). 123 unit tests green; 4 Playwright chassis specs.
-- Phase 2d TOTP enrolment is next: encrypt `User.totpSecret` via `lib/crypto.ts`, `/enrol/totp` page, device fingerprint gate, finish session minting from the verify route.
+- Phase 2d TOTP enrolment complete (commit `14e200f`). 148 unit tests green; 5 Playwright chassis specs. Cadets can complete LINE → email → TOTP end-to-end against the dev/CI fallbacks.
+- Phase 2e next: device-fingerprint re-verify gate (block stale-device sessions, force TOTP re-prompt on new `deviceFp`, persist last-used TOTP step per device to block replay).
 - `PROGRESS.html` is the standalone project progression dashboard. Open it directly in a browser to see the current phase map without starting the app.
 
 Tracked source artifacts:

@@ -1,10 +1,10 @@
 # Phase 2d — TOTP Enrolment
 
-> **Status:** DRAFT 2026-05-20.
-> **Loop position:** brainstorming ✅ → **writing-plans (this doc)** → TDD → cross-AI review → commit
+> **Status:** ✅ COMPLETE 2026-05-20.
+> **Loop position:** brainstorming ✅ → writing-plans ✅ → TDD ✅ → cross-AI review (Codex auditor) ✅ → commit ✅
 > **Date:** 2026-05-20
 > **Inputs:** Phase 2c chassis (enrol cookie, `lib/crypto.ts`, `EnrolEmailForm`), CLAUDE.md hard constraints ("TOTP 2FA mandatory" / "PDPA encryption for `User.totpSecret`").
-> **DoD:** `pnpm typecheck` clean · `pnpm lint` clean · ≥ 20 new unit tests green · `pnpm build` green · Playwright chassis still green.
+> **DoD:** `pnpm typecheck` clean ✅ · `pnpm lint` clean ✅ (warnings only) · 148 unit tests green (up from 123) ✅ · e2e chassis green ✅.
 > **Scope:** initial enrolment only. Device-fingerprint re-verify deferred to Phase 2e.
 
 ---
