@@ -4,9 +4,12 @@ import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 import {
   ACCESS_COOKIE,
+  ENROL_COOKIE,
   REFRESH_COOKIE,
   signAccessToken,
+  signEnrolToken,
   signRefreshToken,
+  type EnrolPayload,
   type SessionPayload,
 } from '@/lib/session'
 import { middleware } from '@/middleware'
@@ -124,6 +127,38 @@ describe('middleware — refresh flow', () => {
       }),
     )
     expect(res.status).toBe(401)
+  })
+})
+
+describe('middleware — enrol cookie', () => {
+  const enrolSample: EnrolPayload = {
+    sub: 'user_enrol',
+    lineUserId: 'U_line',
+    deviceFp: 'devfp',
+  }
+
+  test('valid enrol cookie on /enrol/email passes through (no x-user-* headers)', async () => {
+    const token = await signEnrolToken(enrolSample)
+    const res = await middleware(build('/enrol/email', { [ENROL_COOKIE]: token }))
+    expect(res.headers.get('x-middleware-next')).toBe('1')
+    expect(res.headers.get('x-user-id')).toBeNull()
+  })
+
+  test('no enrol cookie on /enrol/email → redirect to /login', async () => {
+    const res = await middleware(build('/enrol/email'))
+    expect(res.status).toBe(307)
+    expect(res.headers.get('location')).toContain('/login')
+  })
+
+  test('access cookie alone does NOT satisfy /enrol/email (audience guard)', async () => {
+    const access = await signAccessToken(sample)
+    const res = await middleware(build('/enrol/email', { [ACCESS_COOKIE]: access }))
+    expect(res.status).toBe(307)
+  })
+
+  test('invalid enrol cookie on /enrol/email → redirect to /login', async () => {
+    const res = await middleware(build('/enrol/email', { [ENROL_COOKIE]: 'bad.token.here' }))
+    expect(res.status).toBe(307)
   })
 })
 

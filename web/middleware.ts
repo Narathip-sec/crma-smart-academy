@@ -3,17 +3,29 @@ import { NextResponse, type NextRequest } from 'next/server'
 import {
   ACCESS_COOKIE,
   buildAccessCookie,
+  ENROL_COOKIE,
   REFRESH_COOKIE,
   signAccessToken,
   verifyAccessToken,
+  verifyEnrolToken,
   verifyRefreshToken,
   type SessionPayload,
 } from '@/lib/session'
 
 const PUBLIC_PREFIXES = ['/_next', '/favicon.ico', '/api/auth', '/login', '/public']
 
+// Paths that accept the enrol cookie as a pass while a cadet finishes
+// email + TOTP setup. Phase 2c covers /enrol/email; Phase 2d will add
+// /enrol/totp. /api/auth/email/* is already public (under /api/auth)
+// and enforces enrol-cookie inside the route handler.
+const ENROL_PREFIXES = ['/enrol']
+
 function isPublic(pathname: string): boolean {
   return PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))
+}
+
+function isEnrolPath(pathname: string): boolean {
+  return ENROL_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))
 }
 
 function attachUser(res: NextResponse, payload: SessionPayload): NextResponse {
@@ -45,6 +57,22 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
 
   const access = req.cookies.get(ACCESS_COOKIE)?.value
   const refresh = req.cookies.get(REFRESH_COOKIE)?.value
+  const enrol = req.cookies.get(ENROL_COOKIE)?.value
+
+  // Enrol pages accept a valid __Host-crma-enrol cookie. The cookie
+  // itself is single-purpose (aud=crma-enrol) so it cannot leak to
+  // protected /api/* paths under any other code path.
+  if (isEnrolPath(pathname)) {
+    if (enrol) {
+      try {
+        await verifyEnrolToken(enrol)
+        return NextResponse.next()
+      } catch {
+        // Fall through — invalid enrol cookie → redirect to /login.
+      }
+    }
+    return unauthorized(req)
+  }
 
   // Try access token first.
   if (access) {
