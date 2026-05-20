@@ -13,10 +13,11 @@ const PROFILE: LineProfile = {
   picture: 'https://example/p.png',
 }
 
-type UserState = 'new' | 'needs_totp' | 'enrolled' | 'none'
+type UserState = 'new' | 'needs_totp' | 'enrolled' | 'enrolled_known_device' | 'none'
 
 function fakeUser(state: UserState) {
   if (state === 'none') return null
+  const enrolled = state === 'enrolled' || state === 'enrolled_known_device'
   return {
     id: 'user_1',
     cadetId: 'CDT-001',
@@ -29,8 +30,8 @@ function fakeUser(state: UserState) {
     role: 'CADET',
     company: null,
     year: null,
-    totpSecret: state === 'enrolled' ? 'encrypted-secret' : null,
-    totpVerified: state === 'enrolled' ? new Date() : null,
+    totpSecret: enrolled ? 'encrypted-secret' : null,
+    totpVerified: enrolled ? new Date() : null,
     createdAt: new Date(),
     updatedAt: new Date(),
   }
@@ -49,6 +50,17 @@ function setup(state: UserState, opts?: { verifyError?: Error }) {
     },
     refreshToken: {
       create: vi.fn().mockResolvedValue({ id: 'rt_1' }),
+      findFirst: vi.fn().mockResolvedValue(
+        state === 'enrolled_known_device'
+          ? {
+              id: 'rt_existing',
+              userId: 'user_1',
+              deviceFp: 'd',
+              expiresAt: new Date(Date.now() + 86_400_000),
+              revokedAt: null,
+            }
+          : null,
+      ),
     },
   }
 
@@ -139,8 +151,8 @@ describe('POST /api/auth/line/callback — enrolment branches', () => {
     expect(setCookie).not.toContain(`${ACCESS_COOKIE}=`)
   })
 
-  test('fully enroled → 200 ok with cookies + RefreshToken row', async () => {
-    const { handler, prisma } = setup('enrolled')
+  test('fully enroled, known device → 200 ok with cookies + RefreshToken row', async () => {
+    const { handler, prisma } = setup('enrolled_known_device')
     const res = await handler(postBody({ idToken: 'good', deviceFp: 'd' }))
     expect(res.status).toBe(200)
     const body = await res.json()
@@ -154,5 +166,21 @@ describe('POST /api/auth/line/callback — enrolment branches', () => {
     expect(rtArg?.data.deviceFp).toBe('d')
     expect(typeof rtArg?.data.tokenHash).toBe('string')
     expect(rtArg?.data.expiresAt).toBeInstanceOf(Date)
+  })
+
+  test('fully enroled, unknown device → 200 needs_reverify + enrol cookie (no session cookies, no RefreshToken row)', async () => {
+    const { handler, prisma, audit } = setup('enrolled')
+    const res = await handler(postBody({ idToken: 'good', deviceFp: 'd' }))
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.status).toBe('needs_reverify')
+    const setCookie = res.headers.get('set-cookie') ?? ''
+    expect(setCookie).toContain(`${ENROL_COOKIE}=`)
+    expect(setCookie).not.toContain(`${ACCESS_COOKIE}=`)
+    expect(setCookie).not.toContain(`${REFRESH_COOKIE}=`)
+    expect(prisma.refreshToken.create).not.toHaveBeenCalled()
+    expect(audit).toHaveBeenCalledWith(
+      expect.objectContaining({ metadata: { branch: 'needs_reverify' } }),
+    )
   })
 })

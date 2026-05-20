@@ -159,7 +159,35 @@ export function createLineCallbackHandler(deps: CallbackDeps) {
       return res
     }
 
-    // Fully enroled → mint session. Email is not part of the JWT (see
+    // Both gates passed → device-known check (Phase 2e). A device is
+    // "known" when at least one non-expired, non-revoked RefreshToken
+    // row already exists for (userId, deviceFp). Otherwise the cadet
+    // must re-verify TOTP on the new device before we mint cookies.
+    const known = await deps.prisma.refreshToken.findFirst({
+      where: {
+        userId: user.id,
+        deviceFp: body.deviceFp,
+        expiresAt: { gt: new Date() },
+        revokedAt: null,
+      },
+    })
+
+    if (!known) {
+      await deps.audit({
+        userId: user.id,
+        action: 'AUTH:line_callback',
+        resource: `user:${user.id}`,
+        result: 'ALLOW',
+        ip,
+        userAgent,
+        metadata: { branch: 'needs_reverify' },
+      })
+      const res = NextResponse.json({ status: 'needs_reverify' })
+      res.headers.append('set-cookie', buildEnrolCookie(enrolToken))
+      return res
+    }
+
+    // Known device → mint session. Email is not part of the JWT (see
     // lib/session.ts SessionPayload comment); routes look it up + decrypt
     // from user.emailCiphertext when needed.
     const sessionPayload = {
