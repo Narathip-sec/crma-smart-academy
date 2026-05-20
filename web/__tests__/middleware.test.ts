@@ -52,6 +52,16 @@ describe('middleware — public bypass', () => {
     const res = await middleware(build('/login'))
     expect(res.headers.get('x-middleware-next')).toBe('1')
   })
+
+  test('skips /api/line/webhook (HMAC-gated in route)', async () => {
+    const res = await middleware(build('/api/line/webhook'))
+    expect(res.headers.get('x-middleware-next')).toBe('1')
+  })
+
+  test('skips /api/cron/duty-reminder (CRON_SECRET-gated in route)', async () => {
+    const res = await middleware(build('/api/cron/duty-reminder'))
+    expect(res.headers.get('x-middleware-next')).toBe('1')
+  })
 })
 
 describe('middleware — unauthenticated', () => {

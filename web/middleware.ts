@@ -12,7 +12,18 @@ import {
   type SessionPayload,
 } from '@/lib/session'
 
-const PUBLIC_PREFIXES = ['/_next', '/favicon.ico', '/api/auth', '/login', '/public']
+// /api/line/webhook authorises via x-line-signature HMAC; /api/cron/*
+// authorises via Bearer ${CRON_SECRET}. Both gate themselves inside
+// the handler, so they bypass the cookie-based middleware gate.
+const PUBLIC_PREFIXES = [
+  '/_next',
+  '/favicon.ico',
+  '/api/auth',
+  '/api/line',
+  '/api/cron',
+  '/login',
+  '/public',
+]
 
 // Paths that accept the enrol cookie as a pass while a cadet finishes
 // email + TOTP setup or proves a new device. Phase 2c covers /enrol/email,
