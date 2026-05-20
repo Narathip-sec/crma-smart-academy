@@ -100,16 +100,20 @@ enum AuditResult {
 /// codeHash = sha256(code); the plaintext code is never persisted.
 /// emailHash binds the OTP to the specific email the cadet entered
 /// so a re-request with a different email starts a new row.
+/// emailCiphertext = AES-GCM envelope of the plaintext email. /start
+/// computes it once and persists it here so /verify can copy it to
+/// User.emailCiphertext without re-prompting the cadet for the address.
 model EmailOtp {
-  id         String    @id @default(cuid())
-  userId     String
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  codeHash   String
-  emailHash  String
-  expiresAt  DateTime
-  attempts   Int       @default(0)
-  consumedAt DateTime?
-  createdAt  DateTime  @default(now())
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  codeHash        String
+  emailHash       String
+  emailCiphertext String
+  expiresAt       DateTime
+  attempts        Int       @default(0)
+  consumedAt      DateTime?
+  createdAt       DateTime  @default(now())
 
   @@index([userId, createdAt])
   @@index([emailHash, createdAt])

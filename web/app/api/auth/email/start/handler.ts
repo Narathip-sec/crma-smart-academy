@@ -7,7 +7,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
 import { audit as defaultAudit } from '@/lib/audit'
-import { hmacEmail, normaliseEmail } from '@/lib/crypto'
+import { encrypt, hmacEmail, normaliseEmail } from '@/lib/crypto'
 import { sendOtpEmail as defaultSendOtpEmail } from '@/lib/email'
 import { createOtpService } from '@/lib/email-otp'
 import { prisma as defaultPrisma } from '@/lib/prisma'
@@ -136,7 +136,12 @@ export function createEmailStartHandler(deps: EmailStartDeps) {
       return json(429, { error: 'rate_limited', retryAt: gate.retryAt })
     }
 
-    const { code, expiresAt } = await otp.issue({ userId: enrol.sub, emailHash })
+    const emailCiphertext = await encrypt(email)
+    const { code, expiresAt } = await otp.issue({
+      userId: enrol.sub,
+      emailHash,
+      emailCiphertext,
+    })
     const send = await deps.sendOtpEmail({ to: email, code })
     if (!send.ok) {
       await deps.audit({

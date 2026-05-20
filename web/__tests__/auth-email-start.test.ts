@@ -16,6 +16,7 @@ type OtpRow = {
   userId: string
   codeHash: string
   emailHash: string
+  emailCiphertext: string
   expiresAt: Date
   attempts: number
   consumedAt: Date | null
@@ -36,6 +37,7 @@ function setup(opts?: {
       userId: ENROL.sub,
       codeHash: 'h',
       emailHash: 'h',
+      emailCiphertext: 'ct',
       expiresAt: new Date(Date.now() + 600_000),
       attempts: 0,
       consumedAt: null,

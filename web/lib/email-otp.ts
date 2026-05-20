@@ -12,6 +12,7 @@ export type OtpRow = {
   userId: string
   codeHash: string
   emailHash: string
+  emailCiphertext: string
   expiresAt: Date
   attempts: number
   consumedAt: Date | null
@@ -19,7 +20,7 @@ export type OtpRow = {
 }
 
 export type VerifyResult =
-  | { ok: true; emailHash: string }
+  | { ok: true; emailHash: string; emailCiphertext: string }
   | {
       ok: false
       reason: 'expired' | 'mismatch' | 'attempts_exceeded' | 'not_found'
@@ -78,6 +79,7 @@ export function createOtpService(deps: { prisma: EmailOtpPrisma }) {
   async function issue(opts: {
     userId: string
     emailHash: string
+    emailCiphertext: string
   }): Promise<{ code: string; expiresAt: Date }> {
     const code = generateCode()
     const codeHash = await hashCode(code)
@@ -86,6 +88,7 @@ export function createOtpService(deps: { prisma: EmailOtpPrisma }) {
       data: {
         userId: opts.userId,
         emailHash: opts.emailHash,
+        emailCiphertext: opts.emailCiphertext,
         codeHash,
         expiresAt,
         attempts: 0,
@@ -131,7 +134,7 @@ export function createOtpService(deps: { prisma: EmailOtpPrisma }) {
       where: { id: row.id },
       data: { consumedAt: new Date() },
     })
-    return { ok: true, emailHash: row.emailHash }
+    return { ok: true, emailHash: row.emailHash, emailCiphertext: row.emailCiphertext }
   }
 
   async function canSendAgain(opts: { userId: string }): Promise<{ ok: boolean; retryAt?: Date }> {

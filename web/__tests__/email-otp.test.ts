@@ -16,6 +16,7 @@ type OtpRow = {
   userId: string
   codeHash: string
   emailHash: string
+  emailCiphertext: string
   expiresAt: Date
   attempts: number
   consumedAt: Date | null
@@ -112,11 +113,11 @@ describe('lib/email-otp — hashCode', () => {
 })
 
 describe('lib/email-otp — issue', () => {
-  test('persists a row with codeHash + expiresAt and returns the plaintext code', async () => {
+  test('persists a row with codeHash + emailCiphertext + expiresAt and returns the plaintext code', async () => {
     const prisma = mockPrisma()
     const svc = createOtpService({ prisma: prisma as never })
     const before = Date.now()
-    const out = await svc.issue({ userId: 'user_1', emailHash: 'hash_a' })
+    const out = await svc.issue({ userId: 'user_1', emailHash: 'hash_a', emailCiphertext: 'ct_a' })
     const after = Date.now()
 
     expect(out.code).toMatch(/^\d{6}$/)
@@ -127,6 +128,7 @@ describe('lib/email-otp — issue', () => {
     const row = prisma.rows[0]
     expect(row?.userId).toBe('user_1')
     expect(row?.emailHash).toBe('hash_a')
+    expect(row?.emailCiphertext).toBe('ct_a')
     expect(row?.codeHash).toBe(await hashCode(out.code))
     expect(row?.attempts).toBe(0)
     expect(row?.consumedAt).toBeNull()
@@ -137,17 +139,21 @@ describe('lib/email-otp — verify', () => {
   test('matching code → ok + returns row.emailHash + consumes the row', async () => {
     const prisma = mockPrisma()
     const svc = createOtpService({ prisma: prisma as never })
-    const { code } = await svc.issue({ userId: 'user_1', emailHash: 'hash_a' })
+    const { code } = await svc.issue({
+      userId: 'user_1',
+      emailHash: 'hash_a',
+      emailCiphertext: 'ct_a',
+    })
 
     const result = await svc.verify({ userId: 'user_1', code })
-    expect(result).toEqual({ ok: true, emailHash: 'hash_a' })
+    expect(result).toEqual({ ok: true, emailHash: 'hash_a', emailCiphertext: 'ct_a' })
     expect(prisma.rows[0]?.consumedAt).toBeInstanceOf(Date)
   })
 
   test('mismatched code → mismatch + increments attempts', async () => {
     const prisma = mockPrisma()
     const svc = createOtpService({ prisma: prisma as never })
-    await svc.issue({ userId: 'user_1', emailHash: 'hash_a' })
+    await svc.issue({ userId: 'user_1', emailHash: 'hash_a', emailCiphertext: 'ct_a' })
 
     const result = await svc.verify({ userId: 'user_1', code: '000000' })
     expect(result).toEqual({ ok: false, reason: 'mismatch' })
@@ -158,7 +164,7 @@ describe('lib/email-otp — verify', () => {
   test('5th wrong attempt → attempts_exceeded + consumes row', async () => {
     const prisma = mockPrisma()
     const svc = createOtpService({ prisma: prisma as never })
-    await svc.issue({ userId: 'user_1', emailHash: 'hash_a' })
+    await svc.issue({ userId: 'user_1', emailHash: 'hash_a', emailCiphertext: 'ct_a' })
 
     for (let i = 0; i < OTP_MAX_ATTEMPTS - 1; i++) {
       const r = await svc.verify({ userId: 'user_1', code: '000000' })
@@ -172,7 +178,11 @@ describe('lib/email-otp — verify', () => {
   test('row past expiresAt → expired (no attempt increment, row consumed)', async () => {
     const prisma = mockPrisma()
     const svc = createOtpService({ prisma: prisma as never })
-    const { code } = await svc.issue({ userId: 'user_1', emailHash: 'hash_a' })
+    const { code } = await svc.issue({
+      userId: 'user_1',
+      emailHash: 'hash_a',
+      emailCiphertext: 'ct_a',
+    })
     // backdate expiry
     if (prisma.rows[0]) prisma.rows[0].expiresAt = new Date(Date.now() - 1000)
 
@@ -201,7 +211,7 @@ describe('lib/email-otp — canSendAgain', () => {
   test('row created < 60s ago → ok: false with retryAt', async () => {
     const prisma = mockPrisma()
     const svc = createOtpService({ prisma: prisma as never })
-    await svc.issue({ userId: 'user_1', emailHash: 'hash_a' })
+    await svc.issue({ userId: 'user_1', emailHash: 'hash_a', emailCiphertext: 'ct_a' })
 
     const out = await svc.canSendAgain({ userId: 'user_1' })
     expect(out.ok).toBe(false)
@@ -212,7 +222,7 @@ describe('lib/email-otp — canSendAgain', () => {
   test('row created > 60s ago → ok: true', async () => {
     const prisma = mockPrisma()
     const svc = createOtpService({ prisma: prisma as never })
-    await svc.issue({ userId: 'user_1', emailHash: 'hash_a' })
+    await svc.issue({ userId: 'user_1', emailHash: 'hash_a', emailCiphertext: 'ct_a' })
     if (prisma.rows[0]) {
       prisma.rows[0].createdAt = new Date(Date.now() - (OTP_RATE_LIMIT_SECONDS + 5) * 1000)
     }
