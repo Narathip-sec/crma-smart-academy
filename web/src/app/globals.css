@@ -1,0 +1,126 @@
+@import "tailwindcss";
+
+/* ============================================================
+   CRMA Smart Academy — design tokens (Academy Teal)
+   Source of truth: approved Claude Design mock.
+   Brand teal = #0BA8A0 (confirmed 2026-06-16).
+   New design is light-first (very light blue / off-white).
+   ============================================================ */
+:root {
+  /* Brand */
+  --brand:        #0BA8A0;
+  --brand-dark:   #0A8E87;
+  --brand-darker: #07706B;
+
+  /* Surfaces & background */
+  --bg:           #E9F1F6;  /* app background — light blue */
+  --stage:        #DCE6EC;  /* deeper bg / behind cards */
+  --surface:      #ffffff;  /* cards */
+  --tint:         #E1F4F2;  /* brand wash / chips */
+  --tint-2:       #F0FAF9;  /* subtle wash */
+
+  /* Text & lines */
+  --ink:          #0f172a;  /* primary text */
+  --muted:        #64748b;  /* secondary text */
+  --line:         #e2e8f0;  /* dividers */
+
+  /* Semantic */
+  --danger:       #c81e2c;  /* urgent / emergency */
+  --success:      #15946b;  /* done / returned */
+  --warning:      #d18b00;  /* pending / due */
+
+  /* Gradient (hero / featured headers) */
+  --grad-from:    #0FB6AD;
+  --grad-to:      #0A8E87;
+
+  /* ---- Legacy aliases (old prototype screens until P1 rebuild) ----
+     Repointed onto the teal palette so pre-existing pages keep
+     compiling and recolor automatically. Remove when P1 rebuilds. */
+  --paper:  var(--surface);
+  --ink2:   var(--muted);
+  --crimson: var(--brand);
+  --gold:   var(--warning);
+  --bone:   var(--tint);
+  --bone2:  #cfe9e6;
+  --gray:   #94a3b8;
+  --gray2:  var(--muted);
+  --rule:   var(--line);
+  --shade:  #eef4f4;
+  --shade2: #e3eded;
+  --good:   var(--success);
+}
+
+/* Optional teal-dark (theme toggle); design ships light by default. */
+[data-theme="dark"] {
+  --brand:        #19C2B8;
+  --brand-dark:   #0FB6AD;
+  --brand-darker: #0A8E87;
+  --bg:           #0c1a1c;
+  --stage:        #0a1517;
+  --surface:      #122426;
+  --tint:         #15302e;
+  --tint-2:       #102624;
+  --ink:          #ecf5f4;
+  --muted:        #9fb4b2;
+  --line:         #1f3a3a;
+  --danger:       #e06472;
+  --success:      #3fbf8f;
+  --warning:      #e0ad4a;
+  --grad-from:    #0FB6AD;
+  --grad-to:      #0A8E87;
+
+  --paper:  var(--surface);
+  --ink2:   var(--muted);
+  --crimson: var(--brand);
+  --gold:   var(--warning);
+  --bone:   var(--tint);
+  --bone2:  #1b3a38;
+  --gray:   #6f8785;
+  --gray2:  var(--muted);
+  --rule:   var(--line);
+  --shade:  #15302e;
+  --shade2: #102624;
+  --good:   var(--success);
+}
+
+@theme inline {
+  /* New semantic color utilities */
+  --color-brand:        var(--brand);
+  --color-brand-dark:   var(--brand-dark);
+  --color-brand-darker: var(--brand-darker);
+  --color-bg:           var(--bg);
+  --color-stage:        var(--stage);
+  --color-surface:      var(--surface);
+  --color-tint:         var(--tint);
+  --color-tint-2:       var(--tint-2);
+  --color-ink:          var(--ink);
+  --color-muted:        var(--muted);
+  --color-line:         var(--line);
+  --color-danger:       var(--danger);
+  --color-success:      var(--success);
+  --color-warning:      var(--warning);
+
+  /* Legacy color utilities (kept until P1 rebuild) */
+  --color-paper:    var(--paper);
+  --color-ink2:     var(--ink2);
+  --color-crimson:  var(--crimson);
+  --color-gold:     var(--gold);
+  --color-bone:     var(--bone);
+  --color-bone2:    var(--bone2);
+  --color-gray:     var(--gray);
+  --color-gray2:    var(--gray2);
+  --color-rule:     var(--rule);
+  --color-shade:    var(--shade);
+  --color-shade2:   var(--shade2);
+  --color-good:     var(--good);
+
+  --font-sans:  var(--font-sarabun), system-ui, sans-serif;
+  --font-mono:  var(--font-grotesk), ui-monospace, monospace;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--font-sans);
+}

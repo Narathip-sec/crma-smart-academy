@@ -1,0 +1,106 @@
+// CRMA Smart Cadet Platform — POC Phase 1 schema
+// Scope: Schedule + Grade + Cadet profile. Activity/SNA come in later phases.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  cadet
+  instructor
+  command
+}
+
+model Cadet {
+  id           String   @id @default(cuid())
+  // LINE LIFF profile.userId — populated on first login. Null until claimed.
+  lineUserId   String?  @unique
+  email        String   @unique // *@crma.ac.th
+  thaiName     String
+  englishName  String
+  rank         String   // "2LT", "1LT" etc — display rank
+  yearLevel    Int      // 1..4 (ชั้นปี)
+  studentCode  String   @unique // "67-0421"
+  companyId    String
+  battalion    String   // "BN-2"
+  role         Role     @default(cadet)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  company      Company        @relation(fields: [companyId], references: [id])
+  enrollments  Enrollment[]
+  grades       GradeRecord[]
+
+  @@index([companyId])
+}
+
+model Company {
+  id       String  @id @default(cuid())
+  name     String  @unique // "Co-A", "Co-B"
+  cadets   Cadet[]
+}
+
+model Course {
+  id          String   @id @default(cuid())
+  code        String   @unique // "MA201"
+  thaiName    String   // "แคลคูลัส II"
+  englishName String   // "Calculus II"
+  credits     Int
+  semester    Int      // 1 or 2
+  year        Int      // 2024..2026
+
+  enrollments    Enrollment[]
+  grades         GradeRecord[]
+  scheduleEntries ScheduleEntry[]
+
+  @@unique([code, semester, year])
+}
+
+model Enrollment {
+  id        String  @id @default(cuid())
+  cadetId   String
+  courseId  String
+  semester  Int
+  year      Int
+
+  cadet     Cadet   @relation(fields: [cadetId], references: [id])
+  course    Course  @relation(fields: [courseId], references: [id])
+
+  @@unique([cadetId, courseId, semester, year])
+}
+
+model GradeRecord {
+  id        String  @id @default(cuid())
+  cadetId   String
+  courseId  String
+  grade     String  // "A", "A-", "B+" ...
+  semester  Int
+  year      Int
+  locked    Boolean @default(true) // current/future term may be unlocked
+  createdAt DateTime @default(now())
+
+  cadet     Cadet   @relation(fields: [cadetId], references: [id])
+  course    Course  @relation(fields: [courseId], references: [id])
+
+  @@unique([cadetId, courseId, semester, year])
+}
+
+model ScheduleEntry {
+  id         String  @id @default(cuid())
+  courseId   String
+  dayOfWeek  Int     // 0=Mon ... 6=Sun
+  startTime  String  // "08:30"
+  endTime    String  // "10:00"
+  room       String  // "Rm 304" / "Field A"
+  semester   Int
+  year       Int
+
+  course     Course  @relation(fields: [courseId], references: [id])
+
+  @@index([courseId, dayOfWeek])
+}

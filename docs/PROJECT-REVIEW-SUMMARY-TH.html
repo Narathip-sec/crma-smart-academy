@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>สรุปทบทวนโครงการ — CRMA Smart Academy LINE LIFF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --brand: #0BA8A0;
+    --brand-dark: #0A8E87;
+    --brand-darker: #07706B;
+    --tint: #E1F4F2;
+    --tint-2: #F0FAF9;
+    --bg: #E9F1F6;
+    --stage: #DCE6EC;
+    --surface: #ffffff;
+    --ink: #0f172a;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --danger: #c81e2c;
+    --success: #15946b;
+    --warning: #d18b00;
+    --grad: linear-gradient(135deg, #0FB6AD 0%, #0A8E87 100%);
+    --radius: 20px;
+    --shadow: 0 6px 24px rgba(7, 112, 107, 0.10);
+    --shadow-sm: 0 2px 10px rgba(15, 23, 42, 0.06);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: 'Sarabun', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+
+  /* Hero */
+  .hero {
+    background: var(--grad);
+    color: #fff;
+    border-radius: 0 0 28px 28px;
+    padding: 48px 32px 40px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+  }
+  .hero .kicker {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    margin: 0 0 10px;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .hero p {
+    margin: 0;
+    font-size: 16px;
+    opacity: 0.95;
+    max-width: 640px;
+  }
+  .hero .meta {
+    margin-top: 18px;
+    font-size: 13.5px;
+    opacity: 0.88;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 28px;
+  }
+  .toc h2 {
+    margin: 0 0 12px;
+    font-size: 15px;
+    color: var(--brand-darker);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .toc ol {
+    margin: 0;
+    padding-left: 20px;
+    columns: 2;
+    column-gap: 32px;
+  }
+  .toc li { margin-bottom: 6px; }
+  .toc a {
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .toc a:hover { color: var(--brand); text-decoration: underline; }
+
+  /* Sections */
+  section {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 28px 30px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 22px;
+  }
+  section > h2 {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .num {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    background: var(--tint);
+    color: var(--brand-darker);
+    font-size: 16px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sub-en {
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 14px;
+    margin: 2px 0 18px 46px;
+  }
+  section h3 {
+    font-size: 17px;
+    color: var(--brand-darker);
+    margin: 22px 0 8px;
+  }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 7px; }
+  strong { font-weight: 600; }
+  .lead {
+    font-size: 16.5px;
+    color: #1e293b;
+  }
+
+  /* Callouts */
+  .note {
+    border-left: 4px solid var(--brand);
+    background: var(--tint-2);
+    border-radius: 0 12px 12px 0;
+    padding: 14px 18px;
+    margin: 16px 0;
+  }
+  .note.warn { border-color: var(--warning); background: #fdf6e7; }
+  .note.danger { border-color: var(--danger); background: #fdeaec; }
+  .note.ok { border-color: var(--success); background: #eaf7f1; }
+  .note p:last-child { margin-bottom: 0; }
+  .note .label {
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .note .label { color: var(--brand-darker); }
+  .note.warn .label { color: var(--warning); }
+  .note.danger .label { color: var(--danger); }
+  .note.ok .label { color: var(--success); }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 18px;
+    font-size: 14.5px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  thead th {
+    background: var(--tint);
+    color: var(--brand-darker);
+    font-weight: 600;
+    border-bottom: 2px solid var(--brand);
+  }
+  tbody tr:nth-child(even) { background: #fafcfc; }
+
+  /* Badges */
+  .pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .pill.ok { background: #e3f5ed; color: var(--success); }
+  .pill.warn { background: #fbefd6; color: var(--warning); }
+  .pill.bad { background: #fbe3e6; color: var(--danger); }
+  .pill.info { background: var(--tint); color: var(--brand-darker); }
+
+  /* Cards grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 16px 0;
+  }
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px 18px;
+    background: #fff;
+  }
+  .card h4 {
+    margin: 0 0 6px;
+    font-size: 15.5px;
+    color: var(--brand-darker);
+  }
+  .card p { font-size: 14px; color: #334155; margin: 0; }
+
+  .scope-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .scope-cols .card.in { border-top: 3px solid var(--success); }
+  .scope-cols .card.out { border-top: 3px solid var(--danger); }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  @media (max-width: 640px) {
+    .toc ol { columns: 1; }
+    .scope-cols { grid-template-columns: 1fr; }
+    .hero { padding: 36px 22px 30px; border-radius: 0 0 22px 22px; }
+    .hero h1 { font-size: 24px; }
+    section { padding: 22px 20px; }
+    .sub-en { margin-left: 0; }
+  }
+
+  @media print {
+    body { background: #fff; }
+    .hero { box-shadow: none; }
+    section, .toc { box-shadow: none; border: 1px solid var(--line); break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap" style="padding-bottom:0;">
+    <span class="kicker">เอกสารทบทวนความเข้าใจและข้อกำหนดโครงการ</span>
+    <h1>CRMA Smart Academy — LINE LIFF<br />สรุปภูมิหลัง ปัญหา วัตถุประสงค์ กลุ่มเป้าหมาย ความเป็นไปได้ และแนวทางต่อยอด</h1>
+    <p>เอกสารนี้สรุปและทบทวนความเข้าใจต่อโครงการ เพื่อใช้ตรวจทานร่วมกันก่อนลงมือพัฒนา โดยอ้างอิงจากเอกสารวิจัย (บทที่ 1) แผนการพัฒนา (Build Plan) และโครงสร้างโปรเจ็กต์ฉบับภาษาไทย</p>
+    <div class="meta">
+      <span>📅 จัดทำ: 24 มิถุนายน 2569</span>
+      <span>🎯 ระยะ: Proof of Concept (POC) — MVP ไม่มี AI</span>
+      <span>🏛️ หน่วยงาน: โรงเรียนนายร้อยพระจุลจอมเกล้า (รร.จปร.)</span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <nav class="toc">
+    <h2>สารบัญ</h2>
+    <ol>
+      <li><a href="#understanding">ทบทวนความเข้าใจและข้อกำหนด</a></li>
+      <li><a href="#background">ภูมิหลังและปัญหา</a></li>
+      <li><a href="#objectives">วัตถุประสงค์ของโครงการ</a></li>
+      <li><a href="#audience">กลุ่มเป้าหมาย</a></li>
+      <li><a href="#feasibility">การวิเคราะห์ความเป็นไปได้</a></li>
+      <li><a href="#future">แนวทางพัฒนาต่อยอด</a></li>
+      <li><a href="#risks">ความเสี่ยงและสิ่งที่ต้องตัดสินใจ</a></li>
+    </ol>
+  </nav>
+
+  <!-- 1 -->
+  <section id="understanding">
+    <h2><span class="num">1</span> ทบทวนความเข้าใจและข้อกำหนด</h2>
+    <div class="sub-en">Understanding &amp; Requirements Review</div>
+
+    <p class="lead">ความเข้าใจหลัก: โครงการนี้มี <strong>2 ระดับขอบเขต</strong> ที่ต้องแยกให้ชัด เพื่อไม่ให้สับสนระหว่างวิสัยทัศน์งานวิจัยกับสิ่งที่จะสร้างจริงในรอบนี้</p>
+
+    <div class="grid">
+      <div class="card">
+        <h4>วิสัยทัศน์ระยะยาว (งานวิจัย)</h4>
+        <p>“CRMA Smart Cadet Platform” — ระบบนิเวศดิจิทัลเต็มรูปแบบ มี Gamification, Social Network Analysis, Behavioral Intelligence Dashboard และ Cadet Portfolio</p>
+      </div>
+      <div class="card">
+        <h4>ขอบเขตที่จะสร้างจริงรอบนี้ (MVP)</h4>
+        <p>LINE LIFF App บน Next.js สำหรับใช้งานประจำวัน — <strong>ตัด AI ทุกชนิดออก</strong> เพื่อคุมงบและลดความเสี่ยงข้อมูล แล้วค่อยต่อยอด AI เป็น phase แยกภายหลัง</p>
+      </div>
+    </div>
+
+    <h3>ข้อกำหนดที่ยึดเป็นหลัก (Hard Constraints)</h3>
+    <ul>
+      <li><strong>ไม่มี AI ใน MVP</strong> — ไม่มี Health AI, AI Coach, AI Q&amp;A, AI Insight, AI recommendation และไม่เรียก paid AI API</li>
+      <li><strong>Lost &amp; Found แทน Health AI</strong> — เป็นฟีเจอร์ต้นทุนต่ำ ทำได้จริง เหมาะกับชีวิตในโรงเรียนประจำ</li>
+      <li><strong>ตารางเรียนแบบรายวัน จันทร์–ศุกร์</strong> (day tabs) ไม่ใช่ปฏิทินสัปดาห์ ใช้ข้อมูล fixed จากไฟล์ที่โรงเรียนส่ง</li>
+      <li><strong>ปฏิทินการศึกษาแบบรายปี</strong> — เลือกปี + month grid + agenda 1 ชุดข้อมูลต่อปีการศึกษา</li>
+      <li><strong>สร้าง UI ด้วย mock/CSV ก่อน แล้วค่อยต่อ Database</strong> — UI ไม่ผูกกับ data layer ใด layer หนึ่ง</li>
+      <li><strong>สองภาษา ไทยเป็นหลัก</strong> ทุก label และออกแบบ <strong>มือถือเป็นหลัก (LIFF-first)</strong></li>
+      <li><strong>เป็นไปตาม PDPA พ.ศ. 2562</strong> — ใช้ข้อมูลสังเคราะห์/ที่ได้รับความยินยอม, มี audit log, secret อยู่ฝั่ง server เท่านั้น</li>
+    </ul>
+
+    <h3>ขอบเขตหน้าจอ MVP (15 หน้า / 5 แท็บหลัก)</h3>
+    <p>แท็บล่าง: <span class="pill info">หน้าหลัก</span> <span class="pill info">ตารางเรียน</span> <span class="pill info">งาน</span> <span class="pill info">กิจกรรม</span> <span class="pill info">บริการ</span> &nbsp;+ หน้า push: Profile/Grades, Meals, Calendar, Report (+Tickets), Lost &amp; Found (+detail), Activity (detail/new), Notifications, Settings</p>
+
+    <div class="note ok">
+      <span class="label">สรุปการทบทวน</span>
+      <p>ความเข้าใจตรงกับเอกสารแหล่งความจริง (Build Plan + โครงสร้าง TH + บทที่ 1) ทุกข้อ จุดที่ต้องระวังที่สุดคือ <strong>อย่าปนฟีเจอร์งานวิจัยระยะยาว (AI/SNA/Gamification) เข้ามาใน MVP</strong> และต้องเคลียร์แหล่งข้อมูลจริง (ปฏิทิน/เมนูอาหาร) ก่อน pilot</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section id="background">
+    <h2><span class="num">2</span> ภูมิหลังและปัญหา</h2>
+    <div class="sub-en">Background &amp; Problem Statement</div>
+
+    <h3>ความเป็นมา</h3>
+    <p>ปัจจุบัน รร.จปร. ยังบริหารข้อมูลและสื่อสารในรูปแบบ <strong>Analog</strong> เป็นหลัก ทั้งตารางการฝึก ผลการเรียน การประสานงานกิจกรรม และการติดตามบุคลากร โดยพึ่งบอร์ดประกาศ กลุ่มไลน์ สเปรดชีต และการบอกปากต่อปาก ทำให้เกิด <strong>Information Silos</strong> และ <strong>Coordination Friction</strong></p>
+    <p>เมื่อเทียบกับสถาบันทหารชั้นนำ เช่น West Point (USA) และ Sandhurst (UK) ที่ใช้ระบบดิจิทัลแบบ real-time มากว่าทศวรรษ รร.จปร. มีโอกาสพิเศษในฐานะระบบ <strong>Greenfield</strong> (ไม่มีระบบเดิมที่ต้องรื้อ) จึงออกแบบให้ถูกต้องตั้งแต่ต้นได้</p>
+    <p>แนวคิดเชิงทฤษฎีตั้งอยู่บน 3 ทฤษฎี: ทฤษฎีเครือข่ายสังคม (Social Network Theory), เกมมิฟิเคชัน (Gamification Theory) และชุมชนแห่งการเรียนรู้ (Community of Practice)</p>
+
+    <h3>ปัญหาหลัก — รากเหง้าเดียวกัน: ไม่มี Single Source of Truth</h3>
+    <table>
+      <thead>
+        <tr><th style="width:34%">ปัญหา</th><th>รายละเอียด</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Schedule Opacity</strong><br />ตารางไม่ชัดเจน</td><td>ตารางประจำวัน การจัดกำลัง เวรยาม สื่อสารผ่านช่องทางไม่เป็นทางการ นนร. วางแผนชีวิตไม่ได้ — เป็นสาเหตุความเครียดอันดับ 1</td></tr>
+        <tr><td><strong>Late Schedule Changes</strong><br />แจ้งเปลี่ยนตารางล่าช้า</td><td>เมื่อตารางเปลี่ยน ข้อมูลส่งผ่านสายบังคับบัญชาช้า บางส่วนไม่ได้รับแจ้งทันเวลา</td></tr>
+        <tr><td><strong>Grade Lookup Friction</strong><br />เข้าถึงผลการเรียนยาก</td><td>ต้องเข้าเว็บไซต์ที่ไม่เหมาะกับมือถือ ตรวจสอบยากหรือทำไม่ได้เลย</td></tr>
+        <tr><td><strong>Activity Discovery Gap</strong><br />หากิจกรรมไม่เจอ</td><td>ไม่มีระบบกลางช่วยค้นหา/เข้าร่วมกิจกรรมข้ามกองร้อย–กองพัน เกิดปัญหา “ไปแล้วเก้อ”</td></tr>
+        <tr><td><strong>No Behavioral Intelligence</strong><br />ขาดข้อมูลเชิงพฤติกรรม</td><td>ผู้บังคับบัญชาตัดสินใจจัดสรรงบ/ทรัพยากรโดยอาศัยการคาดเดา</td></tr>
+      </tbody>
+    </table>
+
+    <h3>ความจำเป็นเร่งด่วน 3 ประการ</h3>
+    <ol>
+      <li><strong>Digital Transformation</strong> — นายทหารยุคใหม่ต้องเป็นผู้นำในโลกดิจิทัล สถาบันควรสะท้อนความจริงนั้น</li>
+      <li><strong>โอกาส Greenfield</strong> — ไม่มีระบบเดิมต้องสืบทอด ออกแบบได้ถูกต้องตั้งแต่ต้น</li>
+      <li><strong>Data-Driven Administration</strong> — ข้อมูลที่ระบบสร้างช่วยจัดสรรทรัพยากรแม่นยำ และเข้าใจสุขภาวะองค์กรลึกขึ้น</li>
+    </ol>
+  </section>
+
+  <!-- 3 -->
+  <section id="objectives">
+    <h2><span class="num">3</span> วัตถุประสงค์ของโครงการ</h2>
+    <div class="sub-en">Project Objectives</div>
+
+    <h3>วัตถุประสงค์งานวิจัย (วิสัยทัศน์เต็ม)</h3>
+    <ol>
+      <li>ออกแบบและพัฒนา <strong>CRMA Smart Cadet Platform</strong> เป็นระบบนิเวศดิจิทัลแบบ Single Source of Truth / One-stop Service ครอบคลุมตารางการฝึก ผลการเรียน และพอร์ตโฟลิโอ ผ่าน LINE OA, แอปมือถือ และเว็บพอร์ทัล</li>
+      <li>พัฒนาโมดูล <strong>CRMA Sport &amp; Activity Hub</strong> เป็นแพลตฟอร์มชุมชนสร้าง/เข้าร่วมกิจกรรม โดยใช้ Gamification (คะแนนสะสม, Leaderboard, Badges) เพิ่มการมีส่วนร่วม</li>
+      <li>วิเคราะห์ข้อมูลพฤติกรรมด้วย <strong>Social Network Analysis</strong> และ Behavioral Intelligence Dashboard เพื่อสนับสนุนการตัดสินใจเชิงนโยบาย</li>
+      <li>พัฒนา <strong>Cadet Portfolio</strong> ดิจิทัล รวมข้อมูลวิชาการ กายภาพ และกิจกรรมไว้ที่เดียว</li>
+    </ol>
+
+    <div class="note">
+      <span class="label">การแปลงเป็นเป้าหมาย MVP รอบนี้</span>
+      <p>เป้า MVP คือ <strong>ส่งมอบ “ศูนย์กลางชีวิตประจำวันของ นนร.” บน LINE LIFF</strong> ที่ตอบคำถาม “วันนี้มีอะไรสำคัญ” ได้เร็ว — เริ่มจากตารางเรียน ผลการเรียน อาหาร งาน กิจกรรม (Meetup-style + moderation) แจ้งซ่อม และ Lost &amp; Found โดยยังไม่แตะ AI/SNA/Gamification (เลื่อนเป็น Phase ถัดไป)</p>
+    </div>
+
+    <h3>สมมติฐานที่ใช้วัดความสำเร็จ</h3>
+    <ul>
+      <li>การสื่อสารตารางเร็วขึ้น: เวลาแจ้งเตือนจาก “หลักชั่วโมง” เหลือ <strong>ไม่เกิน 5 นาที</strong> อย่างมีนัยสำคัญทางสถิติ</li>
+      <li>อัตราการเข้าร่วมกิจกรรมนอกหลักสูตรเฉลี่ยต่อคน <strong>เพิ่มขึ้น</strong> หลังใช้ Gamification</li>
+    </ul>
+  </section>
+
+  <!-- 4 -->
+  <section id="audience">
+    <h2><span class="num">4</span> กลุ่มเป้าหมาย</h2>
+    <div class="sub-en">Target Audience</div>
+
+    <div class="grid">
+      <div class="card">
+        <h4>นักเรียนนายร้อย (นนร.)</h4>
+        <p>ผู้ใช้หลัก — ดูตาราง/เกรด/อาหาร/งาน, ค้นหาและสร้างกิจกรรม, แจ้งซ่อม, แจ้งของหาย-พบ</p>
+      </div>
+      <div class="card">
+        <h4>อาจารย์ผู้สอน</h4>
+        <p>มอบหมายงาน, Advisor Note, เผยแพร่ผลการเรียน/ประกาศวิชาการ</p>
+      </div>
+      <div class="card">
+        <h4>ผู้บังคับบัญชา</h4>
+        <p>สื่อสารตาราง, ติดตามสถานะ, (ระยะยาว) ใช้ Behavioral Intelligence ตัดสินใจ</p>
+      </div>
+      <div class="card">
+        <h4>เจ้าหน้าที่ฝ่ายบริหาร / Moderator</h4>
+        <p>นำเข้าข้อมูล, ตรวจกิจกรรม/Lost&amp;Found/Report, ดูแลจุดรับของกลาง</p>
+      </div>
+    </div>
+
+    <h3>กลุ่มตัวอย่างระยะ POC</h3>
+    <p>นนร. <strong>1 กองร้อย (ประมาณ 80–120 นาย)</strong> พร้อมผู้บังคับกองร้อย ระยะเวลาวิจัย <strong>8 เดือน</strong></p>
+
+    <div class="note warn">
+      <span class="label">ขอบเขตกลุ่มผู้ใช้ที่ “ไม่รวม” ในระยะ POC</span>
+      <p>ไม่รวมผู้ปกครองและศิษย์เก่า และ <strong>ไม่เกี่ยวข้องกับข้อมูลลับทางทหาร (Classified)</strong> — เป็นข้อมูลส่วนบุคคลระดับ PDPA เท่านั้น</p>
+    </div>
+
+    <p><strong>บทบาท RBAC:</strong> <span class="pill info">cadet</span> <span class="pill info">instructor</span> <span class="pill info">command</span> <span class="pill info">moderator</span></p>
+  </section>
+
+  <!-- 5 -->
+  <section id="feasibility">
+    <h2><span class="num">5</span> การวิเคราะห์ความเป็นไปได้</h2>
+    <div class="sub-en">Feasibility Analysis</div>
+
+    <table>
+      <thead>
+        <tr><th style="width:22%">ด้าน</th><th style="width:14%">ระดับ</th><th>เหตุผล</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>เทคนิค</strong></td>
+          <td><span class="pill ok">สูง</span></td>
+          <td>Stack มาตรฐานพร้อมแล้ว: Next.js 16 + React 19 + TypeScript + Tailwind 4 + Prisma + @line/liff. มี scaffold เดิมใน <code>web/</code> ให้ refactor ไม่ต้องเริ่มศูนย์</td>
+        </tr>
+        <tr>
+          <td><strong>งบประมาณ</strong></td>
+          <td><span class="pill ok">สูง</span></td>
+          <td>ตัด AI ทุกชนิดออก, Pin-on-Map ใช้รูปแผนที่ + พิกัด % แทน paid Google Maps, LIFF/LINE OA ใช้ฟรี — ต้นทุนหลักเหลือเพียง hosting + Postgres</td>
+        </tr>
+        <tr>
+          <td><strong>การกระจาย/ใช้งาน</strong></td>
+          <td><span class="pill ok">สูง</span></td>
+          <td>นนร. ใช้ LINE อยู่แล้ว เปิดผ่าน LIFF ใน LINE OA ได้ทันที ไม่ต้องติดตั้งแอปแยก ลดแรงต้านการรับใช้งาน</td>
+        </tr>
+        <tr>
+          <td><strong>ข้อมูลตารางเรียน</strong></td>
+          <td><span class="pill ok">พร้อม</span></td>
+          <td>CSV pilot 2569 ใช้ได้: 75 แถว, 5 cohort (ก.1, ก, ข, ค, ง) ปี 1 เทอม 1 จันทร์–ศุกร์ (มีเวลา/ชื่อบางส่วนต้อง verify)</td>
+        </tr>
+        <tr>
+          <td><strong>ข้อมูลปฏิทินการศึกษา</strong></td>
+          <td><span class="pill bad">เสี่ยง</span></td>
+          <td>PDF เป็น scan ไม่มี text layer — verify ได้แค่ ~เดือนเมษายน ต้อง OCR/ทำ sheet เอง ก่อน pilot จริง</td>
+        </tr>
+        <tr>
+          <td><strong>ข้อมูลเมนูอาหาร</strong></td>
+          <td><span class="pill warn">ยังไม่มีไฟล์</span></td>
+          <td>ยังไม่มี source — ใช้ mock เต็มเดือนตาม schema ที่ตกลงไว้ก่อน แล้วนำเข้าไฟล์จริงภายหลัง</td>
+        </tr>
+        <tr>
+          <td><strong>กฎหมาย/PDPA</strong></td>
+          <td><span class="pill warn">จัดการได้ มีเงื่อนไข</span></td>
+          <td>ใช้ข้อมูลสังเคราะห์/ยินยอม, audit log, data residency ในไทย, moderation รูปภาพ Lost&amp;Found — ต้องมีผู้รับผิดชอบ (DPO) และ privacy notice</td>
+        </tr>
+        <tr>
+          <td><strong>องค์กร/กระบวนการ</strong></td>
+          <td><span class="pill warn">ขึ้นกับความร่วมมือ</span></td>
+          <td>ต้องได้อนุมัติจากผู้บังคับบัญชา รร.จปร., กำหนดเจ้าของไฟล์ข้อมูล และผู้ดูแล moderation/ticket ให้ชัด</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note ok">
+      <span class="label">สรุปความเป็นไปได้</span>
+      <p>MVP มีความเป็นไปได้ <strong>สูง</strong> ในด้านเทคนิค งบประมาณ และการกระจายใช้งาน เพราะออกแบบให้ตัดความซับซ้อน/ต้นทุนสูงออกตั้งแต่ต้น ความเสี่ยงที่เหลือเป็น <strong>ความพร้อมของข้อมูลจริง</strong> (ปฏิทิน, เมนู) และ <strong>กระบวนการอนุมัติ/ผู้รับผิดชอบ</strong> ไม่ใช่เรื่องเทคโนโลยี</p>
+    </div>
+
+    <h3>กลยุทธ์ลดความเสี่ยง: สถาปัตยกรรมข้อมูล 3 ชั้น</h3>
+    <p>สร้างจากซ้ายไปขวา โดย UI ไม่รู้ว่า layer ไหนทำงานอยู่ (data-access module เดียวต่อ domain): <strong>A) Typed Mock → B) Parsed CSV → C) PostgreSQL (Prisma)</strong> ทำให้เริ่ม UI ได้ทันทีโดยไม่ต้องรอข้อมูลจริงครบ</p>
+  </section>
+
+  <!-- 6 -->
+  <section id="future">
+    <h2><span class="num">6</span> แนวทางพัฒนาต่อยอด</h2>
+    <div class="sub-en">Ideas for Further Development</div>
+
+    <h3>ต่อยอดตามเฟสที่วางไว้ (ใกล้ตัว)</h3>
+    <ul>
+      <li><strong>Phase 3 — Backend + Import:</strong> ย้ายจาก mock ไป Postgres, เขียน import scripts (class/meals/calendar/cadets) แบบ idempotent + admin import preview + audit log</li>
+      <li><strong>Phase 4 — LINE Integration:</strong> LIFF login, ผูกบัญชี LINE, Rich Menu ให้ตรงกับ bottom nav, push notification (สถานะ report, Lost&amp;Found match/claim, กิจกรรมใกล้ถึง, ประกาศสำคัญ)</li>
+      <li><strong>Phase 5 — Pilot:</strong> ทดสอบ 1 กองร้อย เก็บ feedback แก้ UI friction ตรวจความถูกต้องข้อมูล ทำคู่มือ rollout</li>
+    </ul>
+
+    <h3>ต่อยอดสู่วิสัยทัศน์เต็ม (ระยะถัดไป — แยก phase ชัดเจน)</h3>
+    <div class="grid">
+      <div class="card">
+        <h4>Gamification</h4>
+        <p>คะแนนสะสม, Leaderboard, Badges บน Sport &amp; Activity Hub เพื่อดันอัตราการเข้าร่วมกิจกรรม</p>
+      </div>
+      <div class="card">
+        <h4>Behavioral Intelligence Dashboard</h4>
+        <p>Heatmap + Social Graph จาก SNA (Python NetworkX) สนับสนุนการตัดสินใจของผู้บังคับบัญชา</p>
+      </div>
+      <div class="card">
+        <h4>Cadet Portfolio เต็มรูปแบบ</h4>
+        <p>รวมวิชาการ + กายภาพ + กิจกรรม เพื่อประเมินคุณลักษณะผู้นำ</p>
+      </div>
+      <div class="card">
+        <h4>AI Layer (เมื่อมีงบ)</h4>
+        <p>เพิ่ม AI เป็น phase แยก — ห้ามปนกับ MVP เพื่อคุมต้นทุนและความเสี่ยงข้อมูล</p>
+      </div>
+    </div>
+
+    <h3>ไอเดียเพิ่มเติมที่น่าพิจารณา</h3>
+    <ul>
+      <li><strong>ขยาย cohort/ชั้นปี/เทอม</strong> — ตอนนี้ pilot มีแค่ปี 1 เทอม 1; เตรียม importer ให้รองรับหลายปี/เทอมตั้งแต่ออกแบบ schema</li>
+      <li><strong>โมดูลทางเลือกแทน/เสริม Health</strong> — Clinic &amp; Welfare (ระวัง PDPA) หรือ Campus Map &amp; Wayfinding ใช้คู่กับ Pin-on-Map ของ Report</li>
+      <li><strong>Personnel Tracking แบบ real-time</strong> สำหรับผู้บังคับบัญชา (ตามที่ระบุในประโยชน์ที่คาดหวัง)</li>
+      <li><strong>ขยายผลเป็นต้นแบบ</strong> ให้สถาบันทหารอื่นในไทย/อาเซียนนำไปใช้ (multi-tenant)</li>
+      <li><strong>Offline-friendly / caching</strong> สำหรับช่วงสัญญาณจำกัดในพื้นที่ฝึก</li>
+    </ul>
+  </section>
+
+  <!-- 7 -->
+  <section id="risks">
+    <h2><span class="num">7</span> ความเสี่ยงและสิ่งที่ต้องตัดสินใจ</h2>
+    <div class="sub-en">Risks &amp; Open Decisions</div>
+
+    <table>
+      <thead>
+        <tr><th style="width:30%">ประเด็น</th><th style="width:14%">ระดับ</th><th>สิ่งที่ต้องทำ / ตัดสินใจ</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>ข้อมูลปฏิทินการศึกษาขาด (scan)</td><td><span class="pill bad">สูง</span></td><td>ใครเป็นผู้จัดทำไฟล์ปฏิทินรายปีที่ verify แล้ว ก่อน pilot</td></tr>
+        <tr><td>ไม่มีไฟล์เมนูอาหาร</td><td><span class="pill warn">กลาง</span></td><td>กำหนดเจ้าของไฟล์เมนูรายเดือน; ระหว่างนี้ใช้ mock</td></tr>
+        <tr><td>ตาราง pilot มีแค่ปี 1 เทอม 1</td><td><span class="pill warn">กลาง</span></td><td>cohort selector ใช้งานจริงได้ (5) แต่ปี/เทอมอื่นเป็น stub จนกว่าได้ไฟล์</td></tr>
+        <tr><td>ผู้ดูแล moderation</td><td><span class="pill warn">กลาง</span></td><td>กำหนดผู้รับผิดชอบ Activity + Lost&amp;Found + Report ก่อนขึ้น Phase 2/pilot</td></tr>
+        <tr><td>scaffold เดิมเป็นธีมเก่า (crimson)</td><td><span class="pill info">ต่ำ</span></td><td>refactor P0 ต้องไม่หลงเหลือ token crimson หรือ route <code>health</code></td></tr>
+        <tr><td>PDPA / DPO</td><td><span class="pill warn">กลาง</span></td><td>มอบหมาย DPO, ทำ privacy notice, ยืนยัน data residency ในไทย</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note danger">
+      <span class="label">สิ่งที่ต้องยืนยันก่อนเริ่ม Build</span>
+      <p>ยืนยันชื่อแอป + brand color (teal <code>#0BA8A0</code> ✓), bottom nav 5 แท็บ, MVP ไม่มี AI, Lost&amp;Found แทน Health, เตรียมไฟล์ตาราง/อาหาร/ปฏิทิน, รูปแผนที่ campus, LINE OA + LIFF ID, Postgres (ไทย), privacy/PDPA + DPO, ผู้ดูแล moderation/ticket</p>
+    </div>
+  </section>
+
+  <footer>
+    เอกสารทบทวนภายใน · CRMA Smart Academy LINE LIFF · อ้างอิง: บทที่ 1 (งานวิจัย), CLAUDE-CODE-BUILD-PLAN.md, CRMA-LIFF-New-Project-Structure-TH.md
+  </footer>
+
+</div>
+</body>
+</html>

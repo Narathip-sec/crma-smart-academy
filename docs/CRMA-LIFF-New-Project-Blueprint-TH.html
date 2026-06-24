@@ -1,0 +1,1403 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CRMA Smart Academy LINE LIFF Blueprint</title>
+  <style>
+    :root {
+      --bg: #f5f7ff;
+      --surface: #ffffff;
+      --surface-2: #eef6ff;
+      --brand: #006b67;
+      --brand-dark: #004f4b;
+      --brand-soft: #dcefee;
+      --blue-soft: #dbeafe;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --danger: #c81e2c;
+      --success: #15946b;
+      --warning: #c78100;
+      --shadow: 0 18px 55px rgba(15, 23, 42, .08);
+      font-family: "Noto Sans Thai", "Sarabun", "Segoe UI", system-ui, sans-serif;
+      color-scheme: light;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 12% 0%, rgba(219, 234, 254, .9), transparent 28%),
+        radial-gradient(circle at 90% 12%, rgba(220, 239, 238, .95), transparent 30%),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.72;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: var(--brand);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .page {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px 0 72px;
+    }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--brand);
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background:
+        linear-gradient(135deg, rgba(0, 107, 103, .22), rgba(219, 234, 254, .9)),
+        var(--surface);
+      border: 3px solid var(--surface);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, .12);
+    }
+
+    .date-pill {
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, .8);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) 380px;
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 28px;
+    }
+
+    .hero-card,
+    .phone-shell,
+    .panel,
+    .toc,
+    .card,
+    .step,
+    .matrix {
+      background: rgba(255, 255, 255, .92);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      min-height: 430px;
+      padding: 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      right: -120px;
+      top: -120px;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 107, 103, .12), transparent 62%);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .02em;
+    }
+
+    .chip.brand-chip {
+      border-color: rgba(0, 107, 103, .18);
+      color: var(--brand);
+      background: var(--brand-soft);
+    }
+
+    .chip.dark {
+      border-color: var(--brand);
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .chip.warn {
+      border-color: rgba(200, 30, 44, .18);
+      color: var(--danger);
+      background: rgba(200, 30, 44, .08);
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      margin: 0;
+      line-height: 1.17;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 750px;
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 950;
+    }
+
+    h2 {
+      margin: 42px 0 16px;
+      font-size: clamp(26px, 3vw, 38px);
+      font-weight: 950;
+    }
+
+    h3 {
+      margin-bottom: 8px;
+      font-size: 20px;
+      font-weight: 950;
+    }
+
+    h4 {
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    p {
+      margin: 0 0 12px;
+      color: var(--muted);
+    }
+
+    .lead {
+      max-width: 720px;
+      margin-top: 16px;
+      color: #475569;
+      font-size: 19px;
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .metric {
+      padding: 16px;
+      border-radius: 18px;
+      background: var(--surface-2);
+      border: 1px solid rgba(0, 107, 103, .12);
+    }
+
+    .metric strong {
+      display: block;
+      color: var(--brand);
+      font-size: 32px;
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .phone-shell {
+      padding: 18px;
+      display: grid;
+      place-items: center;
+      background: #0f172a;
+      border-radius: 38px;
+    }
+
+    .phone {
+      width: min(100%, 310px);
+      height: 650px;
+      border-radius: 30px;
+      background: var(--bg);
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, .8);
+    }
+
+    .phone-header {
+      height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px 18px 12px;
+      border-bottom: 1px solid rgba(226, 232, 240, .9);
+      background: rgba(255, 255, 255, .82);
+    }
+
+    .mini-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--brand);
+      font-size: 18px;
+      font-weight: 950;
+    }
+
+    .mini-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #dbeafe, #bfe8e5);
+      border: 2px solid #fff;
+    }
+
+    .bell {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #1f2937;
+      position: relative;
+    }
+
+    .bell::after {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 2px;
+      background: #1f2937;
+      left: 8px;
+      bottom: 4px;
+      border-radius: 999px;
+    }
+
+    .phone-body {
+      padding: 18px 16px 88px;
+    }
+
+    .student-card {
+      min-height: 86px;
+      display: grid;
+      grid-template-columns: 62px 1fr;
+      gap: 14px;
+      align-items: center;
+      padding: 16px;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 92% 20%, rgba(219, 234, 254, .95), transparent 28%),
+        #fff;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, .06);
+    }
+
+    .student-photo {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      background: linear-gradient(135deg, #bfe8e5, #dbeafe);
+    }
+
+    .student-name {
+      color: var(--ink);
+      font-weight: 950;
+      font-size: 18px;
+    }
+
+    .mini-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .mini-pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #475569;
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .featured {
+      margin-top: 18px;
+      padding: 20px;
+      min-height: 128px;
+      border-radius: 22px;
+      color: #fff;
+      background:
+        radial-gradient(circle at 30% 16%, rgba(255, 255, 255, .18) 2px, transparent 3px) 0 0 / 24px 24px,
+        var(--brand);
+    }
+
+    .featured small {
+      display: inline-flex;
+      margin-bottom: 8px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .15);
+      font-weight: 850;
+    }
+
+    .featured b {
+      display: block;
+      font-size: 18px;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .featured span {
+      color: rgba(255, 255, 255, .84);
+      font-size: 13px;
+    }
+
+    .quick {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 11px;
+      margin: 18px 0;
+    }
+
+    .quick-item {
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .quick-icon {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 6px;
+      border-radius: 50%;
+      background: var(--blue-soft);
+      color: var(--ink);
+      font-size: 18px;
+      font-weight: 950;
+    }
+
+    .my-day {
+      display: grid;
+      gap: 10px;
+    }
+
+    .my-day-row {
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 11px;
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, .05);
+    }
+
+    .my-day-row i {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: var(--brand-soft);
+      color: var(--brand);
+      font-style: normal;
+      font-weight: 950;
+    }
+
+    .my-day-row strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.2;
+    }
+
+    .my-day-row small {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .my-day-row em {
+      color: var(--brand);
+      font-style: normal;
+      font-weight: 950;
+    }
+
+    .phone-nav {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 74px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      align-items: center;
+      background: rgba(255, 255, 255, .96);
+      border-top: 1px solid var(--line);
+    }
+
+    .phone-nav span {
+      text-align: center;
+      color: #475569;
+      font-size: 10px;
+      line-height: 1.1;
+      font-weight: 850;
+    }
+
+    .phone-nav b {
+      display: block;
+      margin-bottom: 2px;
+      color: inherit;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .phone-nav span:first-child {
+      color: var(--brand);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      padding: 16px;
+    }
+
+    .toc a {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 850;
+    }
+
+    .toc a:hover {
+      background: var(--surface-2);
+      text-decoration: none;
+    }
+
+    .panel {
+      padding: 24px;
+      margin-bottom: 18px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid.five {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .card {
+      min-height: 100%;
+      padding: 18px;
+      box-shadow: none;
+      border-radius: 20px;
+    }
+
+    .card small {
+      display: inline-flex;
+      margin-bottom: 10px;
+      color: var(--brand);
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .card.danger small,
+    .danger-text {
+      color: var(--danger);
+    }
+
+    .card.success small,
+    .success-text {
+      color: var(--success);
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      padding: 5px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: #fff;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .checks {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      padding: 0;
+      margin: 12px 0 0;
+    }
+
+    .checks li {
+      position: relative;
+      padding-left: 25px;
+      color: var(--muted);
+    }
+
+    .checks li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: .52em;
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      border: 1.5px solid var(--brand);
+      background: #fff;
+    }
+
+    .checks li.done::before {
+      background: var(--brand);
+      box-shadow: inset 0 0 0 3px #fff;
+    }
+
+    .matrix {
+      overflow: hidden;
+      box-shadow: none;
+      border-radius: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      vertical-align: top;
+      text-align: left;
+      padding: 13px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      background: #edf5ff;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+      counter-reset: phase;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 66px minmax(0, 1fr);
+      gap: 14px;
+      padding: 18px;
+      box-shadow: none;
+      counter-increment: phase;
+      border-radius: 20px;
+    }
+
+    .step::before {
+      content: counter(phase);
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: var(--brand);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 950;
+    }
+
+    .step.alt::before {
+      background: var(--danger);
+    }
+
+    pre,
+    code {
+      font-family: "Cascadia Mono", Consolas, ui-monospace, monospace;
+    }
+
+    code {
+      padding: 2px 6px;
+      border-radius: 7px;
+      background: rgba(0, 107, 103, .08);
+      color: var(--brand-dark);
+      font-size: .92em;
+      font-weight: 750;
+    }
+
+    pre {
+      margin: 0;
+      padding: 16px;
+      overflow-x: auto;
+      border-radius: 18px;
+      background: #111827;
+      color: #e5f7f6;
+      font-size: 13px;
+      line-height: 1.65;
+      white-space: pre-wrap;
+    }
+
+    .callout {
+      margin: 16px 0;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 107, 103, .18);
+      background: linear-gradient(135deg, rgba(220, 239, 238, .74), rgba(255, 255, 255, .9));
+    }
+
+    .callout.warning {
+      border-color: rgba(200, 30, 44, .2);
+      background: linear-gradient(135deg, rgba(200, 30, 44, .06), rgba(255, 255, 255, .92));
+    }
+
+    .footer {
+      margin-top: 40px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .layout,
+      .grid.two,
+      .grid.three,
+      .grid.five {
+        grid-template-columns: 1fr;
+      }
+
+      .toc {
+        position: static;
+        order: -1;
+      }
+
+      .phone-shell {
+        display: none;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100vw - 18px, 1180px);
+        padding-top: 14px;
+      }
+
+      .topline {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .hero-card,
+      .panel {
+        padding: 18px;
+      }
+
+      .hero-metrics,
+      .quick {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .step {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .toc,
+      .phone-shell {
+        display: none;
+      }
+
+      .page {
+        width: auto;
+        padding: 0;
+      }
+
+      .hero-card,
+      .panel,
+      .card,
+      .step,
+      .matrix {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topline">
+      <div class="brand">
+        <span class="avatar" aria-hidden="true"></span>
+        <span>Smart Academy</span>
+      </div>
+      <div class="date-pill">Project Blueprint - 2 มิถุนายน 2026</div>
+    </header>
+
+    <section class="hero" aria-labelledby="title">
+      <article class="hero-card">
+        <div>
+          <div class="chips">
+            <span class="chip dark">LINE LIFF App</span>
+            <span class="chip brand-chip">AI-free MVP</span>
+            <span class="chip">Daily School Data</span>
+            <span class="chip warn">Budget Friendly</span>
+          </div>
+          <h1 id="title">โครงสร้างโปรเจ็กต์ใหม่สำหรับ CRMA Smart Academy</h1>
+          <p class="lead">
+            Blueprint นี้วางโครงสร้างแอป LIFF ใหม่ตาม requirement ล่าสุด: ตัด AI ทั้งหมด,
+            ใช้ตารางเรียนรายวัน จันทร์-ศุกร์, มื้ออาหารรายเดือน, ปฏิทินรายปี,
+            Activity แบบ Meetup, Lost&Found แทน Health AI, Report พร้อม Pin on Map และ Service Page ที่ไม่มี AI Coach
+          </p>
+        </div>
+        <div class="hero-metrics" aria-label="project summary">
+          <div class="metric">
+            <strong>0</strong>
+            <span>AI features ใน MVP</span>
+          </div>
+          <div class="metric">
+            <strong>5</strong>
+            <span>แท็บหลัก</span>
+          </div>
+          <div class="metric">
+            <strong>3</strong>
+            <span>ไฟล์ข้อมูลหลัก</span>
+          </div>
+        </div>
+      </article>
+
+      <aside class="phone-shell" aria-label="mobile preview">
+        <div class="phone">
+          <div class="phone-header">
+            <div class="mini-brand">
+              <span class="mini-avatar"></span>
+              <span>Smart Academy</span>
+            </div>
+            <span class="bell" aria-hidden="true"></span>
+          </div>
+          <div class="phone-body">
+            <div class="student-card">
+              <span class="student-photo"></span>
+              <div>
+                <div class="student-name">Nattapong T.</div>
+                <div class="mini-pills">
+                  <span class="mini-pill">M.6/1</span>
+                  <span class="mini-pill">กำลังเรียน: Math</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="featured">
+              <small>ประกาศสำคัญ</small>
+              <b>Exam Schedule Released</b>
+              <span>ตรวจสอบตารางสอบกลางภาคได้แล้ววันนี้</span>
+            </div>
+
+            <div class="quick">
+              <div class="quick-item"><span class="quick-icon">G</span>Grades</div>
+              <div class="quick-item"><span class="quick-icon">M</span>Meals</div>
+              <div class="quick-item"><span class="quick-icon">F</span>Lost</div>
+              <div class="quick-item"><span class="quick-icon">R</span>Reports</div>
+            </div>
+
+            <div class="my-day">
+              <div class="my-day-row">
+                <i>C</i>
+                <div><small>คาบต่อไป</small><strong>English (Room 302)</strong></div>
+                <em>10:30</em>
+              </div>
+              <div class="my-day-row">
+                <i>M</i>
+                <div><small>อาหารกลางวัน</small><strong>Basil Chicken</strong></div>
+                <em></em>
+              </div>
+              <div class="my-day-row">
+                <i>T</i>
+                <div><small>งานค้าง</small><strong>2 รายการ</strong></div>
+                <em></em>
+              </div>
+            </div>
+          </div>
+          <nav class="phone-nav" aria-label="bottom nav preview">
+            <span><b>⌂</b>Home</span>
+            <span><b>▣</b>Class</span>
+            <span><b>☑</b>Todo</span>
+            <span><b>☆</b>Activity</span>
+            <span><b>▦</b>Service</span>
+          </nav>
+        </div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <div>
+        <section id="decision">
+          <h2>สรุปการตัดสินใจใหม่</h2>
+          <div class="grid two">
+            <article class="card success">
+              <small>Keep</small>
+              <h3>ฟีเจอร์ที่คงไว้</h3>
+              <ul class="checks">
+                <li class="done">Home พร้อม Featured, Quick Services, My Day, News</li>
+                <li class="done">Grades / Profile Report แต่ไม่มี AI Insight</li>
+                <li class="done">Meals รายเดือน วันละ 3 มื้อ</li>
+                <li class="done">Academic Calendar รายปี</li>
+                <li class="done">Report แจ้งซ่อม/แจ้งเหตุ พร้อม Pin on Map</li>
+                <li class="done">Activity แบบ Meetup พร้อมสร้าง event</li>
+                <li class="done">Service Page แบบค้นหาง่ายและเป็นหมวดหมู่</li>
+              </ul>
+            </article>
+            <article class="card danger">
+              <small>Remove</small>
+              <h3>ฟีเจอร์ที่ตัดออกจาก MVP</h3>
+              <ul class="checks">
+                <li>Health AI</li>
+                <li>AI Coach</li>
+                <li>AI Q&A</li>
+                <li>AI Insight</li>
+                <li>AI recommendation</li>
+                <li>Calorie AI หรือ nutrition AI</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="replacement">
+          <h2>Feature แทน Health AI</h2>
+          <div class="panel">
+            <div class="chips">
+              <span class="chip dark">Recommended</span>
+              <span class="chip brand-chip">Lost & Found / ของหาย-ของพบ</span>
+              <span class="chip warn">No AI cost</span>
+            </div>
+            <h3>เปลี่ยนคำแนะนำเป็น Lost & Found / ของหาย-ของพบ</h3>
+            <p>
+              เหตุผลคือระบบขอลาของ รร.จปร. ยังเป็นกระดาษและไม่น่าจะเปลี่ยนเร็ว การเลือก Lost&Found จึงเหมาะกว่า:
+              ทำได้จริง งบต่ำ ใช้กับชีวิตในโรงเรียนประจำ และต่อยอดกับ LINE notification ได้ง่าย
+            </p>
+            <div class="grid three">
+              <div class="card">
+                <small>Cadet</small>
+                <h3>แจ้งของหาย</h3>
+                <p>กรอกชื่อสิ่งของ หมวดหมู่ รูปภาพ สถานที่หาย วันที่ และรายละเอียดที่ช่วยค้นหา</p>
+              </div>
+              <div class="card">
+                <small>Finder</small>
+                <h3>แจ้งพบของ</h3>
+                <p>โพสต์รูปและตำแหน่งที่พบ ระบบช่วยให้เจ้าของค้นหาและส่งคำขอ claim</p>
+              </div>
+              <div class="card">
+                <small>LINE</small>
+                <h3>แจ้งเตือนสถานะ</h3>
+                <p>ส่ง notification เมื่อมีรายการ match, มีคน claim, หรือรายการถูกคืนเจ้าของแล้ว</p>
+              </div>
+            </div>
+            <div class="callout warning">
+              <h3>ข้อควรระวัง</h3>
+              <p>
+                รูปภาพอาจติดใบหน้า บัตรประจำตัว หรือเอกสารส่วนบุคคล จึงควรมี moderation
+                และซ่อนรายละเอียดบางส่วนของของสำคัญ เช่น บัตรหรือเอกสารราชการ
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="tabs">
+          <h2>โครง 5 แท็บหลัก</h2>
+          <div class="grid five">
+            <article class="card">
+              <small>Home</small>
+              <h3>หน้าหลัก</h3>
+              <p>Featured, Quick Services, My Day, News และ notification</p>
+              <div class="tag-list">
+                <span class="tag">Grades</span>
+                <span class="tag">Meals</span>
+                <span class="tag">Lost&Found</span>
+                <span class="tag">Reports</span>
+              </div>
+            </article>
+            <article class="card">
+              <small>Class</small>
+              <h3>ตารางเรียน</h3>
+              <p>รายวัน จันทร์ถึงศุกร์ จากไฟล์โรงเรียนแบบ fixed</p>
+              <div class="tag-list">
+                <span class="tag">Monday-Friday</span>
+                <span class="tag">Daily Import</span>
+              </div>
+            </article>
+            <article class="card">
+              <small>Todo</small>
+              <h3>งาน</h3>
+              <p>Open, Due Today, Done และ filter โดยไม่มี Top 3 Tasks</p>
+              <div class="tag-list">
+                <span class="tag">No Top 3</span>
+                <span class="tag">No AI</span>
+              </div>
+            </article>
+            <article class="card">
+              <small>Activity</small>
+              <h3>กิจกรรม</h3>
+              <p>Meetup-style, image cards, RSVP, event creation, moderation</p>
+              <div class="tag-list">
+                <span class="tag">Meetup</span>
+                <span class="tag">RSVP</span>
+              </div>
+            </article>
+            <article class="card">
+              <small>Service</small>
+              <h3>บริการ</h3>
+              <p>Search, recent services, service hub, grouped services</p>
+              <div class="tag-list">
+                <span class="tag">No AI Coach</span>
+                <span class="tag">Service Hub</span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="modules">
+          <h2>Module Detail</h2>
+          <div class="grid two">
+            <article class="card">
+              <small>Class Data</small>
+              <h3>ตารางเรียนรายวัน</h3>
+              <p>ใช้ day tabs แทน calendar grid: จันทร์, อังคาร, พุธ, พฤหัสบดี, ศุกร์</p>
+              <ul class="checks">
+                <li>cohort/class เช่น M6/1</li>
+                <li>period, start, end</li>
+                <li>subject code, subject Thai/English</li>
+                <li>room, instructor, type</li>
+              </ul>
+            </article>
+            <article class="card">
+              <small>Meals Data</small>
+              <h3>อาหารรายเดือน</h3>
+              <p>ข้อมูล 1 เดือน วันละ 3 มื้อ แสดงเป็น month selector + daily meal cards</p>
+              <ul class="checks">
+                <li>breakfast</li>
+                <li>lunch</li>
+                <li>dinner</li>
+                <li>note/image optional</li>
+              </ul>
+            </article>
+            <article class="card">
+              <small>Academic Calendar</small>
+              <h3>ปฏิทินรายปี</h3>
+              <p>import ทั้งปี, แยก category, แสดง month grid และ agenda ของวันที่เลือก</p>
+              <ul class="checks">
+                <li>academic, exam, military</li>
+                <li>activity, holiday, deadline</li>
+                <li>event dot colors</li>
+              </ul>
+            </article>
+            <article class="card">
+              <small>Report Map</small>
+              <h3>Pin on Map ต้นทุนต่ำ</h3>
+              <p>ใช้ภาพ campus map แล้ววาง pin overlay บันทึกเป็นเปอร์เซ็นต์ของภาพ</p>
+              <ul class="checks">
+                <li>pin_x, pin_y</li>
+                <li>building/floor optional</li>
+                <li>photo attachment</li>
+                <li>ticket status timeline</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="structure">
+          <h2>Project Structure</h2>
+          <div class="panel">
+            <pre>crma-smart-academy-liff/
+  docs/
+    PROJECT-STRUCTURE.md
+    FEATURE-SPEC.md
+    DATA-IMPORT-SPEC.md
+    LIFF-SETUP.md
+    PDPA-CHECKLIST.md
+
+  web/
+    public/
+      images/
+      maps/campus-map.png
+
+    prisma/
+      schema.prisma
+      seed.ts
+
+    scripts/
+      import-class-schedule.ts
+      import-meals.ts
+      import-academic-calendar.ts
+
+    src/
+      app/
+        page.tsx
+        class/page.tsx
+        meals/page.tsx
+        calendar/page.tsx
+        todo/page.tsx
+        activity/page.tsx
+        activity/new/page.tsx
+        activity/[eventId]/page.tsx
+        service/page.tsx
+        report/page.tsx
+        lost-found/page.tsx
+        profile/page.tsx
+        api/...
+
+      components/
+        shell/
+        ui/
+        home/
+        class/
+        meals/
+        calendar/
+        todo/
+        activity/
+        report/
+        service/
+        lost-found/
+
+      lib/
+        liff.ts
+        db.ts
+        auth.ts
+        rbac.ts
+        i18n.ts
+        validators/
+        imports/</pre>
+          </div>
+        </section>
+
+        <section id="data">
+          <h2>Data Model ระดับ MVP</h2>
+          <div class="matrix">
+            <table>
+              <thead>
+                <tr>
+                  <th>กลุ่ม</th>
+                  <th>ตารางหลัก</th>
+                  <th>ใช้กับหน้า</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Identity</td>
+                  <td><code>user</code>, <code>cadet_profile</code>, <code>line_account</code>, <code>role_assignment</code></td>
+                  <td>ทุกหน้า, LIFF login, RBAC</td>
+                </tr>
+                <tr>
+                  <td>Class</td>
+                  <td><code>class_schedule_day</code>, <code>class_period</code></td>
+                  <td>Class, Home My Day</td>
+                </tr>
+                <tr>
+                  <td>Meals</td>
+                  <td><code>meal_month</code>, <code>meal_day</code>, <code>meal_item</code></td>
+                  <td>Meals, Home My Day</td>
+                </tr>
+                <tr>
+                  <td>Calendar</td>
+                  <td><code>academic_calendar_event</code></td>
+                  <td>Calendar, Home Featured</td>
+                </tr>
+                <tr>
+                  <td>Todo</td>
+                  <td><code>task</code>, <code>task_assignment</code>, <code>task_completion</code></td>
+                  <td>Todo, Home My Day</td>
+                </tr>
+                <tr>
+                  <td>Activity</td>
+                  <td><code>activity_event</code>, <code>activity_attendee</code>, <code>activity_comment</code>, <code>activity_moderation_log</code></td>
+                  <td>Activity, Event detail</td>
+                </tr>
+                <tr>
+                  <td>Report</td>
+                  <td><code>report_ticket</code>, <code>report_location</code>, <code>report_attachment</code>, <code>report_status_event</code></td>
+                  <td>Report/Fix, Ticket status</td>
+                </tr>
+                <tr>
+                  <td>Lost & Found</td>
+                  <td><code>lost_found_item</code>, <code>lost_found_claim</code>, <code>lost_found_attachment</code>, <code>lost_found_status_event</code></td>
+                  <td>ของหาย/ของพบ, claim, คืนของ</td>
+                </tr>
+                <tr>
+                  <td>System</td>
+                  <td><code>notification</code>, <code>notification_delivery</code>, <code>audit_log</code></td>
+                  <td>LINE push, security, admin tracking</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="imports">
+          <h2>Data Import</h2>
+          <div class="panel">
+            <div class="chips">
+              <span class="chip dark">Ingested</span>
+              <span class="chip brand-chip">Class Schedule 2569</span>
+              <span class="chip brand-chip">Academic Calendar 2569</span>
+            </div>
+            <p>
+              คัดลอก source PDF เข้า workspace แล้วที่ <code>docs/sources/</code>.
+              Class Schedule มี text layer และ extract raw text ได้ ส่วน Academic Calendar เป็น scan จึงสร้าง preview PNG ไว้ใน
+              <code>docs/ingested/previews/</code> และควรทำ OCR/manual import sheet ก่อนนำเข้าฐานข้อมูล
+            </p>
+            <div class="tag-list">
+              <span class="tag">docs/ingested/INGEST-REPORT-2569.md</span>
+              <span class="tag">class-schedule-import-template.csv</span>
+              <span class="tag">academic-calendar-import-template.csv</span>
+            </div>
+          </div>
+          <div class="grid three">
+            <article class="card">
+              <small>Daily Class</small>
+              <h3>ไฟล์ตารางเรียน</h3>
+              <p>CSV/Excel รายวัน จันทร์-ศุกร์ มี cohort, day, period, time, subject, room, instructor</p>
+            </article>
+            <article class="card">
+              <small>Monthly Meals</small>
+              <h3>ไฟล์อาหารรายเดือน</h3>
+              <p>ทุกวันต้องมี breakfast, lunch, dinner ถ้าวันไหนไม่มีข้อมูลให้แสดง empty state</p>
+            </article>
+            <article class="card">
+              <small>Yearly Calendar</small>
+              <h3>ไฟล์ปฏิทินรายปี</h3>
+              <p>import ทั้งปีพร้อม category เพื่อใช้สีและ filter ใน Academic Calendar</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="phases">
+          <h2>Development Phases</h2>
+          <div class="timeline">
+            <article class="step">
+              <div>
+                <h3>Phase 0 - Project Setup</h3>
+                <p>Next.js, TypeScript, Tailwind, Prisma, PostgreSQL, LIFF SDK, app shell, bottom nav, design tokens</p>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>Phase 1 - MVP UI + Mock Data</h3>
+                <p>Home, Class, Meals, Calendar, Todo, Service, Profile/Grades โดยใช้ mock data และไม่มี AI</p>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>Phase 2 - Workflow Features</h3>
+                <p>Report พร้อม Pin on Map, Lost&Found, Activity Meetup-style, RSVP, event creation</p>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>Phase 3 - Backend + Import</h3>
+                <p>Prisma schema, import scripts, database queries, admin import preview, audit log</p>
+              </div>
+            </article>
+            <article class="step alt">
+              <div>
+                <h3>Phase 4 - LINE Integration + Pilot</h3>
+                <p>LIFF login, LINE user binding, Rich Menu, push notification และ pilot กับกลุ่มเล็ก</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="prompts">
+          <h2>Claude Code Prompts</h2>
+          <div class="grid two">
+            <article class="card">
+              <small>Prompt 1</small>
+              <h3>สร้างโปรเจ็กต์ใหม่</h3>
+              <pre>Create a new Next.js App Router project for a LINE LIFF app named CRMA Smart Academy.
+Use TypeScript, Tailwind CSS, Prisma, PostgreSQL, and @line/liff.
+Do not add any AI feature.
+Build a mobile-first app shell with top bar, bottom navigation, and routes:
+Home, Class, Todo, Activity, Service, Profile, Meals, Calendar, Report, LostFound.</pre>
+            </article>
+            <article class="card">
+              <small>Prompt 2</small>
+              <h3>หน้า Home</h3>
+              <pre>Build the Home page using mock data.
+Style: teal brand, light blue background, white rounded cards, avatar header,
+featured carousel, quick services, My Day summary, and News list.
+Quick services: Grades, Meals, Lost & Found, Reports.
+No Health AI and no AI features.</pre>
+            </article>
+            <article class="card">
+              <small>Prompt 3</small>
+              <h3>Class รายวัน</h3>
+              <pre>Build the Class page as a fixed daily schedule.
+Use Monday-Friday tabs, not a weekly calendar grid.
+Data shape: cohort, day, period, start, end, subject code,
+subject Thai/English, room, instructor, type.</pre>
+            </article>
+            <article class="card">
+              <small>Prompt 4</small>
+              <h3>Report Map</h3>
+              <pre>Build the Report page with category, urgency, description,
+photo upload placeholder, and Pin on Map.
+Use a campus map image with clickable pin overlay.
+Store pin_x and pin_y as percentages.
+Do not use paid map APIs.</pre>
+            </article>
+          </div>
+        </section>
+
+        <section id="checklist">
+          <h2>Checklist ก่อนเริ่ม Build</h2>
+          <div class="panel">
+            <div class="grid two">
+              <ul class="checks">
+                <li>ยืนยันว่า MVP ไม่มี AI ทุกชนิด</li>
+                <li>เลือก feature แทน Health AI: Lost & Found</li>
+                <li>เตรียมไฟล์ตารางเรียนรายวัน</li>
+                <li>เตรียมไฟล์อาหารรายเดือน</li>
+                <li>เตรียมไฟล์ academic calendar รายปี</li>
+                <li>เตรียมรูป campus map สำหรับ Pin on Map</li>
+              </ul>
+              <ul class="checks">
+                <li>เตรียม LINE Official Account และ LINE Developers channel</li>
+                <li>เตรียม LIFF ID และ HTTPS endpoint</li>
+                <li>เตรียม PostgreSQL database</li>
+                <li>เขียน privacy notice และแนวทาง PDPA</li>
+                <li>กำหนดผู้ดูแล event moderation</li>
+                <li>กำหนดผู้ดูแล report ticket และ Lost&Found moderation</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="refs">
+          <h2>Reference</h2>
+          <div class="panel">
+            <p>
+              เอกสาร LINE Developers ระบุว่า LIFF app ต้องตั้ง endpoint URL เป็น HTTPS,
+              เมื่อเพิ่ม LIFF app จะได้ LIFF ID และ LIFF URL, ต้องใช้ <code>liff.init()</code>
+              ก่อนเรียก LIFF SDK methods และ Rich Menu สามารถใช้เป็นเมนูลัดจาก LINE Official Account ได้
+            </p>
+            <ul class="checks">
+              <li><a href="https://developers.line.biz/en/docs/liff/registering-liff-apps/">LINE Developers - Adding a LIFF app</a></li>
+              <li><a href="https://developers.line.biz/en/docs/liff/developing-liff-apps/">LINE Developers - Developing LIFF apps</a></li>
+              <li><a href="https://developers.line.biz/en/docs/liff/development-guidelines/">LINE Developers - LIFF development guidelines</a></li>
+              <li><a href="https://developers.line.biz/en/docs/messaging-api/rich-menus-overview/">LINE Developers - Rich menus overview</a></li>
+              <li><a href="https://gppc.pdpc.or.th/">GPPC - Government Platform for PDPA Compliance</a></li>
+            </ul>
+          </div>
+        </section>
+
+        <footer class="footer">
+          Blueprint นี้เป็นเอกสารวางโครงสร้างสำหรับเริ่มโปรเจ็กต์ใหม่ และใช้คู่กับไฟล์ Markdown:
+          <code>docs/CRMA-LIFF-New-Project-Structure-TH.md</code>
+        </footer>
+      </div>
+
+      <nav class="toc" aria-label="สารบัญ">
+        <h4>สารบัญ</h4>
+        <a href="#decision"><span>Decision</span><span>01</span></a>
+        <a href="#replacement"><span>Replace Health</span><span>02</span></a>
+        <a href="#tabs"><span>Tabs</span><span>03</span></a>
+        <a href="#modules"><span>Modules</span><span>04</span></a>
+        <a href="#structure"><span>Structure</span><span>05</span></a>
+        <a href="#data"><span>Data</span><span>06</span></a>
+        <a href="#imports"><span>Import</span><span>07</span></a>
+        <a href="#phases"><span>Phases</span><span>08</span></a>
+        <a href="#prompts"><span>Prompts</span><span>09</span></a>
+        <a href="#checklist"><span>Checklist</span><span>10</span></a>
+      </nav>
+    </div>
+  </main>
+</body>
+</html>

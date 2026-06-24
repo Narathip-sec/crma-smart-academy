@@ -1,0 +1,1119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CRMA Smart Academy LIFF · Implementation Plan</title>
+  <style>
+    :root {
+      --paper: #fbfaf6;
+      --ink: #15203a;
+      --ink2: #3a4561;
+      --crimson: #a8182a;
+      --gold: #b8923a;
+      --bone: #ece8de;
+      --bone2: #dad4c5;
+      --gray: #6f6a60;
+      --rule: #cdc6b7;
+      --shade: #ebe7db;
+      --good: #3a8b5e;
+      --stage: #cdc4ac;
+      --blue: #1a73e8;
+      --shadow: 0 16px 48px rgba(21, 32, 58, .14);
+      color-scheme: light;
+      font-family: "Sarabun", "Space Grotesk", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 18% 0%, rgba(251, 250, 246, .7), transparent 35%),
+        linear-gradient(135deg, #d6cdb8 0%, var(--stage) 58%, #b8ae98 100%);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.55;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .08;
+      background-image:
+        linear-gradient(135deg, var(--ink) 1px, transparent 1px),
+        linear-gradient(45deg, var(--ink) 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: linear-gradient(to bottom, #000, transparent 82%);
+    }
+
+    a {
+      color: var(--crimson);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .page {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 32px 0 72px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(280px, .8fr);
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+
+    .hero-main,
+    .panel,
+    .toc,
+    .milestone,
+    .callout,
+    .matrix,
+    .roadmap-item,
+    .screen-card,
+    .api-card,
+    .data-card,
+    .decision-card {
+      background: rgba(251, 250, 246, .88);
+      border: 1px solid rgba(205, 198, 183, .95);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-main {
+      padding: 28px;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      right: -120px;
+      top: -120px;
+      width: 300px;
+      height: 300px;
+      border: 1px solid rgba(168, 24, 42, .3);
+      transform: rotate(18deg);
+    }
+
+    .meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 24px;
+      padding: 3px 9px;
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      color: var(--ink2);
+      background: rgba(255, 255, 255, .28);
+      font: 700 11px/1.2 "Space Grotesk", ui-sans-serif, system-ui;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .chip.strong {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
+    }
+
+    .chip.warn {
+      background: var(--crimson);
+      color: var(--paper);
+      border-color: var(--crimson);
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      margin: 0;
+      letter-spacing: 0;
+      line-height: 1.08;
+    }
+
+    h1 {
+      max-width: 780px;
+      font-size: clamp(42px, 6vw, 78px);
+      font-weight: 800;
+    }
+
+    h2 {
+      margin: 38px 0 14px;
+      font-size: clamp(26px, 3vw, 38px);
+      font-weight: 800;
+    }
+
+    h3 {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    h4 {
+      color: var(--ink2);
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-bottom: 8px;
+      font-family: "Space Grotesk", ui-sans-serif, system-ui;
+    }
+
+    p {
+      margin: 0 0 12px;
+      color: var(--ink2);
+    }
+
+    .lead {
+      max-width: 760px;
+      margin-top: 16px;
+      color: var(--ink2);
+      font-size: 18px;
+    }
+
+    .hero-side {
+      display: grid;
+      gap: 12px;
+    }
+
+    .score {
+      padding: 18px;
+      background: var(--ink);
+      color: var(--paper);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .score p {
+      color: rgba(251, 250, 246, .75);
+    }
+
+    .score-value {
+      display: block;
+      margin: 4px 0 8px;
+      font: 800 42px/1 "Space Grotesk", ui-sans-serif, system-ui;
+      color: var(--gold);
+    }
+
+    .toc {
+      position: sticky;
+      top: 14px;
+      align-self: start;
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .toc a {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: var(--ink);
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+
+    .toc a:hover {
+      background: var(--shade);
+      border-color: var(--rule);
+      text-decoration: none;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    section {
+      scroll-margin-top: 18px;
+    }
+
+    .panel {
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .screen-card,
+    .api-card,
+    .data-card,
+    .decision-card {
+      padding: 16px;
+      box-shadow: none;
+      min-height: 100%;
+    }
+
+    .screen-card h3,
+    .api-card h3,
+    .data-card h3,
+    .decision-card h3 {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .screen-card small,
+    .api-card small,
+    .data-card small {
+      color: var(--gray);
+      font: 700 10px/1 "Space Grotesk", ui-sans-serif, system-ui;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      margin-top: 8px;
+      padding: 3px 7px;
+      border-radius: 6px;
+      background: var(--shade);
+      color: var(--ink2);
+      font: 700 10px/1.2 "Space Grotesk", ui-sans-serif, system-ui;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .status.done {
+      color: var(--good);
+      background: rgba(58, 139, 94, .1);
+    }
+
+    .status.next {
+      color: var(--crimson);
+      background: rgba(168, 24, 42, .08);
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+      counter-reset: step;
+    }
+
+    .roadmap-item {
+      position: relative;
+      display: grid;
+      grid-template-columns: 76px minmax(0, 1fr);
+      gap: 16px;
+      padding: 18px;
+      box-shadow: none;
+    }
+
+    .roadmap-item::before {
+      counter-increment: step;
+      content: counter(step);
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--ink);
+      color: var(--paper);
+      font: 800 20px/1 "Space Grotesk", ui-sans-serif, system-ui;
+    }
+
+    .roadmap-item.critical::before {
+      background: var(--crimson);
+    }
+
+    .roadmap-item.gold::before {
+      background: var(--gold);
+      color: var(--ink);
+    }
+
+    .checks {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0;
+      display: grid;
+      gap: 7px;
+    }
+
+    .checks li {
+      position: relative;
+      padding-left: 24px;
+      color: var(--ink2);
+    }
+
+    .checks li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: .45em;
+      width: 12px;
+      height: 12px;
+      border: 1.5px solid var(--crimson);
+      border-radius: 3px;
+      background: var(--paper);
+    }
+
+    .checks li.done::before {
+      border-color: var(--good);
+      background: var(--good);
+      box-shadow: inset 0 0 0 3px var(--paper);
+    }
+
+    .matrix {
+      overflow: hidden;
+      box-shadow: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      vertical-align: top;
+      padding: 12px;
+      border-bottom: 1px solid var(--rule);
+      text-align: left;
+    }
+
+    th {
+      background: var(--shade);
+      color: var(--ink);
+      font: 800 11px/1.3 "Space Grotesk", ui-sans-serif, system-ui;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .callout {
+      padding: 18px;
+      border-left: 5px solid var(--crimson);
+      box-shadow: none;
+      margin: 16px 0;
+    }
+
+    .callout.good {
+      border-left-color: var(--good);
+    }
+
+    .callout.gold {
+      border-left-color: var(--gold);
+    }
+
+    .callout h3 {
+      margin-bottom: 6px;
+    }
+
+    .rail {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .rail > div {
+      flex: 0 0 220px;
+    }
+
+    .code {
+      display: block;
+      white-space: pre-wrap;
+      padding: 14px;
+      border-radius: 8px;
+      background: #111827;
+      color: #e5e7eb;
+      font: 500 12px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      overflow-x: auto;
+    }
+
+    .footer {
+      margin-top: 36px;
+      padding: 18px;
+      color: var(--gray);
+      border-top: 1px solid rgba(21, 32, 58, .18);
+      font-size: 13px;
+    }
+
+    @media (max-width: 920px) {
+      .hero,
+      .layout,
+      .grid.two,
+      .grid.three,
+      .grid.four {
+        grid-template-columns: 1fr;
+      }
+
+      .toc {
+        position: static;
+        order: -1;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100vw - 20px, 1180px);
+        padding-top: 12px;
+      }
+
+      .hero-main,
+      .panel {
+        padding: 18px;
+      }
+
+      .roadmap-item {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 40px;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      body::before,
+      .toc {
+        display: none;
+      }
+
+      .page {
+        width: auto;
+        padding: 0;
+      }
+
+      .hero-main,
+      .panel,
+      .screen-card,
+      .api-card,
+      .data-card,
+      .decision-card,
+      .roadmap-item,
+      .callout,
+      .matrix {
+        box-shadow: none;
+        background: #fff;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="hero">
+      <article class="hero-main">
+        <div>
+          <div class="meta">
+            <span class="chip strong">CRMA Smart Academy</span>
+            <span class="chip">LINE LIFF</span>
+            <span class="chip">Next.js · Prisma · PostgreSQL</span>
+            <span class="chip">Bilingual TH/EN</span>
+          </div>
+          <h1>Prototype-to-product plan for the CRMA cadet LIFF app.</h1>
+          <p class="lead">
+            This document converts the Claude Design prototype into a build plan:
+            app scope, backend systems, data requirements, delivery phases, risks,
+            and model usage recommendations for continued work.
+          </p>
+        </div>
+        <div class="meta" aria-label="source summary">
+          <span class="chip warn">Remote URL returned not found</span>
+          <span class="chip">Local design bundle read</span>
+          <span class="chip">Prototype HTML + 3 screen files read</span>
+        </div>
+      </article>
+
+      <aside class="hero-side">
+        <div class="score">
+          <h3>Prototype Sufficiency</h3>
+          <span class="score-value">70%</span>
+          <p>
+            Strong enough for UX direction and POC scope. Not yet sufficient for
+            production backend, security, operations, or academy data governance.
+          </p>
+        </div>
+        <div class="score">
+          <h3>Recommended Build Shape</h3>
+          <span class="score-value">API-first</span>
+          <p>
+            One Next.js LIFF app plus one shared backend/data model. Keep LINE as
+            the access channel, not the only system of record.
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <div class="layout">
+      <div>
+        <section id="source">
+          <h2>1. Design Source Read</h2>
+          <div class="panel">
+            <p>
+              The requested remote design URL could not be fetched from this environment;
+              it returned <strong>not found</strong>. The workspace already contains the
+              exported Claude Design bundle for the same project, so this plan uses that
+              as the source of truth:
+            </p>
+            <ul class="checks">
+              <li class="done"><strong>README</strong>: confirms this is a Claude Design handoff and instructs agents to implement visual output, not copy prototype internals.</li>
+              <li class="done"><strong>CRMA Smart Academy - Prototype.html</strong>: imports React/Babel CDN, shared primitives, three screen bundles, and the interactive prototype router.</li>
+              <li class="done"><strong>wireframe-primitives.jsx</strong>: defines the design system: Sarabun + Space Grotesk, paper/navy/crimson/gold palette, phone shell, AppBar, BottomNav, bilingual label helper, light/dark theme.</li>
+              <li class="done"><strong>prototype-screens-1.jsx</strong>: Home, Profile + Grade Report, Class Schedule.</li>
+              <li class="done"><strong>prototype-screens-2.jsx</strong>: Meal + Calorie AI, Health AI, Report/Fix with draggable map pin.</li>
+              <li class="done"><strong>prototype-screens-3.jsx</strong>: Calendar, To-do-list, Activity, Service Menu.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section id="purpose">
+          <h2>2. Product Purpose</h2>
+          <div class="panel">
+            <p>
+              CRMA Smart Academy should become a one-stop digital service for cadets,
+              distributed through the CRMA LINE Official Account as a LIFF app. It should
+              replace scattered LINE groups, whiteboards, spreadsheets, and manual
+              announcements with a controlled, auditable, role-based platform.
+            </p>
+            <div class="grid three">
+              <div class="decision-card">
+                <h3>Cadets</h3>
+                <p>Consume schedules, grades, daily tasks, meals, activity rooms, notifications, reports, and personal development guidance.</p>
+              </div>
+              <div class="decision-card">
+                <h3>Instructors</h3>
+                <p>Publish class data, record or verify grades, manage assignments and training-related events.</p>
+              </div>
+              <div class="decision-card">
+                <h3>Command / Admin</h3>
+                <p>Manage cadet data, official announcements, calendars, reports, audit logs, and operational dashboards.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="design">
+          <h2>3. Relevant Design Aspects to Implement</h2>
+          <div class="panel">
+            <div class="grid two">
+              <div class="screen-card">
+                <h3>Visual Language <small>keep</small></h3>
+                <p>Warm paper surface, academy navy text, crimson active state, gold honors/AI accent, restrained borders, 8-10px radius, dense but readable mobile layout.</p>
+                <span class="status done">source-backed</span>
+              </div>
+              <div class="screen-card">
+                <h3>Typography <small>keep</small></h3>
+                <p>Sarabun for Thai and main copy. Space Grotesk for system labels, metadata, chips, tab text, and compact metrics. Avoid browser-default control type.</p>
+                <span class="status done">source-backed</span>
+              </div>
+              <div class="screen-card">
+                <h3>Navigation <small>build</small></h3>
+                <p>Five bottom tabs: Home, Calendar, To-do-list, Activity, Service. Home quick services push Profile, Class, Meal, Health AI, and Report/Fix.</p>
+                <span class="status next">sync web port</span>
+              </div>
+              <div class="screen-card">
+                <h3>Runtime Controls <small>ship carefully</small></h3>
+                <p>English default, TH/EN switch, light/dark switch. In production these belong in Settings/Profile, not a visible DEV chip.</p>
+                <span class="status next">productionize</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="screens">
+          <h2>4. Screen Inventory</h2>
+          <div class="grid two">
+            <div class="screen-card">
+              <h3>Home <small>Phase 1</small></h3>
+              <p>Profile banner, hero carousel, quick services, News/Events tabs, World News rail. Needs real announcements and image policy.</p>
+              <span class="status done">partly ported</span>
+            </div>
+            <div class="screen-card">
+              <h3>Profile + Grade Report <small>Phase 1</small></h3>
+              <p>Cadet identity, year, battalion, completed-semester dropdown, GPA/GPAX, course list, locked current semester.</p>
+              <span class="status done">partly ported</span>
+            </div>
+            <div class="screen-card">
+              <h3>Class Schedule <small>Phase 1</small></h3>
+              <p>Semester selector, weekday pills, sessions, room, duration, academic/training accent colors.</p>
+              <span class="status done">partly ported</span>
+            </div>
+            <div class="screen-card">
+              <h3>Calendar <small>Phase 1/2</small></h3>
+              <p>Month grid, dot markers, selected-day agenda. Needs event taxonomy, recurrence, permissions, and official calendar import.</p>
+              <span class="status next">placeholder in web</span>
+            </div>
+            <div class="screen-card">
+              <h3>To-do-list <small>Phase 1/2</small></h3>
+              <p>Categorized Academic/Military/Personal list, checkboxes, filters, urgent markers, daily orders.</p>
+              <span class="status next">placeholder in web</span>
+            </div>
+            <div class="screen-card">
+              <h3>Meal + Calorie AI <small>Phase 2</small></h3>
+              <p>Mess hall meals, calorie target, macros, canteen purchases, custom receipt/manual entry, daily spend.</p>
+              <span class="status next">placeholder in web</span>
+            </div>
+            <div class="screen-card">
+              <h3>Health AI <small>Phase 2</small></h3>
+              <p>Activity rings, app connections, steps, water, HR, weather, PFT recommendation. Needs consent and third-party integration scope.</p>
+              <span class="status next">placeholder in web</span>
+            </div>
+            <div class="screen-card">
+              <h3>Report/Fix <small>Phase 2</small></h3>
+              <p>Severity, category, map pin, GPS, photos, ticket success state, LINE status notification.</p>
+              <span class="status next">placeholder in web</span>
+            </div>
+            <div class="screen-card">
+              <h3>Activity <small>Phase 2/3</small></h3>
+              <p>Meetup-style event cards, RSVP, capacity, categories, creation FAB, possible LINE Flex message previews.</p>
+              <span class="status next">placeholder in web</span>
+            </div>
+            <div class="screen-card">
+              <h3>Service Menu <small>Phase 2</small></h3>
+              <p>Search, frequent services, tile grid for grades, e-book, library, AI coach, history, commanders, maps, contact.</p>
+              <span class="status next">placeholder in web</span>
+            </div>
+          </div>
+        </section>
+
+        <section id="backend">
+          <h2>5. Backend Systems Needed</h2>
+          <div class="grid two">
+            <div class="api-card">
+              <h3>Identity & Access</h3>
+              <p>LIFF profile, LINE user ID binding, @crma.ac.th email verification, role-based access control, user provisioning, account deactivation.</p>
+              <ul class="checks">
+                <li>Tables: User, CadetProfile, RoleAssignment, UserLineIdentity.</li>
+                <li>Services: LIFF login callback, email-domain allowlist, session/JWT, admin invite/import.</li>
+              </ul>
+            </div>
+            <div class="api-card">
+              <h3>Academic Core</h3>
+              <p>Schedules, courses, enrollments, grade records, semester lock rules, GPA/GPAX calculation, current-term visibility policy.</p>
+              <ul class="checks">
+                <li>Tables: Term, Course, Enrollment, ScheduleEntry, GradeRecord.</li>
+                <li>APIs: getMySchedule, getMyGrades, getTermAvailability.</li>
+              </ul>
+            </div>
+            <div class="api-card">
+              <h3>Announcements & Content</h3>
+              <p>News, events, hero carousel items, world news links, service pages, rich media, audience targeting.</p>
+              <ul class="checks">
+                <li>Tables: Announcement, ContentAsset, AudienceRule, ReadReceipt.</li>
+                <li>Admin: create/publish/schedule/archive, attach image, target battalion/year/company.</li>
+              </ul>
+            </div>
+            <div class="api-card">
+              <h3>Calendar & Tasks</h3>
+              <p>Academic/military/personal events, recurrence, task assignment, daily orders, completion tracking, reminders.</p>
+              <ul class="checks">
+                <li>Tables: CalendarEvent, EventAudience, Task, TaskAssignment, TaskCompletion.</li>
+                <li>Rules: official vs personal events, who can create, who can mark done.</li>
+              </ul>
+            </div>
+            <div class="api-card">
+              <h3>Meal & Health</h3>
+              <p>Mess hall menu, nutrition, canteen additions, AI recommendations, PFT data, wearable sync connections, weather data.</p>
+              <ul class="checks">
+                <li>Tables: MealMenu, FoodItem, FoodLog, FitnessMetric, PftResult, HealthConnection, ConsentRecord.</li>
+                <li>Risk: health and nutrition data require explicit consent and minimization.</li>
+              </ul>
+            </div>
+            <div class="api-card">
+              <h3>Report/Fix Workflow</h3>
+              <p>Maintenance reports, emergency channel distinction, map coordinates, photo uploads, status workflow, technician assignment.</p>
+              <ul class="checks">
+                <li>Tables: ReportTicket, TicketPhoto, TicketStatusEvent, MaintenanceTeam.</li>
+                <li>Storage: signed upload URLs, virus scanning, retention policy.</li>
+              </ul>
+            </div>
+            <div class="api-card">
+              <h3>LINE Messaging</h3>
+              <p>Push, narrowcast, multicast, Flex messages, RSVP links, service reminders, repair status notifications.</p>
+              <ul class="checks">
+                <li>Services: Messaging API worker, webhook receiver, idempotency, retry queue.</li>
+                <li>Tables: Notification, NotificationDelivery, LineWebhookEvent.</li>
+              </ul>
+            </div>
+            <div class="api-card">
+              <h3>Audit, Compliance, Operations</h3>
+              <p>PDPA controls, audit logs, consent, data-subject requests, admin actions, backups, monitoring, incident response.</p>
+              <ul class="checks">
+                <li>Tables: AuditLog, ConsentRecord, DataSubjectRequest, AdminAction.</li>
+                <li>Ops: Vercel logs, database backups, alerting, runbooks, DPO workflow.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="architecture">
+          <h2>6. Recommended Architecture</h2>
+          <div class="panel">
+            <div class="code">LINE OA / Rich Menu / Flex Message
+        │
+        ▼
+LINE LIFF app on Vercel
+Next.js App Router · React · TypeScript · Tailwind
+        │
+        ▼
+Next.js API layer / server actions
+Auth · RBAC · validation · audit middleware
+        │
+        ├── PostgreSQL via Prisma
+        ├── Object storage for report/news images
+        ├── Queue/worker for LINE push delivery
+        ├── Optional AI service for recommendations/Q&A
+        └── Future NetworkX service for activity/social analysis</div>
+            <div class="callout gold">
+              <h3>Recommendation</h3>
+              <p>
+                Keep the first production version monolithic inside Next.js where practical:
+                app, API routes, Prisma, auth, and audit middleware in one deployable system.
+                Add separate workers only for push notification delivery, image processing,
+                and future analytics once traffic and ownership justify it.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="data">
+          <h2>7. Information Required Before Build</h2>
+          <div class="matrix">
+            <table>
+              <thead>
+                <tr>
+                  <th>Area</th>
+                  <th>Required Information</th>
+                  <th>Owner / Decision</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>LINE</td>
+                  <td>LINE Official Account ID, LIFF ID, channel secret/access token, rich menu structure, webhook URL, allowed redirect URLs.</td>
+                  <td>LINE admin / project owner</td>
+                </tr>
+                <tr>
+                  <td>Identity</td>
+                  <td>@crma.ac.th email format, cadet roster source, student code format, role definitions, account lifecycle, alumni/officer handling.</td>
+                  <td>Registrar / IT / Command</td>
+                </tr>
+                <tr>
+                  <td>Academics</td>
+                  <td>Course catalog, terms, schedules, grade source, GPA formula, completed-semester lock date, instructor permissions.</td>
+                  <td>Academic affairs</td>
+                </tr>
+                <tr>
+                  <td>Announcements</td>
+                  <td>Categories, publishing workflow, image requirements, language policy, targeting rules, retention policy.</td>
+                  <td>Admin / Battalion / Activities</td>
+                </tr>
+                <tr>
+                  <td>Reports</td>
+                  <td>Maintenance categories, emergency escalation rules, facility map base, ticket SLA, team assignment, photo retention.</td>
+                  <td>Facilities / Safety office</td>
+                </tr>
+                <tr>
+                  <td>Meals</td>
+                  <td>Mess hall menu source, nutrition source, canteen item list, whether receipts are required, calorie recommendation policy.</td>
+                  <td>Mess hall / Health office</td>
+                </tr>
+                <tr>
+                  <td>Health</td>
+                  <td>PFT standards, wearable providers to support, consent text, weather source, manual-entry fallback, medical-data limits.</td>
+                  <td>Training / Medical / Legal</td>
+                </tr>
+                <tr>
+                  <td>Compliance</td>
+                  <td>PDPA lawful basis, privacy notice, consent language, DPO, data residency requirement, audit retention, classified-data exclusion.</td>
+                  <td>Legal / DPO / IT security</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="apis">
+          <h2>8. API Surface</h2>
+          <div class="grid three">
+            <div class="data-card">
+              <h3>Me</h3>
+              <p><code>GET /api/me</code><br />Cadet profile, role, theme/lang preferences, LINE binding status.</p>
+            </div>
+            <div class="data-card">
+              <h3>Home</h3>
+              <p><code>GET /api/home</code><br />Hero items, news, events, world-news links, quick-service availability.</p>
+            </div>
+            <div class="data-card">
+              <h3>Grades</h3>
+              <p><code>GET /api/grades?term=2/2025</code><br />Allowed terms, GPA, GPAX, records, locked-term metadata.</p>
+            </div>
+            <div class="data-card">
+              <h3>Schedule</h3>
+              <p><code>GET /api/schedule?term=2/2025&amp;week=...</code><br />Day slots, course labels, rooms, duration, training accents.</p>
+            </div>
+            <div class="data-card">
+              <h3>Reports</h3>
+              <p><code>POST /api/reports</code><br />Severity, category, location, details, photos, audit event, notification trigger.</p>
+            </div>
+            <div class="data-card">
+              <h3>Notifications</h3>
+              <p><code>POST /api/admin/notifications</code><br />Audience targeting, preview, enqueue, delivery status, retries.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="roadmap">
+          <h2>9. Detailed Delivery Plan</h2>
+          <div class="timeline">
+            <div class="roadmap-item critical">
+              <div>
+                <h3>Confirm Product Boundaries</h3>
+                <p>Freeze Phase 1 scope: Home, Profile/Grades, Class Schedule, Calendar, LINE login, admin seed imports, and basic push notifications.</p>
+                <ul class="checks">
+                  <li>Approve screen list and labels: especially To-do-list vs To-do.</li>
+                  <li>Confirm POC audience: one pilot company, approximate cadet count, admin roles.</li>
+                  <li>Approve production language behavior: English default, TH/EN preference stored per user.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="roadmap-item">
+              <div>
+                <h3>Stabilize Design System</h3>
+                <p>Move prototype tokens into production components, remove prototype-only artifacts, and make light/dark mode accessible.</p>
+                <ul class="checks">
+                  <li>Use CSS variables from the prototype palette.</li>
+                  <li>Replace emoji icons with a consistent icon system where possible.</li>
+                  <li>Move DEV language/theme toggle into Settings/Profile before production.</li>
+                  <li>Check Thai text wrapping on mobile widths.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="roadmap-item">
+              <div>
+                <h3>Build Auth + User Foundation</h3>
+                <p>Initialize LIFF, bind LINE user ID to a CRMA email/cadet record, and enforce role-based access.</p>
+                <ul class="checks">
+                  <li>Implement LIFF init and login redirect handling.</li>
+                  <li>Add email verification or admin-imported invitation flow.</li>
+                  <li>Reject non-CRMA domains and log rejected attempts.</li>
+                  <li>Add audit middleware for sensitive reads and writes.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="roadmap-item">
+              <div>
+                <h3>Expand Database Schema</h3>
+                <p>Extend the existing Prisma Phase 1 schema into a system that supports content, calendar, notifications, reports, and preferences.</p>
+                <ul class="checks">
+                  <li>Add User, RoleAssignment, Term, Announcement, CalendarEvent, UserPreference.</li>
+                  <li>Add Notification and NotificationDelivery before LINE push work.</li>
+                  <li>Add ReportTicket and TicketStatusEvent if Report/Fix enters Phase 1.</li>
+                  <li>Write seed data matching the prototype so UI can be tested without academy integrations.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="roadmap-item gold">
+              <div>
+                <h3>Port Remaining Prototype Screens</h3>
+                <p>Replace placeholder pages with production React components, starting with the highest-value Phase 1 pages.</p>
+                <ul class="checks">
+                  <li>Calendar: month grid, selected-day agenda, event dots with overflow cap.</li>
+                  <li>To-do-list: categories, filters, completion, urgent marker.</li>
+                  <li>Service: search, frequent services, tile grid, routing to completed screens.</li>
+                  <li>Later: Meal, Health AI, Report/Fix, Activity with real workflow decisions.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="roadmap-item">
+              <div>
+                <h3>Build Admin Data Inputs</h3>
+                <p>Production cannot rely on mock data. Add controlled import and publishing flows before pilot usage.</p>
+                <ul class="checks">
+                  <li>CSV import for cadets, courses, enrollments, and schedules.</li>
+                  <li>Admin content editor for news/events and hero carousel.</li>
+                  <li>Grade import with completed-semester lock validation.</li>
+                  <li>Preview mode for announcements and LINE messages.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="roadmap-item">
+              <div>
+                <h3>Integrate LINE Messaging</h3>
+                <p>Use push/narrowcast carefully; every notification should be targeted, logged, and user-relevant.</p>
+                <ul class="checks">
+                  <li>Create rich menu links to Home, Calendar, To-do-list, Activity, Service.</li>
+                  <li>Add webhook receiver for postback events if Flex messages are used.</li>
+                  <li>Add queue/retry for delivery and idempotency keys.</li>
+                  <li>Expose admin delivery reports.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="roadmap-item critical">
+              <div>
+                <h3>Compliance Review Before Pilot</h3>
+                <p>PDPA and military context must be handled before real cadet data enters the system.</p>
+                <ul class="checks">
+                  <li>Publish privacy notice and consent text in Thai and English.</li>
+                  <li>Confirm Thailand data residency.</li>
+                  <li>Confirm no classified military data in the POC.</li>
+                  <li>Verify audit logs for grade access, profile access, reports, admin actions, and notifications.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="roadmap-item">
+              <div>
+                <h3>Pilot, Measure, Iterate</h3>
+                <p>Run with the pilot company, measure usage, gather cadet/admin feedback, and decide Phase 2 priorities.</p>
+                <ul class="checks">
+                  <li>Track daily active users, screen completion, notification open rates, report SLA, and schedule/grade lookup frequency.</li>
+                  <li>Collect structured feedback inside the LIFF app.</li>
+                  <li>Hold admin review after two weeks and cadet review after one month.</li>
+                  <li>Promote Phase 2 modules based on usage, not just prototype appeal.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="sufficiency">
+          <h2>10. Is the Prototype Sufficient?</h2>
+          <div class="grid two">
+            <div class="callout good">
+              <h3>Sufficient For</h3>
+              <ul class="checks">
+                <li class="done">Visual direction and mobile density.</li>
+                <li class="done">Main navigation and screen inventory.</li>
+                <li class="done">Bilingual and light/dark behavior.</li>
+                <li class="done">POC demo conversations with stakeholders.</li>
+                <li class="done">Seed data shape for first UI port.</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <h3>Not Sufficient For</h3>
+              <ul class="checks">
+                <li>Production data model completeness.</li>
+                <li>RBAC, PDPA, audit logging, retention, and security controls.</li>
+                <li>Admin workflows and source-of-truth data ingestion.</li>
+                <li>LINE webhook, Messaging API delivery, and retry behavior.</li>
+                <li>Health/AI consent, wearable provider contracts, and medical boundary rules.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="model">
+          <h2>11. Claude / Opus 4.7 Usage</h2>
+          <div class="panel">
+            <p>
+              Claude Opus 4.7 is appropriate for this project when the task needs deep
+              architecture, product decomposition, backend/security review, cross-file
+              codebase reasoning, or careful design-to-code critique. It is more model
+              than needed for repetitive UI porting, copy edits, seed-data cleanup, or
+              mechanical Prisma changes.
+            </p>
+            <div class="grid three">
+              <div class="decision-card">
+                <h3>Use Opus 4.7 For</h3>
+                <p>Architecture, compliance review, data modeling, AI feature policy, major refactors, and final plan reviews.</p>
+              </div>
+              <div class="decision-card">
+                <h3>Use Cheaper/Faster Models For</h3>
+                <p>Component porting, CSS polish, simple tests, fixture cleanup, label changes, and routine API routes.</p>
+              </div>
+              <div class="decision-card">
+                <h3>Operating Rule</h3>
+                <p>Ask the strongest model to decide strategy, then use smaller models or agents to execute bounded tasks with tests.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="next">
+          <h2>12. Immediate Next Steps</h2>
+          <div class="panel">
+            <ol>
+              <li><strong>Approve Phase 1 scope</strong>: Home, Profile/Grades, Class, Calendar, auth, LINE push baseline.</li>
+              <li><strong>Fix naming consistency</strong>: decide whether production label is To-do-list everywhere.</li>
+              <li><strong>Port Calendar next</strong>: it is a high-value Phase 1 screen and already well-defined by the prototype.</li>
+              <li><strong>Add User/Auth schema</strong>: current Prisma schema starts with Cadet academic data but needs identity/session/audit foundation.</li>
+              <li><strong>Prepare data import templates</strong>: cadets, courses, enrollments, schedules, announcements.</li>
+              <li><strong>Define privacy and consent text</strong>: before any real LINE/cadet/health data is connected.</li>
+            </ol>
+          </div>
+        </section>
+
+        <footer class="footer">
+          Generated for CRMA Smart Academy LIFF planning. Source: local Claude Design export in
+          <code>.design-tmp/extracted/crma-smart-academy-liff-app/</code> and current Next.js app in
+          <code>web/</code>. Date: 2026-05-28.
+        </footer>
+      </div>
+
+      <nav class="toc" aria-label="Plan contents">
+        <h4>Contents</h4>
+        <a href="#source"><span>Source</span><span>01</span></a>
+        <a href="#purpose"><span>Purpose</span><span>02</span></a>
+        <a href="#design"><span>Design</span><span>03</span></a>
+        <a href="#screens"><span>Screens</span><span>04</span></a>
+        <a href="#backend"><span>Backend</span><span>05</span></a>
+        <a href="#architecture"><span>Architecture</span><span>06</span></a>
+        <a href="#data"><span>Info Needed</span><span>07</span></a>
+        <a href="#apis"><span>APIs</span><span>08</span></a>
+        <a href="#roadmap"><span>Roadmap</span><span>09</span></a>
+        <a href="#sufficiency"><span>Sufficiency</span><span>10</span></a>
+        <a href="#model"><span>Model</span><span>11</span></a>
+        <a href="#next"><span>Next</span><span>12</span></a>
+      </nav>
+    </div>
+  </main>
+</body>
+</html>

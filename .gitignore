@@ -1,0 +1,22 @@
+# Local agent/settings
+.claude/settings.local.json
+
+# App dependencies and build output
+web/node_modules/
+web/.next/
+web/out/
+web/build/
+web/coverage/
+web/.vercel/
+web/*.tsbuildinfo
+web/next-env.d.ts
+
+# Local env/secrets
+web/.env
+web/.env.*
+!web/.env.example
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db
