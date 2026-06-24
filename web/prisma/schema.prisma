@@ -17,90 +17,180 @@ enum Role {
 }
 
 model Cadet {
-  id           String   @id @default(cuid())
+  id          String   @id @default(cuid())
   // LINE LIFF profile.userId — populated on first login. Null until claimed.
-  lineUserId   String?  @unique
-  email        String   @unique // *@crma.ac.th
-  thaiName     String
-  englishName  String
-  rank         String   // "2LT", "1LT" etc — display rank
-  yearLevel    Int      // 1..4 (ชั้นปี)
-  studentCode  String   @unique // "67-0421"
-  companyId    String
-  battalion    String   // "BN-2"
-  role         Role     @default(cadet)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  lineUserId  String?  @unique
+  email       String   @unique // *@crma.ac.th
+  thaiName    String
+  englishName String
+  rank        String // "2LT", "1LT" etc — display rank
+  yearLevel   Int // 1..4 (ชั้นปี)
+  studentCode String   @unique // "67-0421"
+  companyId   String
+  battalion   String // "BN-2"
+  role        Role     @default(cadet)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  company      Company        @relation(fields: [companyId], references: [id])
-  enrollments  Enrollment[]
-  grades       GradeRecord[]
+  company     Company       @relation(fields: [companyId], references: [id])
+  enrollments Enrollment[]
+  grades      GradeRecord[]
 
   @@index([companyId])
 }
 
 model Company {
-  id       String  @id @default(cuid())
-  name     String  @unique // "Co-A", "Co-B"
-  cadets   Cadet[]
+  id     String  @id @default(cuid())
+  name   String  @unique // "Co-A", "Co-B"
+  cadets Cadet[]
 }
 
 model Course {
-  id          String   @id @default(cuid())
-  code        String   @unique // "MA201"
-  thaiName    String   // "แคลคูลัส II"
-  englishName String   // "Calculus II"
+  id          String @id @default(cuid())
+  code        String @unique // "MA201"
+  thaiName    String // "แคลคูลัส II"
+  englishName String // "Calculus II"
   credits     Int
-  semester    Int      // 1 or 2
-  year        Int      // 2024..2026
+  semester    Int // 1 or 2
+  year        Int // 2024..2026
 
-  enrollments    Enrollment[]
-  grades         GradeRecord[]
+  enrollments     Enrollment[]
+  grades          GradeRecord[]
   scheduleEntries ScheduleEntry[]
 
   @@unique([code, semester, year])
 }
 
 model Enrollment {
-  id        String  @id @default(cuid())
-  cadetId   String
-  courseId  String
-  semester  Int
-  year      Int
+  id       String @id @default(cuid())
+  cadetId  String
+  courseId String
+  semester Int
+  year     Int
 
-  cadet     Cadet   @relation(fields: [cadetId], references: [id])
-  course    Course  @relation(fields: [courseId], references: [id])
+  cadet  Cadet  @relation(fields: [cadetId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
 
   @@unique([cadetId, courseId, semester, year])
 }
 
 model GradeRecord {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   cadetId   String
   courseId  String
-  grade     String  // "A", "A-", "B+" ...
+  grade     String // "A", "A-", "B+" ...
   semester  Int
   year      Int
-  locked    Boolean @default(true) // current/future term may be unlocked
+  locked    Boolean  @default(true) // current/future term may be unlocked
   createdAt DateTime @default(now())
 
-  cadet     Cadet   @relation(fields: [cadetId], references: [id])
-  course    Course  @relation(fields: [courseId], references: [id])
+  cadet  Cadet  @relation(fields: [cadetId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
 
   @@unique([cadetId, courseId, semester, year])
 }
 
 model ScheduleEntry {
-  id         String  @id @default(cuid())
-  courseId   String
-  dayOfWeek  Int     // 0=Mon ... 6=Sun
-  startTime  String  // "08:30"
-  endTime    String  // "10:00"
-  room       String  // "Rm 304" / "Field A"
-  semester   Int
-  year       Int
+  id        String @id @default(cuid())
+  courseId  String
+  dayOfWeek Int // 0=Mon ... 6=Sun
+  startTime String // "08:30"
+  endTime   String // "10:00"
+  room      String // "Rm 304" / "Field A"
+  semester  Int
+  year      Int
 
-  course     Course  @relation(fields: [courseId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
 
   @@index([courseId, dayOfWeek])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Import-file domains — mirror the CSV templates in docs/ingested/.
+// Self-contained (cohort/date keyed), independent of the Course-based models
+// above. Loaders normalize a CSV row -> these models (idempotent upsert).
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum ClassCategory {
+  academic
+  military
+  pe
+  advisory
+  self_study
+}
+
+enum CalendarCategory {
+  academic
+  exam
+  military
+  activity
+  holiday
+  deadline
+}
+
+enum MealType {
+  breakfast
+  lunch
+  dinner
+}
+
+/// Source: schedule.csv (one row per class period, date-based).
+model ClassPeriod {
+  id          String        @id @default(cuid())
+  date        DateTime      @db.Date // 2026-06-22
+  dayTh       String // "จันทร์"
+  periodLabel String // "1-2"
+  startTime   String // "08:00"
+  endTime     String // "09:50"
+  courseCode  String? // "CS311" (blank for free periods)
+  courseName  String // "Linux Server Configuration"
+  section     String? // "ซบ." / "รวม"
+  instructor  String?
+  room        String?
+  remarks     String?
+  category    ClassCategory @default(academic)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@unique([date, periodLabel, courseName])
+  @@index([date])
+}
+
+/// Source: academic-calendar-import-template.csv (one row per event).
+model AcademicCalendarEvent {
+  id            String           @id @default(cuid())
+  academicYear  Int // พ.ศ., e.g. 2569
+  date          DateTime         @db.Date // 2026-04-06
+  thaiDateLabel String? // "6 เม.ย. 69"
+  dayOfWeekTh   String? // "จันทร์"
+  startTime     String? // null = all-day
+  endTime       String?
+  titleTh       String
+  titleEn       String?
+  category      CalendarCategory @default(academic)
+  note          String? // verify flags, etc.
+  sourcePage    Int?
+  sourceRow     Int?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@unique([academicYear, date, titleTh])
+  @@index([academicYear, date])
+  @@index([academicYear, category])
+}
+
+/// Source: meals CSV (proposed; no source file yet). One row per meal per day.
+model MealItem {
+  id        String   @id @default(cuid())
+  date      DateTime @db.Date
+  mealType  MealType
+  menuTh    String
+  menuEn    String?
+  note      String? // halal / vegetarian / allergen
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([date, mealType])
+  @@index([date])
 }

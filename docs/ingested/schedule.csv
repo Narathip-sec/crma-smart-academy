@@ -1,0 +1,18 @@
+﻿Date,Day,Period,Start_Time,End_Time,Course_Code,Course_Name,Section (ตอน),Instructor,Room,Remarks
+2026-06-22,จันทร์,1-2,08:00,09:50,CS311,Linux Server Configuration,ซบ.,พ.อ. ดร. สมชาย,Cyber Lab 1,Lab Session
+2026-06-22,จันทร์,3-4,10:00,11:50,CS312,Firewall and Perimeter Defense,ซบ.,พ.ต. ประยุทธ์,Cyber Lab 1,Quiz 1
+2026-06-22,จันทร์,5-6,13:00,14:50,MIL201,Tactics and Leadership I,รวม,พ.ท. มนัส,Auditorium,Dress: Combat Uniform
+2026-06-22,จันทร์,7-8,15:00,16:50,GE102,Technical English,รวม,อ. นภาพร,Room 202,
+2026-06-23,อังคาร,1-2,08:00,09:50,CE321,Geodesic Surveying,วผ.,ร.อ. วิทยา,Map Room 1,Field Work
+2026-06-23,อังคาร,3-4,10:00,11:50,CE322,Photogrammetry,วผ.,พ.ต. หญิง ศิริพร,Map Room 2,
+2026-06-23,อังคาร,5-6,13:00,14:50,GE103,Advanced Mathematics,รวม,ดร. สมศักดิ์,Room 301,
+2026-06-24,พุธ,1-2,08:00,09:50,SS211,Social Change and Development,สศ.,อ. สมศรี,Room 401,
+2026-06-24,พุธ,3-4,10:00,11:50,SS212,Public Policy Planning,สศ.,พ.ท. ณรงค์,Room 402,Group Presentation
+2026-06-24,พุธ,5-6,13:00,14:50,MIL202,Military History,รวม,พ.อ. สุรเดช,Auditorium,
+2026-06-25,พฤหัสบดี,1-2,08:00,09:50,CS401,Network Forensics,ซบ.,พ.ท. หญิง อารยา,Cyber Lab 2,Autopsy Tool Lab
+2026-06-25,พฤหัสบดี,3,10:00,10:50,CS402,Cryptography Basics,ซบ.,ร.อ. นิธิ,Room 302,
+2026-06-25,พฤหัสบดี,4,11:00,11:50,CS403,Vulnerability Assessment,ซบ.,พ.ต. ประยุทธ์,Cyber Lab 2,TryHackMe Mr.Robot Lab
+2026-06-25,พฤหัสบดี,5-6,13:00,14:50,GE104,Professional Ethics,รวม,ดร. วิภา,Room 204,
+2026-06-26,ศุกร์,1-2,08:00,09:50,CE411,Remote Sensing and GIS,วผ.,ร.อ. วิทยา,GIS Lab,
+2026-06-26,ศุกร์,3-4,10:00,11:50,SS411,Strategic Management,สศ.,อ. สมศรี,Room 401,
+2026-06-26,ศุกร์,5-6,13:00,14:50,MIL203,Command and Control Systems,รวม,พ.อ. สมชาย,Command Room,Dress: Combat Uniform
