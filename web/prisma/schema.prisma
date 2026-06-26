@@ -1,5 +1,5 @@
-// CRMA Smart Cadet Platform — POC Phase 1 schema
-// Scope: Schedule + Grade + Cadet profile. Activity/SNA come in later phases.
+// CRMA Smart Cadet Platform — MVP schema (Phase 3)
+// Groups: Identity · Content · Class · Meals · Calendar · Todo · Activity · Report · Lost&Found · Service · System
 
 generator client {
   provider = "prisma-client-js"
@@ -10,106 +10,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
 enum Role {
   cadet
   instructor
   command
+  moderator
 }
-
-model Cadet {
-  id          String   @id @default(cuid())
-  // LINE LIFF profile.userId — populated on first login. Null until claimed.
-  lineUserId  String?  @unique
-  email       String   @unique // *@crma.ac.th
-  thaiName    String
-  englishName String
-  rank        String // "2LT", "1LT" etc — display rank
-  yearLevel   Int // 1..4 (ชั้นปี)
-  studentCode String   @unique // "67-0421"
-  companyId   String
-  battalion   String // "BN-2"
-  role        Role     @default(cadet)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  company     Company       @relation(fields: [companyId], references: [id])
-  enrollments Enrollment[]
-  grades      GradeRecord[]
-
-  @@index([companyId])
-}
-
-model Company {
-  id     String  @id @default(cuid())
-  name   String  @unique // "Co-A", "Co-B"
-  cadets Cadet[]
-}
-
-model Course {
-  id          String @id @default(cuid())
-  code        String @unique // "MA201"
-  thaiName    String // "แคลคูลัส II"
-  englishName String // "Calculus II"
-  credits     Int
-  semester    Int // 1 or 2
-  year        Int // 2024..2026
-
-  enrollments     Enrollment[]
-  grades          GradeRecord[]
-  scheduleEntries ScheduleEntry[]
-
-  @@unique([code, semester, year])
-}
-
-model Enrollment {
-  id       String @id @default(cuid())
-  cadetId  String
-  courseId String
-  semester Int
-  year     Int
-
-  cadet  Cadet  @relation(fields: [cadetId], references: [id])
-  course Course @relation(fields: [courseId], references: [id])
-
-  @@unique([cadetId, courseId, semester, year])
-}
-
-model GradeRecord {
-  id        String   @id @default(cuid())
-  cadetId   String
-  courseId  String
-  grade     String // "A", "A-", "B+" ...
-  semester  Int
-  year      Int
-  locked    Boolean  @default(true) // current/future term may be unlocked
-  createdAt DateTime @default(now())
-
-  cadet  Cadet  @relation(fields: [cadetId], references: [id])
-  course Course @relation(fields: [courseId], references: [id])
-
-  @@unique([cadetId, courseId, semester, year])
-}
-
-model ScheduleEntry {
-  id        String @id @default(cuid())
-  courseId  String
-  dayOfWeek Int // 0=Mon ... 6=Sun
-  startTime String // "08:30"
-  endTime   String // "10:00"
-  room      String // "Rm 304" / "Field A"
-  semester  Int
-  year      Int
-
-  course Course @relation(fields: [courseId], references: [id])
-
-  @@index([courseId, dayOfWeek])
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Import-file domains — mirror the CSV templates in docs/ingested/.
-// Self-contained (cohort/date keyed), independent of the Course-based models
-// above. Loaders normalize a CSV row -> these models (idempotent upsert).
-// ─────────────────────────────────────────────────────────────────────────────
 
 enum ClassCategory {
   academic
@@ -134,17 +42,173 @@ enum MealType {
   dinner
 }
 
+enum ActivityStatus {
+  draft
+  open
+  closed
+  cancelled
+}
+
+enum ModerationStatus {
+  pending
+  approved
+  rejected
+}
+
+enum ReportStatus {
+  open
+  in_progress
+  resolved
+  closed
+}
+
+enum LostFoundStatus {
+  reported
+  matched
+  claimed
+  closed
+}
+
+enum NotificationChannel {
+  in_app
+  line_push
+}
+
+// ─── Identity ─────────────────────────────────────────────────────────────────
+
+/// App user — created on first LIFF login or manual provisioning.
+model User {
+  id          String   @id @default(cuid())
+  email       String?  @unique // *@crma.ac.th if known
+  displayName String
+  avatarUrl   String?
+  role        Role     @default(cadet)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  cadetProfile         CadetProfile?
+  lineAccount          LineAccount?
+  roleAssignments      RoleAssignment[]
+  notifications        Notification[]
+  notificationDeliveries NotificationDelivery[]
+  auditLogs            AuditLog[]
+  createdActivities    ActivityEvent[]          @relation("ActivityCreator")
+  activityAttendees    ActivityAttendee[]
+  activityComments     ActivityComment[]
+  activityModerations  ActivityModerationLog[]
+  reportTickets        ReportTicket[]
+  reportStatusEvents   ReportStatusEvent[]
+  lostFoundItems       LostFoundItem[]
+  lostFoundClaims      LostFoundClaim[]
+  lostFoundStatusEvents LostFoundStatusEvent[]
+  taskAssignments      TaskAssignment[]
+  taskCompletions      TaskCompletion[]
+  taskComments         TaskComment[]
+}
+
+model CadetProfile {
+  id          String @id @default(cuid())
+  userId      String @unique
+  studentCode String @unique // "67-0421"
+  thaiName    String
+  englishName String
+  rank        String // "2LT", "1LT"
+  yearLevel   Int    // 1..4 (ชั้นปี)
+  companyId   String
+  battalion   String // "BN-2"
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@index([companyId])
+}
+
+model LineAccount {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  lineUserId String   @unique
+  linkedAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model RoleAssignment {
+  id        String   @id @default(cuid())
+  userId    String
+  role      Role
+  grantedAt DateTime @default(now())
+  grantedBy String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, role])
+}
+
+model Company {
+  id           String         @id @default(cuid())
+  name         String         @unique // "Co-A"
+  cadetProfiles CadetProfile[]
+}
+
+// ─── Content ──────────────────────────────────────────────────────────────────
+
+model Announcement {
+  id        String   @id @default(cuid())
+  titleTh   String
+  titleEn   String?
+  bodyTh    String
+  bodyEn    String?
+  pinned    Boolean  @default(false)
+  publishAt DateTime @default(now())
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attachments FileAsset[]
+}
+
+model NewsItem {
+  id        String   @id @default(cuid())
+  titleTh   String
+  titleEn   String?
+  bodyTh    String
+  bodyEn    String?
+  imageUrl  String?
+  publishAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FileAsset {
+  id             String        @id @default(cuid())
+  url            String
+  mimeType       String
+  sizeBytes      Int?
+  nameTh         String?
+  nameEn         String?
+  uploadedAt     DateTime      @default(now())
+  announcementId String?
+  activityEventId String?
+  reportAttachment ReportAttachment?
+  lostFoundAttachment LostFoundAttachment?
+
+  announcement   Announcement?  @relation(fields: [announcementId], references: [id])
+  activityEvent  ActivityEvent? @relation(fields: [activityEventId], references: [id])
+}
+
+// ─── Class ────────────────────────────────────────────────────────────────────
+
 /// Source: schedule.csv (one row per class period, date-based).
 model ClassPeriod {
   id          String        @id @default(cuid())
-  date        DateTime      @db.Date // 2026-06-22
-  dayTh       String // "จันทร์"
-  periodLabel String // "1-2"
-  startTime   String // "08:00"
-  endTime     String // "09:50"
-  courseCode  String? // "CS311" (blank for free periods)
-  courseName  String // "Linux Server Configuration"
-  section     String? // "ซบ." / "รวม"
+  date        DateTime      @db.Date
+  dayTh       String        // "จันทร์"
+  periodLabel String        // "1-2"
+  startTime   String        // "08:00"
+  endTime     String        // "09:50"
+  courseCode  String?
+  courseName  String
+  section     String?
   instructor  String?
   room        String?
   remarks     String?
@@ -156,19 +220,66 @@ model ClassPeriod {
   @@index([date])
 }
 
-/// Source: academic-calendar-import-template.csv (one row per event).
+// ─── Meals ────────────────────────────────────────────────────────────────────
+
+model MealMonth {
+  id           String    @id @default(cuid())
+  year         Int       // 2026
+  month        Int       // 1-12
+  importedAt   DateTime  @default(now())
+  sourceFile   String?
+
+  days MealDay[]
+
+  @@unique([year, month])
+}
+
+model MealDay {
+  id          String    @id @default(cuid())
+  mealMonthId String
+  date        DateTime  @db.Date
+
+  mealMonth MealMonth  @relation(fields: [mealMonthId], references: [id], onDelete: Cascade)
+  items     MealItem[]
+
+  @@unique([mealMonthId, date])
+  @@index([date])
+}
+
+/// Source: meals CSV (wide→long transform). One row per meal slot per day.
+model MealItem {
+  id        String   @id @default(cuid())
+  mealDayId String?  // null = standalone import (legacy)
+  date      DateTime @db.Date
+  mealType  MealType
+  menuTh    String
+  menuEn    String?
+  note      String?
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mealDay MealDay? @relation(fields: [mealDayId], references: [id])
+
+  @@unique([date, mealType])
+  @@index([date])
+}
+
+// ─── Calendar ─────────────────────────────────────────────────────────────────
+
+/// Source: crma_schedule_structured.csv (academic calendar, one row per event).
 model AcademicCalendarEvent {
   id            String           @id @default(cuid())
-  academicYear  Int // พ.ศ., e.g. 2569
-  date          DateTime         @db.Date // 2026-04-06
-  thaiDateLabel String? // "6 เม.ย. 69"
-  dayOfWeekTh   String? // "จันทร์"
-  startTime     String? // null = all-day
+  academicYear  Int              // พ.ศ.
+  date          DateTime         @db.Date
+  thaiDateLabel String?
+  dayOfWeekTh   String?
+  startTime     String?
   endTime       String?
   titleTh       String
   titleEn       String?
   category      CalendarCategory @default(academic)
-  note          String? // verify flags, etc.
+  note          String?
   sourcePage    Int?
   sourceRow     Int?
   createdAt     DateTime         @default(now())
@@ -179,18 +290,347 @@ model AcademicCalendarEvent {
   @@index([academicYear, category])
 }
 
-/// Source: meals CSV (proposed; no source file yet). One row per meal per day.
-model MealItem {
-  id        String   @id @default(cuid())
-  date      DateTime @db.Date
-  mealType  MealType
-  menuTh    String
-  menuEn    String?
-  note      String? // halal / vegetarian / allergen
-  imageUrl  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// ─── Todo ─────────────────────────────────────────────────────────────────────
 
-  @@unique([date, mealType])
-  @@index([date])
+model Task {
+  id          String    @id @default(cuid())
+  titleTh     String
+  titleEn     String?
+  descriptionTh String?
+  descriptionEn String?
+  dueAt       DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  assignments TaskAssignment[]
+  completions TaskCompletion[]
+  comments    TaskComment[]
+}
+
+model TaskAssignment {
+  id        String   @id @default(cuid())
+  taskId    String
+  userId    String
+  assignedAt DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, userId])
+}
+
+model TaskCompletion {
+  id          String   @id @default(cuid())
+  taskId      String
+  userId      String
+  completedAt DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, userId])
+}
+
+model TaskComment {
+  id        String   @id @default(cuid())
+  taskId    String
+  userId    String
+  bodyTh    String
+  bodyEn    String?
+  createdAt DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── Activity ─────────────────────────────────────────────────────────────────
+
+model ActivityCategory {
+  id      String          @id @default(cuid())
+  nameTh  String          @unique
+  nameEn  String?
+  iconKey String?
+
+  events ActivityEvent[]
+}
+
+model ActivityEvent {
+  id            String         @id @default(cuid())
+  categoryId    String?
+  creatorId     String
+  titleTh       String
+  titleEn       String?
+  descriptionTh String?
+  descriptionEn String?
+  location      String?
+  startAt       DateTime
+  endAt         DateTime?
+  maxAttendees  Int?
+  status        ActivityStatus @default(draft)
+  modStatus     ModerationStatus @default(pending)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  category    ActivityCategory?       @relation(fields: [categoryId], references: [id])
+  creator     User                    @relation("ActivityCreator", fields: [creatorId], references: [id])
+  attendees   ActivityAttendee[]
+  comments    ActivityComment[]
+  moderations ActivityModerationLog[]
+  images      FileAsset[]
+}
+
+model ActivityAttendee {
+  id           String   @id @default(cuid())
+  activityId   String
+  userId       String
+  registeredAt DateTime @default(now())
+  attended     Boolean  @default(false)
+
+  activity ActivityEvent @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([activityId, userId])
+}
+
+model ActivityComment {
+  id         String   @id @default(cuid())
+  activityId String
+  userId     String
+  bodyTh     String
+  bodyEn     String?
+  createdAt  DateTime @default(now())
+
+  activity ActivityEvent @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ActivityModerationLog {
+  id         String           @id @default(cuid())
+  activityId String
+  moderatorId String
+  action     String           // "approve" | "reject" | "flag"
+  reason     String?
+  createdAt  DateTime         @default(now())
+
+  activity  ActivityEvent @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  moderator User          @relation(fields: [moderatorId], references: [id])
+}
+
+// ─── Report ───────────────────────────────────────────────────────────────────
+
+model ReportCategory {
+  id      String         @id @default(cuid())
+  nameTh  String         @unique
+  nameEn  String?
+  iconKey String?
+
+  tickets ReportTicket[]
+}
+
+model MaintenanceTeam {
+  id      String         @id @default(cuid())
+  nameTh  String         @unique
+  nameEn  String?
+
+  tickets ReportTicket[]
+}
+
+model ReportTicket {
+  id          String       @id @default(cuid())
+  ticketNo    String       @unique // "RPT-2026-0001"
+  reporterId  String
+  categoryId  String?
+  teamId      String?
+  titleTh     String
+  descriptionTh String
+  locationId  String?
+  status      ReportStatus @default(open)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  reporter    User              @relation(fields: [reporterId], references: [id])
+  category    ReportCategory?   @relation(fields: [categoryId], references: [id])
+  team        MaintenanceTeam?  @relation(fields: [teamId], references: [id])
+  location    ReportLocation?   @relation(fields: [locationId], references: [id])
+  attachments ReportAttachment[]
+  statusEvents ReportStatusEvent[]
+
+  @@index([reporterId])
+  @@index([status])
+}
+
+model ReportLocation {
+  id       String  @id @default(cuid())
+  nameTh   String
+  lat      Float?
+  lng      Float?
+  mapPin   String? // serialized pin JSON
+
+  tickets ReportTicket[]
+}
+
+model ReportAttachment {
+  id       String @id @default(cuid())
+  ticketId String
+  assetId  String @unique
+
+  ticket ReportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  asset  FileAsset    @relation(fields: [assetId], references: [id])
+}
+
+model ReportStatusEvent {
+  id        String       @id @default(cuid())
+  ticketId  String
+  actorId   String
+  fromStatus ReportStatus?
+  toStatus  ReportStatus
+  note      String?
+  createdAt DateTime     @default(now())
+
+  ticket ReportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  actor  User         @relation(fields: [actorId], references: [id])
+}
+
+// ─── Lost & Found ─────────────────────────────────────────────────────────────
+
+model LostFoundCategory {
+  id      String          @id @default(cuid())
+  nameTh  String          @unique
+  nameEn  String?
+  iconKey String?
+
+  items LostFoundItem[]
+}
+
+model LostFoundItem {
+  id           String          @id @default(cuid())
+  reporterId   String
+  categoryId   String?
+  titleTh      String
+  descriptionTh String
+  foundAt      DateTime?       @db.Date
+  foundLocation String?
+  status       LostFoundStatus @default(reported)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  reporter    User                  @relation(fields: [reporterId], references: [id])
+  category    LostFoundCategory?    @relation(fields: [categoryId], references: [id])
+  claims      LostFoundClaim[]
+  attachments LostFoundAttachment[]
+  statusEvents LostFoundStatusEvent[]
+
+  @@index([status])
+}
+
+model LostFoundClaim {
+  id        String   @id @default(cuid())
+  itemId    String
+  claimantId String
+  note      String?
+  claimedAt DateTime @default(now())
+
+  item     LostFoundItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  claimant User          @relation(fields: [claimantId], references: [id])
+
+  @@unique([itemId, claimantId])
+}
+
+model LostFoundAttachment {
+  id      String @id @default(cuid())
+  itemId  String
+  assetId String @unique
+
+  item  LostFoundItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  asset FileAsset     @relation(fields: [assetId], references: [id])
+}
+
+model LostFoundStatusEvent {
+  id         String          @id @default(cuid())
+  itemId     String
+  actorId    String
+  fromStatus LostFoundStatus?
+  toStatus   LostFoundStatus
+  note       String?
+  createdAt  DateTime        @default(now())
+
+  item  LostFoundItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  actor User          @relation(fields: [actorId], references: [id])
+}
+
+// ─── Service ──────────────────────────────────────────────────────────────────
+
+model ServiceCategory {
+  id      String        @id @default(cuid())
+  nameTh  String        @unique
+  nameEn  String?
+  iconKey String?
+  sortOrder Int         @default(0)
+
+  items ServiceItem[]
+}
+
+model ServiceItem {
+  id          String  @id @default(cuid())
+  categoryId  String
+  nameTh      String
+  nameEn      String?
+  descriptionTh String?
+  url         String? // external link or deep link
+  iconKey     String?
+  sortOrder   Int     @default(0)
+  active      Boolean @default(true)
+
+  category ServiceCategory @relation(fields: [categoryId], references: [id])
+
+  @@index([categoryId])
+}
+
+// ─── System ───────────────────────────────────────────────────────────────────
+
+model Notification {
+  id         String              @id @default(cuid())
+  userId     String
+  titleTh    String
+  bodyTh     String
+  deepLink   String?
+  readAt     DateTime?
+  createdAt  DateTime            @default(now())
+
+  user       User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deliveries NotificationDelivery[]
+
+  @@index([userId, readAt])
+}
+
+model NotificationDelivery {
+  id             String              @id @default(cuid())
+  notificationId String
+  userId         String
+  channel        NotificationChannel
+  deliveredAt    DateTime?
+  failReason     String?
+  createdAt      DateTime            @default(now())
+
+  notification Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([notificationId, channel])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String   // "report.create" | "claim.approve" etc.
+  entityType String? // "ReportTicket" | "LostFoundItem"
+  entityId  String?
+  meta      Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id])
+
+  @@index([actorId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
 }

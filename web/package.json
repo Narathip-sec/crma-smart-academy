@@ -14,7 +14,11 @@
     "import:class": "tsx scripts/import-class-schedule.ts",
     "import:calendar": "tsx scripts/import-academic-calendar.ts",
     "import:meals": "tsx scripts/import-meals.ts",
-    "import:all": "npm run import:class && npm run import:calendar && npm run import:meals"
+    "import:all": "npm run import:class && npm run import:calendar && npm run import:meals",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@line/liff": "^2.29.0",
