@@ -1,7 +1,9 @@
 // GET  /api/activity           → approved activity events (open/closed)
-// POST /api/activity           → create event (requires moderation approval)
+// POST /api/activity           → create event (pending moderation; audit-logged)
 
 import { prisma } from "@/lib/db";
+import { writeAuditLog, ipFrom } from "@/lib/audit";
+import { requireCadet } from "@/lib/rbac";
 import { ActivityStatus, ModerationStatus } from "@prisma/client";
 import type { NextRequest } from "next/server";
 
@@ -47,6 +49,9 @@ export async function POST(req: NextRequest) {
   const user = await prisma.user.findUnique({ where: { email: DEV_EMAIL } });
   if (!user) return Response.json({ error: "unauthenticated" }, { status: 401 });
 
+  const denied = requireCadet(user.role);
+  if (denied) return denied;
+
   const body = (await req.json()) as {
     titleTh: string;
     titleEn?: string;
@@ -76,6 +81,15 @@ export async function POST(req: NextRequest) {
       status: ActivityStatus.draft,
       modStatus: ModerationStatus.pending,
     },
+  });
+
+  await writeAuditLog({
+    actorId: user.id,
+    action: "activity.create",
+    entityType: "ActivityEvent",
+    entityId: event.id,
+    meta: { titleTh: event.titleTh },
+    ip: ipFrom(req),
   });
 
   return Response.json(event, { status: 201 });

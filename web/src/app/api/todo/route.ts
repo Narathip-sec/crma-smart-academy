@@ -2,6 +2,7 @@
 // POST /api/todo           → create task (instructor/command only — P3-6 RBAC tightens this)
 
 import { prisma } from "@/lib/db";
+import type { NextRequest } from "next/server";
 
 const DEV_EMAIL = process.env.DEV_USER_EMAIL ?? "dev.cadet@crma.ac.th";
 

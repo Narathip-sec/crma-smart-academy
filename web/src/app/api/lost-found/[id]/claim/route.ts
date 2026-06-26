@@ -1,6 +1,9 @@
 // POST /api/lost-found/:id/claim — file a claim on a lost/found item.
+// Any cadet+ can claim; action is audit-logged.
 
 import { prisma } from "@/lib/db";
+import { writeAuditLog, ipFrom } from "@/lib/audit";
+import { requireCadet } from "@/lib/rbac";
 import { LostFoundStatus } from "@prisma/client";
 import type { NextRequest } from "next/server";
 
@@ -14,6 +17,9 @@ export async function POST(
   const user = await prisma.user.findUnique({ where: { email: DEV_EMAIL } });
   if (!user) return Response.json({ error: "unauthenticated" }, { status: 401 });
 
+  const denied = requireCadet(user.role);
+  if (denied) return denied;
+
   const item = await prisma.lostFoundItem.findUnique({ where: { id } });
   if (!item) return Response.json({ error: "not found" }, { status: 404 });
   if (item.status === LostFoundStatus.claimed || item.status === LostFoundStatus.closed) {
@@ -24,11 +30,7 @@ export async function POST(
 
   const [claim] = await prisma.$transaction([
     prisma.lostFoundClaim.create({
-      data: {
-        itemId: id,
-        claimantId: user.id,
-        note: body.note,
-      },
+      data: { itemId: id, claimantId: user.id, note: body.note },
     }),
     prisma.lostFoundItem.update({
       where: { id },
@@ -44,6 +46,15 @@ export async function POST(
       },
     }),
   ]);
+
+  await writeAuditLog({
+    actorId: user.id,
+    action: "lost_found.claim",
+    entityType: "LostFoundItem",
+    entityId: id,
+    meta: { claimId: claim.id, note: body.note },
+    ip: ipFrom(req),
+  });
 
   return Response.json(claim, { status: 201 });
 }

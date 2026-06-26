@@ -1,8 +1,11 @@
-// GET  /api/report  → tickets for current user (cadet sees own; moderator sees all)
-// POST /api/report  → file new report ticket
+// GET  /api/report  → tickets (cadet: own; moderator/command: all)
+// POST /api/report  → file new report ticket (any cadet+)
 
 import { prisma } from "@/lib/db";
+import { writeAuditLog, ipFrom } from "@/lib/audit";
+import { requireCadet, hasRole } from "@/lib/rbac";
 import { Role } from "@prisma/client";
+import type { NextRequest } from "next/server";
 
 const DEV_EMAIL = process.env.DEV_USER_EMAIL ?? "dev.cadet@crma.ac.th";
 
@@ -16,7 +19,10 @@ export async function GET() {
   const user = await prisma.user.findUnique({ where: { email: DEV_EMAIL } });
   if (!user) return Response.json({ error: "unauthenticated" }, { status: 401 });
 
-  const isMod = user.role === Role.moderator || user.role === Role.command;
+  const denied = requireCadet(user.role);
+  if (denied) return denied;
+
+  const isMod = hasRole(user.role, [Role.moderator, Role.command]);
 
   const tickets = await prisma.reportTicket.findMany({
     where: isMod ? {} : { reporterId: user.id },
@@ -34,6 +40,9 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const user = await prisma.user.findUnique({ where: { email: DEV_EMAIL } });
   if (!user) return Response.json({ error: "unauthenticated" }, { status: 401 });
+
+  const denied = requireCadet(user.role);
+  if (denied) return denied;
 
   const body = (await req.json()) as {
     titleTh: string;
@@ -67,13 +76,19 @@ export async function POST(req: NextRequest) {
       descriptionTh: body.descriptionTh,
       locationId,
       statusEvents: {
-        create: {
-          actorId: user.id,
-          toStatus: "open",
-        },
+        create: { actorId: user.id, toStatus: "open" },
       },
     },
     include: { category: true, team: true, location: true },
+  });
+
+  await writeAuditLog({
+    actorId: user.id,
+    action: "report.create",
+    entityType: "ReportTicket",
+    entityId: ticket.id,
+    meta: { ticketNo },
+    ip: ipFrom(req),
   });
 
   return Response.json(ticket, { status: 201 });
