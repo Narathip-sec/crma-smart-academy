@@ -1,17 +1,176 @@
-import { PlaceholderScreen } from "@/components/shell/placeholder-screen";
+"use client";
 
-// Activity event detail. Next 16: params is a Promise — must await.
-export default async function ActivityDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useTx } from "@/components/shell/bilingual-label";
+
+const THAI_MONTHS_SHORT = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+const THAI_DAYS = ["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
+
+function formatDateTime(iso: string): string {
+  const d = new Date(iso);
+  const be = d.getFullYear() + 543;
+  return `${THAI_DAYS[d.getDay()]} ${d.getDate()} ${THAI_MONTHS_SHORT[d.getMonth()]} ${be} · ${d.toTimeString().slice(0, 5)} น.`;
+}
+
+type Event = {
+  id: string;
+  titleTh: string;
+  titleEn: string | null;
+  descriptionTh: string | null;
+  location: string | null;
+  startAt: string;
+  endAt: string | null;
+  maxAttendees: number | null;
+  status: string;
+  category: { nameTh: string } | null;
+  _count: { attendees: number };
+  attendees: { id: string; userId: string; status: string }[];
+};
+
+const STATUS_LABEL: Record<string, { th: string; color: string }> = {
+  draft:    { th: "ร่าง",           color: "var(--muted)" },
+  pending:  { th: "รอพิจารณา",     color: "#b45309" },
+  approved: { th: "อนุมัติแล้ว",   color: "var(--brand)" },
+  rejected: { th: "ปฏิเสธ",        color: "var(--danger)" },
+  cancelled:{ th: "ยกเลิก",        color: "var(--muted)" },
+};
+
+function InfoRow({ icon, labelTh, labelEn, value, t }: {
+  icon: string; labelTh: string; labelEn: string; value: string;
+  t: (bi: { th: string; en: string }) => string;
 }) {
-  const { id } = await params;
   return (
-    <PlaceholderScreen
-      th={`รายละเอียดกิจกรรม #${id}`}
-      en={`Activity #${id}`}
-      phase="PHASE 2"
-    />
+    <div className="flex items-start gap-3 px-4 py-3" style={{ borderBottom: "1px solid var(--line)" }}>
+      <span style={{ fontSize: 16 }}>{icon}</span>
+      <div>
+        <div style={{ font: "600 10px var(--font-sans)", color: "var(--muted)", marginBottom: 1 }}>
+          {t({ th: labelTh, en: labelEn })}
+        </div>
+        <div style={{ font: "500 13px var(--font-sans)", color: "var(--ink)" }}>{value}</div>
+      </div>
+    </div>
+  );
+}
+
+export default function ActivityDetailPage() {
+  const params = useParams();
+  const router = useRouter();
+  const id = params.id as string;
+  const t = useTx();
+
+  const [event, setEvent] = useState<Event | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [rsvpLoading, setRsvpLoading] = useState(false);
+  const [rsvpDone, setRsvpDone] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetch(`/api/activity/${id}`)
+      .then(r => r.json())
+      .then((data: Event) => {
+        if (data && data.id) setEvent(data);
+        else setError("ไม่พบกิจกรรม");
+      })
+      .catch(() => setError("โหลดข้อมูลไม่สำเร็จ"))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  async function rsvp() {
+    setRsvpLoading(true);
+    const res = await fetch(`/api/activity/${id}/rsvp`, { method: "POST" });
+    if (res.ok) setRsvpDone(true);
+    else {
+      const body = await res.json().catch(() => ({}));
+      setError((body as { error?: string }).error ?? "RSVP ไม่สำเร็จ");
+    }
+    setRsvpLoading(false);
+  }
+
+  if (loading) return (
+    <div className="flex flex-1 items-center justify-center" style={{ background: "var(--bg)" }}>
+      <div style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>{t({ th: "กำลังโหลด…", en: "Loading…" })}</div>
+    </div>
+  );
+
+  if (!event) return (
+    <div className="flex flex-1 items-center justify-center" style={{ background: "var(--bg)" }}>
+      <div style={{ font: "500 13px var(--font-sans)", color: "var(--danger)" }}>{error || "ไม่พบกิจกรรม"}</div>
+    </div>
+  );
+
+  const statusLbl = STATUS_LABEL[event.status] ?? { th: event.status, color: "var(--muted)" };
+  const full = event.maxAttendees !== null && event._count.attendees >= event.maxAttendees;
+  const canRsvp = event.status === "approved" && !full && !rsvpDone;
+
+  return (
+    <div className="flex flex-1 flex-col overflow-y-auto" style={{ background: "var(--bg)" }}>
+      <div style={{ background: "linear-gradient(135deg, var(--grad-from) 0%, var(--grad-to) 100%)", padding: "12px 16px 28px" }}>
+        <button type="button" onClick={() => router.back()}
+          className="mb-4 flex h-9 w-9 items-center justify-center rounded-full"
+          style={{ background: "rgba(255,255,255,.2)" }} aria-label="Back">
+          <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+        {event.category && (
+          <div className="mb-2">
+            <span style={{ display: "inline-block", padding: "2px 10px", borderRadius: 999, background: "rgba(255,255,255,.2)", color: "#fff", font: "600 10px var(--font-sans)" }}>
+              {event.category.nameTh}
+            </span>
+          </div>
+        )}
+        <div style={{ font: "700 20px var(--font-sans)", color: "#fff", lineHeight: 1.25 }}>
+          {t({ th: event.titleTh, en: event.titleEn ?? event.titleTh })}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4 px-4 pb-8 pt-5">
+        <div className="flex gap-2">
+          <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: 999, background: statusLbl.color + "18", color: statusLbl.color, font: "600 11px var(--font-sans)" }}>
+            {statusLbl.th}
+          </span>
+          {event.maxAttendees && (
+            <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: 999, background: "var(--tint)", color: full ? "var(--danger)" : "var(--brand)", font: "600 11px var(--font-sans)" }}>
+              👥 {event._count.attendees}/{event.maxAttendees} {full ? t({ th: "เต็ม", en: "Full" }) : t({ th: "ที่นั่ง", en: "seats" })}
+            </span>
+          )}
+        </div>
+
+        <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--line)", background: "var(--surface)" }}>
+          <InfoRow icon="📅" labelTh="วันเวลา" labelEn="Date & Time" value={formatDateTime(event.startAt)} t={t} />
+          {event.endAt && <InfoRow icon="🔚" labelTh="สิ้นสุด" labelEn="End" value={formatDateTime(event.endAt)} t={t} />}
+          {event.location && <InfoRow icon="📍" labelTh="สถานที่" labelEn="Location" value={event.location} t={t} />}
+        </div>
+
+        {event.descriptionTh && (
+          <div className="rounded-2xl p-4" style={{ border: "1px solid var(--line)", background: "var(--surface)" }}>
+            <div style={{ font: "700 13px var(--font-sans)", color: "var(--ink)", marginBottom: 8 }}>{t({ th: "รายละเอียด", en: "Details" })}</div>
+            <div style={{ font: "400 13px var(--font-sans)", color: "var(--muted)", lineHeight: 1.6 }}>{event.descriptionTh}</div>
+          </div>
+        )}
+
+        {error && <div style={{ font: "500 12px var(--font-sans)", color: "var(--danger)", textAlign: "center" }}>{error}</div>}
+
+        {rsvpDone ? (
+          <div className="rounded-2xl py-4 text-center" style={{ background: "var(--tint)", font: "600 14px var(--font-sans)", color: "var(--brand)" }}>
+            ✓ {t({ th: "ลงทะเบียนแล้ว", en: "Registered" })}
+          </div>
+        ) : (
+          <button type="button" onClick={canRsvp ? rsvp : undefined}
+            disabled={!canRsvp || rsvpLoading}
+            className="w-full rounded-2xl py-4"
+            style={{ background: canRsvp ? "var(--brand)" : "var(--line)", font: "600 14px var(--font-sans)", color: canRsvp ? "#fff" : "var(--muted)", opacity: rsvpLoading ? 0.6 : 1, cursor: canRsvp ? "pointer" : "not-allowed" }}>
+            {rsvpLoading
+              ? t({ th: "กำลังลงทะเบียน…", en: "Registering…" })
+              : full
+              ? t({ th: "ที่นั่งเต็ม", en: "Full" })
+              : event.status !== "approved"
+              ? t({ th: "ยังไม่เปิดรับสมัคร", en: "Not open yet" })
+              : t({ th: "ลงทะเบียนเข้าร่วม", en: "Register" })}
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
