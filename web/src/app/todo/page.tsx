@@ -46,7 +46,21 @@ export default function TodoPage() {
   const [filter, setFilter] = useState<Filter>("ทั้งหมด");
   const [showCreate, setShowCreate] = useState(false);
   const [newTitle, setNewTitle] = useState("");
+  const [newCategory, setNewCategory] = useState("วิชาการ");
+  const [newDue, setNewDue] = useState<"วันนี้"|"พรุ่งนี้"|"สัปดาห์นี้"|"ไม่ระบุ">("ไม่ระบุ");
+  const [newNote, setNewNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const CATEGORIES = ["วิชาการ","ทหาร","ส่วนตัว","กิจกรรม"] as const;
+  const DUE_OPTS = ["วันนี้","พรุ่งนี้","สัปดาห์นี้","ไม่ระบุ"] as const;
+
+  function resolveDueAt(): string | undefined {
+    const now = new Date();
+    if (newDue === "วันนี้") { now.setHours(23,59,0,0); return now.toISOString(); }
+    if (newDue === "พรุ่งนี้") { now.setDate(now.getDate()+1); now.setHours(23,59,0,0); return now.toISOString(); }
+    if (newDue === "สัปดาห์นี้") { now.setDate(now.getDate()+7); now.setHours(23,59,0,0); return now.toISOString(); }
+    return undefined;
+  }
 
   const load = useCallback(() => {
     fetch("/api/todo").then(r => r.json()).then((data: DbTask[]) => {
@@ -69,9 +83,14 @@ export default function TodoPage() {
     await fetch("/api/todo", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ titleTh: newTitle }),
+      body: JSON.stringify({
+        titleTh: newTitle,
+        descriptionTh: newNote || undefined,
+        dueAt: resolveDueAt(),
+      }),
     });
-    setNewTitle(""); setShowCreate(false); setSubmitting(false);
+    setNewTitle(""); setNewCategory("วิชาการ"); setNewDue("ไม่ระบุ"); setNewNote("");
+    setShowCreate(false); setSubmitting(false);
     load();
   }
 
@@ -184,28 +203,79 @@ export default function TodoPage() {
           onClick={(e) => { if (e.target === e.currentTarget) setShowCreate(false); }}>
           <div className="w-full rounded-t-3xl px-5 pb-8 pt-5"
             style={{ background: "var(--surface)", maxWidth: 420, margin: "0 auto" }}>
+            {/* Header */}
             <div className="mb-4 flex items-center justify-between">
-              <div style={{ font: "700 16px var(--font-sans)", color: "var(--ink)" }}>{t({ th: "สร้างงานใหม่", en: "Create task" })}</div>
+              <div style={{ font: "700 16px var(--font-sans)", color: "var(--ink)" }}>
+                {t({ th: "สร้างงานใหม่", en: "Create task" })}
+              </div>
               <button type="button" onClick={() => setShowCreate(false)}
                 style={{ font: "500 22px var(--font-sans)", color: "var(--muted)", lineHeight: 1 }}>✕</button>
             </div>
+
+            {/* Title */}
             <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 6 }}>
               {t({ th: "ชื่องาน", en: "Task name" })} <span style={{ color: "var(--danger)" }}>*</span>
             </div>
             <input type="text" value={newTitle} onChange={(e) => setNewTitle(e.target.value)}
               placeholder={t({ th: "เช่น อ่านบทที่ 5 เตรียมสอบ…", en: "e.g. Read chapter 5 for exam…" })}
-              className="mb-5 w-full rounded-xl px-4 py-3"
+              className="mb-4 w-full rounded-xl px-4 py-3"
               style={{ border: "1px solid var(--line)", background: "var(--bg)", font: "500 13px var(--font-sans)", color: "var(--ink)", outline: "none" }}
             />
+
+            {/* Category chips */}
+            <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 8 }}>
+              {t({ th: "หมวดหมู่", en: "Category" })}
+            </div>
+            <div className="mb-4 flex gap-2 flex-wrap">
+              {CATEGORIES.map(c => (
+                <button key={c} type="button" onClick={() => setNewCategory(c)}
+                  className="rounded-full px-4 py-1.5"
+                  style={{
+                    background: newCategory === c ? "var(--brand)" : "var(--bg)",
+                    color: newCategory === c ? "#fff" : "var(--muted)",
+                    border: newCategory === c ? "none" : "1px solid var(--line)",
+                    font: "600 12px var(--font-sans)",
+                  }}>{c}</button>
+              ))}
+            </div>
+
+            {/* Due date chips */}
+            <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 8 }}>
+              {t({ th: "กำหนดส่ง · Due date", en: "Due date" })}
+            </div>
+            <div className="mb-4 flex gap-2 flex-wrap">
+              {DUE_OPTS.map(d => (
+                <button key={d} type="button" onClick={() => setNewDue(d as typeof newDue)}
+                  className="rounded-full px-4 py-1.5"
+                  style={{
+                    background: newDue === d ? "var(--brand)" : "var(--bg)",
+                    color: newDue === d ? "#fff" : "var(--muted)",
+                    border: newDue === d ? "none" : "1px solid var(--line)",
+                    font: "600 12px var(--font-sans)",
+                  }}>{t({ th: d, en: d })}</button>
+              ))}
+            </div>
+
+            {/* Note */}
+            <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 6 }}>
+              {t({ th: "โน้ต · Note", en: "Note" })}
+            </div>
+            <textarea value={newNote} onChange={e => setNewNote(e.target.value)} rows={2}
+              placeholder={t({ th: "รายละเอียดเพิ่มเติม…", en: "Additional details…" })}
+              className="mb-5 w-full rounded-xl px-4 py-3"
+              style={{ border: "1px solid var(--line)", background: "var(--bg)", font: "500 13px var(--font-sans)", color: "var(--ink)", outline: "none", resize: "none" }}
+            />
+
+            {/* Actions */}
             <div className="flex gap-3">
               <button type="button" onClick={() => setShowCreate(false)}
                 className="flex-1 rounded-2xl py-3.5"
                 style={{ background: "var(--stage)", font: "600 14px var(--font-sans)", color: "var(--muted)" }}>
                 {t({ th: "ยกเลิก", en: "Cancel" })}
               </button>
-              <button type="button" onClick={createTask} disabled={submitting}
+              <button type="button" onClick={createTask} disabled={submitting || !newTitle.trim()}
                 className="flex-1 rounded-2xl py-3.5"
-                style={{ background: "var(--brand)", font: "600 14px var(--font-sans)", color: "#fff", opacity: submitting ? 0.6 : 1 }}>
+                style={{ background: "var(--brand)", font: "600 14px var(--font-sans)", color: "#fff", opacity: (submitting || !newTitle.trim()) ? 0.5 : 1 }}>
                 + {t({ th: "สร้างงาน", en: "Create" })}
               </button>
             </div>

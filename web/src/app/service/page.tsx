@@ -18,7 +18,7 @@ const OTHER: ServiceRow[] = [
 ];
 
 const SUPPORT: ServiceRow[] = [
-  { href: "/lost-found", th: "ของหาย-ของเจอ",        en: "Lost & Found" },
+  { href: "/lost-found", th: "ของหาย / ของพบ",        en: "Lost & Found" },
   { href: "/report",     th: "แจ้งซ่อม / แจ้งปัญหา", en: "Report / Fix" },
   { href: "#",           th: "ติดต่อกองบัญชาการ",     en: "Contact Office", soon: true },
   { href: "#",           th: "แผนที่ค่าย",             en: "Campus Map",     soon: true },
@@ -107,6 +107,30 @@ export default function ServicePage() {
       </header>
 
       <div className="flex-1 overflow-y-auto px-3 pb-6">
+
+        {/* Recent */}
+        <div style={{ marginTop: 16, marginBottom: 8, font: "700 14px var(--font-sans)", color: "var(--ink)" }}>
+          {t({ th: "ใช้ล่าสุด", en: "Recent" })}
+          <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>Recent</span>
+        </div>
+        <div className="flex gap-3 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+          {[
+            { href: "/profile",   th: "ผลการเรียน", en: "Grades",    icon: "🎓" },
+            { href: "/meals",     th: "เมนูโรงจ",   en: "Meals",     icon: "🍽" },
+            { href: "/report",    th: "แจ้งซ่อม",   en: "Report",    icon: "⚠️" },
+            { href: "/calendar",  th: "ปฏิทิน",     en: "Calendar",  icon: "📅" },
+          ].map(r => (
+            <Link key={r.href} href={r.href}
+              className="flex shrink-0 flex-col items-center gap-1.5 rounded-2xl px-4 py-3"
+              style={{ background: "var(--surface)", border: "1px solid var(--line)", textDecoration: "none", minWidth: 72 }}>
+              <span style={{ fontSize: 22 }}>{r.icon}</span>
+              <span style={{ font: "600 10px var(--font-sans)", color: "var(--ink)", textAlign: "center", lineHeight: 1.3 }}>
+                {t({ th: r.th, en: r.en })}
+              </span>
+            </Link>
+          ))}
+        </div>
+
         {/* Popular 2×2 grid */}
         <div style={{ marginTop: 16, marginBottom: 4, font: "700 14px var(--font-sans)", color: "var(--ink)" }}>
           {t({ th: "บริการยอดนิยม", en: "Popular" })}
