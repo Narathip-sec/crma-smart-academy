@@ -5,7 +5,7 @@ import { AppBar } from "@/components/shell/app-bar";
 import { useTx } from "@/components/shell/bilingual-label";
 import {
   DAYS, DAY_LABELS, CATEGORY_COLOR, CATEGORY_LABEL,
-  COHORTS, getSchedule,
+  COHORTS, COHORT_NAMES, getSchedule,
   type DayOfWeek, type Cohort,
 } from "@/lib/data/class";
 
@@ -25,7 +25,7 @@ function nowStr(): string {
 export default function ClassPage() {
   const t = useTx();
   const [selectedDay, setSelectedDay] = useState<DayOfWeek>(todayDay());
-  const [cohort, setCohort] = useState<Cohort>("ก.1");
+  const [cohort, setCohort] = useState<Cohort>("วก.");
 
   const periods = getSchedule(cohort, selectedDay);
   const now = nowStr();
@@ -51,11 +51,7 @@ export default function ClassPage() {
               border: c === cohort ? "none" : "1px solid var(--line)",
               font: "700 12px var(--font-sans)",
             }}>
-            {c === "ก.1" ? t({ th: "กองร้อย ก.1", en: "Co. G1" })
-              : c === "ก" ? t({ th: "กองร้อย ก", en: "Co. G" })
-              : c === "ข" ? t({ th: "กองร้อย ข", en: "Co. B" })
-              : c === "ค" ? t({ th: "กองร้อย ค", en: "Co. C" })
-              : t({ th: "กองร้อย ง", en: "Co. D" })}
+            {c}
           </button>
         ))}
       </div>
@@ -75,6 +71,13 @@ export default function ClassPage() {
             </button>
           );
         })}
+      </div>
+
+      {/* Branch label */}
+      <div className="px-4 pt-2.5 pb-0.5">
+        <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>
+          {t(COHORT_NAMES[cohort])}
+        </span>
       </div>
 
       {/* Day header */}
