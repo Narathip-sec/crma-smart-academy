@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { prisma } from "@/lib/db";
 import { AppBar } from "@/components/shell/app-bar";
 import { NotificationChannel } from "@prisma/client";

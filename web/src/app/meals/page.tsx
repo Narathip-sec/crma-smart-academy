@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { prisma } from "@/lib/db";
 import { AppBar } from "@/components/shell/app-bar";
 import { MealType } from "@prisma/client";

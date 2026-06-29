@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { TopBar } from "@/components/shell/top-bar";
 import { ProfileBanner } from "@/components/home/profile-banner";
 import { HeroCarousel } from "@/components/home/hero-carousel";
