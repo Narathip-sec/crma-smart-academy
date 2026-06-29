@@ -46,7 +46,7 @@ function ReportIcon() {
 const SERVICES: Service[] = [
   { href: "/profile",    th: "ผลการเรียน",   en: "Grades",       icon: <GradesIcon />,    iconBg: "var(--tint)" },
   { href: "/meals",      th: "เมนูอาหาร",    en: "Meals",        icon: <MealsIcon />,     iconBg: "#fbf1dc" },
-  { href: "/lost-found", th: "ของหาย-ของพบ", en: "Lost & Found", icon: <LostFoundIcon />, iconBg: "var(--tint)" },
+  { href: "/lost-found", th: "ของหาย",       en: "Lost",        icon: <LostFoundIcon />, iconBg: "var(--tint)" },
   { href: "/report",     th: "แจ้งซ่อม",     en: "Reports",      icon: <ReportIcon />,    iconBg: "#fdeaec" },
 ];
 
@@ -63,11 +63,11 @@ export function QuickServices() {
           <Link
             key={s.href}
             href={s.href}
-            className="flex flex-col items-center gap-2"
-            style={{ textDecoration: "none" }}
+            className="flex flex-col items-center gap-2 rounded-2xl py-3"
+            style={{ textDecoration: "none", background: "var(--surface)", border: "1px solid var(--line)" }}
           >
             <div
-              className="flex h-12 w-12 items-center justify-center rounded-2xl"
+              className="flex h-11 w-11 items-center justify-center rounded-xl"
               style={{ background: s.iconBg }}
             >
               {s.icon}

@@ -5,9 +5,12 @@ import { AppBar } from "@/components/shell/app-bar";
 import { useTx } from "@/components/shell/bilingual-label";
 import {
   DAYS, DAY_LABELS, CATEGORY_COLOR, CATEGORY_LABEL,
-  COHORTS, COHORT_NAMES, getSchedule,
+  COHORT_NAMES, getSchedule,
   type DayOfWeek, type Cohort,
 } from "@/lib/data/class";
+
+// Dev default — P4 will replace with LIFF profile company
+const USER_COHORT: Cohort = "วก.";
 
 const JS_DAY_MAP: Record<number, DayOfWeek | null> = {
   1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday",
@@ -25,7 +28,7 @@ function nowStr(): string {
 export default function ClassPage() {
   const t = useTx();
   const [selectedDay, setSelectedDay] = useState<DayOfWeek>(todayDay());
-  const [cohort, setCohort] = useState<Cohort>("วก.");
+  const cohort = USER_COHORT;
 
   const periods = getSchedule(cohort, selectedDay);
   const now = nowStr();
@@ -38,23 +41,6 @@ export default function ClassPage() {
   return (
     <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
       <AppBar th="ตารางเรียน" en="Class Schedule" />
-
-      {/* Cohort selector */}
-      <div className="flex gap-2 overflow-x-auto px-3 pb-2 pt-3"
-        style={{ background: "var(--surface)", borderBottom: "1px solid var(--line)", scrollbarWidth: "none" }}>
-        {COHORTS.map((c) => (
-          <button key={c} type="button" onClick={() => setCohort(c)}
-            className="shrink-0 rounded-full px-4 py-1.5"
-            style={{
-              background: c === cohort ? "var(--brand)" : "var(--bg)",
-              color: c === cohort ? "#fff" : "var(--muted)",
-              border: c === cohort ? "none" : "1px solid var(--line)",
-              font: "700 12px var(--font-sans)",
-            }}>
-            {c}
-          </button>
-        ))}
-      </div>
 
       {/* Day tabs */}
       <div className="flex gap-1.5 px-3 py-2"

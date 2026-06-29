@@ -9,7 +9,7 @@ function AnnouncementCard({ item }: { item: Announcement }) {
   const t = useTx();
   return (
     <Link
-      href={`/notifications`}
+      href={`/announcements`}
       className="flex flex-col justify-between rounded-2xl p-3.5"
       style={{
         background: item.accentColor,
@@ -83,7 +83,7 @@ export function HeroCarousel() {
           {t({ th: "ประกาศสำคัญ", en: "Announcements" })}
           <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>Featured</span>
         </div>
-        <Link href="/notifications" style={{ font: "600 11px var(--font-sans)", color: "var(--brand)" }}>
+        <Link href="/announcements" style={{ font: "600 11px var(--font-sans)", color: "var(--brand)" }}>
           {t({ th: "ทั้งหมด", en: "See all" })}
         </Link>
       </div>

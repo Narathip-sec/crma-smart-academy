@@ -21,7 +21,7 @@ function DayRow({ href, iconBg, icon, labelTh, labelEn, titleTh, titleEn, subTh,
   return (
     <Link
       href={href}
-      className="flex items-center gap-3 rounded-2xl p-3.5"
+      className="flex items-center gap-3 rounded-xl p-2.5"
       style={{ background: "var(--surface)", border: "1px solid var(--line)", textDecoration: "none" }}
     >
       <div
@@ -59,7 +59,7 @@ export function MyDay() {
         {t({ th: "วันนี้ของฉัน", en: "My Day" })}
         <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>My Day</span>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1.5">
         {/* Next class */}
         <DayRow
           href="/class"
