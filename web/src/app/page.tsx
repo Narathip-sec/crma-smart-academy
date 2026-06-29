@@ -1,22 +1,33 @@
-export const dynamic = 'force-dynamic';
+"use client";
+
+import { useState, useEffect } from "react";
 import { TopBar } from "@/components/shell/top-bar";
 import { ProfileBanner } from "@/components/home/profile-banner";
 import { HeroCarousel } from "@/components/home/hero-carousel";
 import { QuickServices } from "@/components/home/quick-services";
 import { MyDay } from "@/components/home/my-day";
 import { NewsFeed } from "@/components/home/news-feed";
-import { prisma } from "@/lib/db";
 
-const DEV_EMAIL = process.env.DEV_USER_EMAIL ?? "dev.cadet@crma.ac.th";
+type MeResponse = {
+  displayName?: string;
+  cadetProfile?: { thaiName?: string } | null;
+};
 
-export default async function HomePage() {
-  const user = await prisma.user.findUnique({
-    where: { email: DEV_EMAIL },
-    include: { cadetProfile: { select: { thaiName: true } } },
-  });
-  const name = user?.cadetProfile?.thaiName
-    ? `นนร.${user.cadetProfile.thaiName}`
-    : user?.displayName ?? "นนร.";
+export default function HomePage() {
+  const [name, setName] = useState("นนร.");
+
+  useEffect(() => {
+    fetch("/api/me")
+      .then(r => r.ok ? r.json() : null)
+      .then((d: MeResponse | null) => {
+        if (!d) return;
+        const n = d.cadetProfile?.thaiName
+          ? `นนร.${d.cadetProfile.thaiName}`
+          : d.displayName ?? "นนร.";
+        setName(n);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <>
