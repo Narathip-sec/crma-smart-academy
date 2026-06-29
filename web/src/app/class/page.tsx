@@ -1,14 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { AppBar } from "@/components/shell/app-bar";
 import { useTx } from "@/components/shell/bilingual-label";
-import { DAYS, DAY_LABELS, CATEGORY_COLOR, CATEGORY_LABEL, type DayOfWeek } from "@/lib/data/class";
-
-const DAY_TO_THAI: Record<DayOfWeek, string> = {
-  Monday: "จันทร์", Tuesday: "อังคาร", Wednesday: "พุธ",
-  Thursday: "พฤหัสบดี", Friday: "ศุกร์",
-};
+import {
+  DAYS, DAY_LABELS, CATEGORY_COLOR, CATEGORY_LABEL,
+  COHORTS, getSchedule,
+  type DayOfWeek, type Cohort,
+} from "@/lib/data/class";
 
 const JS_DAY_MAP: Record<number, DayOfWeek | null> = {
   1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday",
@@ -23,42 +22,43 @@ function nowStr(): string {
   return new Date().toTimeString().slice(0, 5);
 }
 
-type DbPeriod = {
-  id: string;
-  periodLabel: string;
-  startTime: string;
-  endTime: string;
-  courseName: string;
-  courseCode: string | null;
-  category: string;
-  room: string | null;
-  instructor: string | null;
-};
-
 export default function ClassPage() {
   const t = useTx();
   const [selectedDay, setSelectedDay] = useState<DayOfWeek>(todayDay());
-  const [periods, setPeriods] = useState<DbPeriod[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [cohort, setCohort] = useState<Cohort>("ก.1");
 
-  useEffect(() => {
-    setLoading(true);
-    fetch(`/api/class?dayTh=${encodeURIComponent(DAY_TO_THAI[selectedDay])}`)
-      .then((r) => r.json())
-      .then((data: DbPeriod[]) => setPeriods(Array.isArray(data) ? data : []))
-      .finally(() => setLoading(false));
-  }, [selectedDay]);
-
+  const periods = getSchedule(cohort, selectedDay);
   const now = nowStr();
   const dayLabel = DAY_LABELS[selectedDay];
   const isToday = selectedDay === todayDay();
 
-  function isActive(p: DbPeriod) { return now >= p.startTime && now < p.endTime; }
-  function isPast(p: DbPeriod) { return now >= p.endTime; }
+  function isActive(start: string, end: string) { return now >= start && now < end; }
+  function isPast(end: string) { return now >= end; }
 
   return (
     <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
       <AppBar th="ตารางเรียน" en="Class Schedule" />
+
+      {/* Cohort selector */}
+      <div className="flex gap-2 overflow-x-auto px-3 pb-2 pt-3"
+        style={{ background: "var(--surface)", borderBottom: "1px solid var(--line)", scrollbarWidth: "none" }}>
+        {COHORTS.map((c) => (
+          <button key={c} type="button" onClick={() => setCohort(c)}
+            className="shrink-0 rounded-full px-4 py-1.5"
+            style={{
+              background: c === cohort ? "var(--brand)" : "var(--bg)",
+              color: c === cohort ? "#fff" : "var(--muted)",
+              border: c === cohort ? "none" : "1px solid var(--line)",
+              font: "700 12px var(--font-sans)",
+            }}>
+            {c === "ก.1" ? t({ th: "กองร้อย ก.1", en: "Co. G1" })
+              : c === "ก" ? t({ th: "กองร้อย ก", en: "Co. G" })
+              : c === "ข" ? t({ th: "กองร้อย ข", en: "Co. B" })
+              : c === "ค" ? t({ th: "กองร้อย ค", en: "Co. C" })
+              : t({ th: "กองร้อย ง", en: "Co. D" })}
+          </button>
+        ))}
+      </div>
 
       {/* Day tabs */}
       <div className="flex gap-1.5 px-3 py-2"
@@ -98,14 +98,7 @@ export default function ClassPage() {
 
       {/* Period list */}
       <div className="flex-1 overflow-y-auto px-3 pb-4">
-        {loading && (
-          <div className="flex justify-center py-12">
-            <div style={{ color: "var(--muted)", font: "500 13px var(--font-sans)" }}>
-              {t({ th: "กำลังโหลด…", en: "Loading…" })}
-            </div>
-          </div>
-        )}
-        {!loading && periods.length === 0 && (
+        {periods.length === 0 && (
           <div className="flex flex-col items-center gap-2 py-12" style={{ color: "var(--muted)" }}>
             <div style={{ font: "600 14px var(--font-sans)" }}>
               {t({ th: "ไม่มีคาบเรียน", en: "No classes" })}
@@ -114,13 +107,12 @@ export default function ClassPage() {
         )}
         <div className="flex flex-col gap-2.5">
           {periods.map((period, idx) => {
-            const cat = period.category as keyof typeof CATEGORY_COLOR;
-            const catColor = CATEGORY_COLOR[cat] ?? "var(--muted)";
-            const catLabel = CATEGORY_LABEL[cat] ?? { th: period.category, en: period.category };
-            const active = isActive(period);
-            const past = isPast(period);
+            const catColor = CATEGORY_COLOR[period.category] ?? "var(--muted)";
+            const catLabel = CATEGORY_LABEL[period.category] ?? { th: period.category, en: period.category };
+            const active = isActive(period.startTime, period.endTime);
+            const past = isPast(period.endTime);
             return (
-              <div key={period.id} className="flex gap-3">
+              <div key={idx} className="flex gap-3">
                 <div className="w-14 shrink-0 pt-1 text-right">
                   <div style={{ font: "700 12px var(--font-sans)", color: active ? "var(--brand)" : "var(--ink)" }}>
                     {period.startTime}
@@ -147,7 +139,7 @@ export default function ClassPage() {
                   }}>
                   <div className="mb-1.5 flex items-center gap-2">
                     <span style={{ font: "600 11px var(--font-sans)", color: "var(--muted)" }}>
-                      {t({ th: `คาบ ${period.periodLabel}`, en: `P${idx + 1}` })}
+                      {t({ th: `คาบ ${period.periodOrder}`, en: `P${period.periodOrder}` })}
                     </span>
                     <span style={{
                       display: "inline-flex", alignItems: "center", gap: 3,
@@ -169,17 +161,11 @@ export default function ClassPage() {
                     )}
                   </div>
                   <div style={{ font: "700 14px var(--font-sans)", color: "var(--ink)", lineHeight: 1.25 }}>
-                    {period.courseName}
+                    {t({ th: period.subjectNameTh, en: period.subjectNameEn || period.subjectNameTh })}
                   </div>
-                  {period.courseCode && (
+                  {period.subjectCode && (
                     <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 4 }}>
-                      {period.courseCode}
-                      {period.room && ` · ${period.room}`}
-                    </div>
-                  )}
-                  {!period.courseCode && period.room && (
-                    <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 4 }}>
-                      {period.room}
+                      {period.subjectCode}
                     </div>
                   )}
                 </div>
