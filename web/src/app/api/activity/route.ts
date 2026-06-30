@@ -61,6 +61,7 @@ export async function POST(req: NextRequest) {
     endAt?: string;
     maxAttendees?: number;
     categoryId?: string;
+    coverImageUrl?: string;
   };
 
   if (!body.titleTh || !body.startAt) {
@@ -82,6 +83,15 @@ export async function POST(req: NextRequest) {
       modStatus: ModerationStatus.pending,
     },
   });
+
+  if (body.coverImageUrl) {
+    const mimeType = body.coverImageUrl.match(/\.png(\?|$)/i) ? "image/png"
+      : body.coverImageUrl.match(/\.webp(\?|$)/i) ? "image/webp"
+      : "image/jpeg";
+    await prisma.fileAsset.create({
+      data: { url: body.coverImageUrl, mimeType, activityEventId: event.id },
+    });
+  }
 
   await writeAuditLog({
     actorId: user.id,

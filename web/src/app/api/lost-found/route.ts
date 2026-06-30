@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
     categoryId?: string;
     foundAt?: string;
     foundLocation?: string;
+    photoUrl?: string;
   };
 
   if (!body.titleTh || !body.descriptionTh) {
@@ -68,6 +69,18 @@ export async function POST(req: NextRequest) {
     },
     include: { category: true },
   });
+
+  if (body.photoUrl) {
+    const mimeType = body.photoUrl.match(/\.png(\?|$)/i) ? "image/png"
+      : body.photoUrl.match(/\.webp(\?|$)/i) ? "image/webp"
+      : "image/jpeg";
+    const asset = await prisma.fileAsset.create({
+      data: { url: body.photoUrl, mimeType },
+    });
+    await prisma.lostFoundAttachment.create({
+      data: { itemId: item.id, assetId: asset.id },
+    });
+  }
 
   await writeAuditLog({
     actorId: user.id,

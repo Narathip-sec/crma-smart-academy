@@ -1,16 +1,20 @@
-export const dynamic = 'force-dynamic';
-import { prisma } from "@/lib/db";
-import { AppBar } from "@/components/shell/app-bar";
-import { CalendarCategory } from "@prisma/client";
+"use client";
 
-const THAI_MONTHS_FULL = [
-  "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน",
-  "กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม",
-];
-const THAI_MONTHS_SHORT = [
-  "ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.",
-  "ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค.",
-];
+import { useState, useEffect } from "react";
+import { AppBar } from "@/components/shell/app-bar";
+
+type CalendarCategory = "academic" | "exam" | "military" | "activity" | "holiday" | "deadline";
+
+type CalEvent = {
+  id: string;
+  date: string;
+  titleTh: string;
+  titleEn?: string | null;
+  category: CalendarCategory;
+  startTime?: string | null;
+  endTime?: string | null;
+  academicYear: number;
+};
 
 const CAT_COLOR: Record<CalendarCategory, string> = {
   academic: "var(--brand)",
@@ -21,160 +25,250 @@ const CAT_COLOR: Record<CalendarCategory, string> = {
   deadline: "#ad1457",
 };
 
-const CAT_LABEL: Record<CalendarCategory, { th: string; en: string }> = {
-  academic: { th: "วิชาการ",    en: "Academic" },
-  exam:     { th: "สอบ",       en: "Exam" },
-  military: { th: "ทหาร",      en: "Military" },
-  activity: { th: "กิจกรรม",   en: "Activity" },
-  holiday:  { th: "วันหยุด",   en: "Holiday" },
-  deadline: { th: "กำหนดส่ง",  en: "Deadline" },
+const CAT_LABEL: Record<CalendarCategory, string> = {
+  academic: "วิชาการ",
+  exam:     "สอบ",
+  military: "ทหาร",
+  activity: "กิจกรรม",
+  holiday:  "วันหยุด",
+  deadline: "กำหนดส่ง",
 };
 
-function thaiShortDate(d: Date): string {
-  return `${d.getDate()} ${THAI_MONTHS_SHORT[d.getMonth()]}`;
-}
+const THAI_MONTHS = [
+  "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน",
+  "กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม",
+];
+const EN_MONTHS = [
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December",
+];
+const DAY_HEADERS = ["อา","จ","อ","พ","พฤ","ศ","ส"];
 
-export default async function CalendarPage() {
-  const events = await prisma.academicCalendarEvent.findMany({
-    orderBy: { date: "asc" },
-  });
+export default function CalendarPage() {
+  const today = new Date();
+  const [viewYear, setViewYear]       = useState(today.getFullYear());
+  const [viewMonth, setViewMonth]     = useState(today.getMonth());
+  const [selectedDay, setSelectedDay] = useState<number | null>(today.getDate());
+  const [events, setEvents] = useState<CalEvent[] | null>(null);
 
-  if (events.length === 0) {
-    return (
-      <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
-        <AppBar th="ปฏิทินวิชาการ" en="Calendar" />
-        <div className="flex flex-1 items-center justify-center" style={{ color: "var(--muted)", font: "500 13px var(--font-sans)" }}>
-          ยังไม่มีข้อมูลปฏิทิน
-        </div>
-      </div>
-    );
+  useEffect(() => {
+    fetch(`/api/calendar?year=${viewYear}`)
+      .then(r => r.json())
+      .then((data: CalEvent[]) => setEvents(data))
+      .catch(() => setEvents([]));
+  }, [viewYear]);
+
+  function prevMonth() {
+    if (viewMonth === 0) { setViewYear(y => y - 1); setViewMonth(11); setEvents(null); }
+    else setViewMonth(m => m - 1);
+    setSelectedDay(null);
+  }
+  function nextMonth() {
+    if (viewMonth === 11) { setViewYear(y => y + 1); setViewMonth(0); setEvents(null); }
+    else setViewMonth(m => m + 1);
+    setSelectedDay(null);
   }
 
-  // Group by month key "YYYY-MM".
-  const byMonth = new Map<string, typeof events>();
-  for (const ev of events) {
-    const d = new Date(ev.date);
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-    if (!byMonth.has(key)) byMonth.set(key, []);
-    byMonth.get(key)!.push(ev);
-  }
+  const loading = events === null;
 
-  const months = [...byMonth.entries()].map(([key, evs]) => {
-    const [y, m] = key.split("-").map(Number);
-    return { key, label: `${THAI_MONTHS_FULL[m - 1]} ${y + 543}`, events: evs };
+  const firstDayOfWeek = new Date(viewYear, viewMonth, 1).getDay();
+  const daysInMonth    = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+  const monthEvents = (events ?? []).filter(e => {
+    const d = new Date(e.date);
+    return d.getFullYear() === viewYear && d.getMonth() === viewMonth;
   });
 
-  const academicYear = events[0]?.academicYear ?? "";
+  const dayCategories = new Map<number, CalendarCategory[]>();
+  for (const e of monthEvents) {
+    const day = new Date(e.date).getDate();
+    if (!dayCategories.has(day)) dayCategories.set(day, []);
+    const cats = dayCategories.get(day)!;
+    if (!cats.includes(e.category)) cats.push(e.category);
+  }
+
+  const isToday = (day: number) =>
+    day === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear();
+
+  const selectedEvents = selectedDay
+    ? monthEvents.filter(e => new Date(e.date).getDate() === selectedDay)
+    : [];
+
+  // Flat grid: leading nulls + day numbers + trailing nulls
+  const cells: (number | null)[] = [
+    ...Array(firstDayOfWeek).fill(null),
+    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
+  ];
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  const thaiYear = viewYear + 543;
 
   return (
     <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
-      <AppBar th="ปฏิทินวิชาการ" en="Calendar" />
+      <AppBar th="ปฏิทินการศึกษา" en="Academic Calendar" />
 
-      {/* Academic year header */}
-      <div
-        className="flex items-center justify-between px-4 py-2.5"
-        style={{ background: "var(--surface)", borderBottom: "1px solid var(--line)" }}
-      >
-        <span style={{ font: "700 14px var(--font-sans)", color: "var(--ink)" }}>
-          ปีการศึกษา {academicYear}
-        </span>
-        <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>
-          {events.length} รายการ
-        </span>
-      </div>
+      {/* Calendar card */}
+      <div className="mx-3 mt-3 rounded-2xl p-4" style={{ background: "var(--surface)", boxShadow: "0 1px 6px rgba(0,0,0,.07)" }}>
 
-      {/* Category legend */}
-      <div
-        className="flex gap-3 overflow-x-auto px-4 py-2.5"
-        style={{ scrollbarWidth: "none", borderBottom: "1px solid var(--line)" }}
-      >
-        {(Object.keys(CAT_LABEL) as CalendarCategory[]).map((cat) => (
-          <div key={cat} className="flex shrink-0 items-center gap-1.5">
-            <span
-              style={{
-                width: 8, height: 8, borderRadius: 999,
-                background: CAT_COLOR[cat], display: "inline-block", flexShrink: 0,
-              }}
-            />
-            <span style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", whiteSpace: "nowrap" }}>
-              {CAT_LABEL[cat].th}
-            </span>
+        {/* Month nav */}
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={prevMonth}
+            className="flex h-8 w-8 items-center justify-center rounded-full"
+            style={{ background: "var(--bg)" }}
+          >
+            <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+
+          <div className="text-center">
+            <div style={{ font: "700 16px var(--font-sans)", color: "var(--ink)" }}>
+              {THAI_MONTHS[viewMonth]} {thaiYear}
+            </div>
+            <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>
+              {EN_MONTHS[viewMonth]} {viewYear}
+            </div>
           </div>
-        ))}
+
+          <button
+            onClick={nextMonth}
+            className="flex h-8 w-8 items-center justify-center rounded-full"
+            style={{ background: "var(--bg)" }}
+          >
+            <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Day-of-week headers */}
+        <div className="grid grid-cols-7 mb-1">
+          {DAY_HEADERS.map((d, i) => (
+            <div key={d} className="flex justify-center py-1">
+              <span style={{ font: "600 12px var(--font-sans)", color: i === 0 ? "#c62828" : "var(--muted)" }}>
+                {d}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Day cells */}
+        <div className="grid grid-cols-7">
+          {cells.map((day, idx) => {
+            if (!day) return <div key={idx} className="h-12" />;
+            const cats = dayCategories.get(day) ?? [];
+            const todayFlag = isToday(day);
+            const selected  = selectedDay === day;
+            const isSunday  = idx % 7 === 0;
+            const active    = todayFlag || selected;
+
+            return (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setSelectedDay(day === selectedDay ? null : day)}
+                className="flex flex-col items-center pb-1 pt-0.5"
+              >
+                <div
+                  className="flex h-8 w-8 items-center justify-center rounded-full"
+                  style={{ background: active ? "var(--brand)" : "transparent" }}
+                >
+                  <span style={{
+                    font: `${active ? "700" : "500"} 14px var(--font-sans)`,
+                    color: active ? "#fff" : isSunday ? "#c62828" : "var(--ink)",
+                  }}>
+                    {day}
+                  </span>
+                </div>
+                {/* Event dots */}
+                <div className="flex gap-0.5 mt-0.5" style={{ minHeight: 7, alignItems: "center" }}>
+                  {cats.slice(0, 3).map(cat => (
+                    <span
+                      key={cat}
+                      style={{
+                        width: 5, height: 5, borderRadius: 999,
+                        background: CAT_COLOR[cat],
+                        display: "inline-block",
+                      }}
+                    />
+                  ))}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Legend */}
+        <div className="flex flex-wrap gap-x-3 gap-y-1.5 mt-3 pt-3" style={{ borderTop: "1px solid var(--line)" }}>
+          {(Object.keys(CAT_LABEL) as CalendarCategory[]).map(cat => (
+            <div key={cat} className="flex items-center gap-1">
+              <span style={{ width: 7, height: 7, borderRadius: 999, background: CAT_COLOR[cat], display: "inline-block", flexShrink: 0 }} />
+              <span style={{ font: "500 10px var(--font-sans)", color: "var(--muted)" }}>{CAT_LABEL[cat]}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
+      {/* Selected day events */}
       <div className="flex-1 overflow-y-auto px-3 pb-6 pt-3">
-        <div className="flex flex-col gap-5">
-          {months.map(({ key, label, events: evs }) => (
-            <div key={key}>
-              <div
-                className="mb-2 px-1"
-                style={{ font: "700 13px var(--font-sans)", color: "var(--brand-dark)" }}
-              >
-                {label}
+        {loading ? (
+          <div className="flex h-20 items-center justify-center">
+            <span style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>กำลังโหลด…</span>
+          </div>
+        ) : selectedDay !== null ? (
+          <>
+            <div className="flex items-center justify-between mb-3">
+              <span style={{ font: "700 15px var(--font-sans)", color: "var(--ink)" }}>
+                วันที่ {selectedDay} {THAI_MONTHS[viewMonth]}
+              </span>
+              <span style={{ font: "500 12px var(--font-sans)", color: "var(--muted)" }}>
+                {selectedEvents.length} events
+              </span>
+            </div>
+
+            {selectedEvents.length === 0 ? (
+              <div className="flex h-16 items-center justify-center">
+                <span style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>ไม่มีกิจกรรมในวันนี้</span>
               </div>
-              <div className="flex flex-col gap-2">
-                {evs.map((ev) => {
-                  const d = new Date(ev.date);
-                  const color = CAT_COLOR[ev.category] ?? "var(--muted)";
-                  const catLbl = CAT_LABEL[ev.category];
-                  const hasNote = !!ev.note?.includes("verify") || !!ev.note?.includes("label_verify");
+            ) : (
+              <div className="flex flex-col gap-3">
+                {selectedEvents.map(ev => {
+                  const color = CAT_COLOR[ev.category];
                   return (
                     <div
                       key={ev.id}
                       className="flex items-start gap-3 rounded-2xl p-3.5"
-                      style={{
-                        background: "var(--surface)",
-                        border: `1px solid var(--line)`,
-                        borderLeft: `3px solid ${color}`,
-                      }}
+                      style={{ background: "var(--surface)", boxShadow: "0 1px 4px rgba(0,0,0,.06)" }}
                     >
-                      {/* Date badge */}
+                      {/* Category icon badge */}
                       <div
-                        className="flex w-11 shrink-0 flex-col items-center rounded-xl py-1.5"
-                        style={{ background: color + "12" }}
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+                        style={{ background: color + "1a" }}
                       >
-                        <span style={{ font: "700 15px var(--font-sans)", color, lineHeight: 1 }}>
-                          {d.getDate()}
-                        </span>
-                        <span style={{ font: "500 9px var(--font-sans)", color: color + "bb", marginTop: 1 }}>
-                          {THAI_MONTHS_SHORT[d.getMonth()]}
+                        <span style={{ font: "700 13px var(--font-sans)", color }}>
+                          {CAT_LABEL[ev.category][0]}
                         </span>
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <div className="mb-1 flex items-center gap-1.5">
-                          <span
-                            style={{
-                              display: "inline-block", padding: "1px 7px", borderRadius: 999,
-                              background: color + "18", color,
-                              font: "600 9px var(--font-sans)",
-                            }}
-                          >
-                            {catLbl.th}
+                        {/* Category chip */}
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <span style={{ width: 7, height: 7, borderRadius: 999, background: color, display: "inline-block", flexShrink: 0 }} />
+                          <span style={{ font: "600 11px var(--font-sans)", color: "var(--muted)" }}>
+                            {CAT_LABEL[ev.category]}
                           </span>
-                          {hasNote && (
-                            <span
-                              style={{
-                                display: "inline-block", padding: "1px 7px", borderRadius: 999,
-                                background: "#fbf1dc", color: "#b45309",
-                                font: "600 9px var(--font-sans)",
-                              }}
-                            >
-                              ⚠ รอยืนยัน
-                            </span>
-                          )}
                         </div>
-                        <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.3 }}>
+                        <div style={{ font: "600 14px var(--font-sans)", color: "var(--ink)", lineHeight: 1.35 }}>
                           {ev.titleTh}
                         </div>
                         {ev.titleEn && (
-                          <div style={{ font: "400 10px var(--font-sans)", color: "var(--muted)", marginTop: 1 }}>
+                          <div style={{ font: "400 11px var(--font-sans)", color: "var(--muted)", marginTop: 1 }}>
                             {ev.titleEn}
                           </div>
                         )}
                         {ev.startTime && (
-                          <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 2 }}>
+                          <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginTop: 3 }}>
                             🕐 {ev.startTime}{ev.endTime ? `–${ev.endTime}` : ""}
                           </div>
                         )}
@@ -183,9 +277,15 @@ export default async function CalendarPage() {
                   );
                 })}
               </div>
-            </div>
-          ))}
-        </div>
+            )}
+          </>
+        ) : (
+          <div className="flex h-20 items-center justify-center">
+            <span style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
+              เลือกวันเพื่อดูกิจกรรม
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

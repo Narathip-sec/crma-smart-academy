@@ -76,7 +76,7 @@ export default function SettingsPage() {
   const t = useTx();
   return (
     <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
-      <AppBar th="ตั้งค่า" en="Settings" />
+      <AppBar th="ตั้งค่า" en="Settings" back />
       <div className="flex-1 overflow-y-auto pb-8">
         <SectionHeader label={t({ th: "การแสดงผล", en: "Display" })} />
         <div style={{ background: "var(--surface)", borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)" }}>

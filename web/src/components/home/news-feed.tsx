@@ -22,7 +22,7 @@ function NewsCard({ item }: { item: NewsItem }) {
   const t = useTx();
   return (
     <Link
-      href="/notifications"
+      href={`/announcements/n${item.id}`}
       className="flex items-start gap-3 rounded-2xl p-3.5"
       style={{ background: "var(--surface)", border: "1px solid var(--line)", textDecoration: "none" }}
     >

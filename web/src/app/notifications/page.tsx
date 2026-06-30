@@ -38,7 +38,7 @@ export default async function NotificationsPage() {
 
   return (
     <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
-      <AppBar th="การแจ้งเตือน" en="Notifications" />
+      <AppBar th="การแจ้งเตือน" en="Notifications" back />
       <div className="flex items-center justify-between px-4 py-2.5"
         style={{ background: "var(--surface)", borderBottom: "1px solid var(--line)" }}>
         <span style={{ font: "500 12px var(--font-sans)", color: "var(--muted)" }}>

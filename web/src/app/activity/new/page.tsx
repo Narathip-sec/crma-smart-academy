@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTx } from "@/components/shell/bilingual-label";
+import { upload } from "@vercel/blob/client";
+import Image from "next/image";
 
 type Category = { id: string; nameTh: string };
 type ActivityItem = { category: Category | null };
@@ -23,6 +25,7 @@ const inputStyle: React.CSSProperties = {
 export default function CreateActivityPage() {
   const t = useTx();
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [cats, setCats] = useState<Category[]>(FALLBACK_CATS);
   const [titleTh, setTitleTh] = useState("");
@@ -34,6 +37,11 @@ export default function CreateActivityPage() {
   const [categoryId, setCategoryId] = useState("กีฬา");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const [uploadError, setUploadError] = useState("");
 
   useEffect(() => {
     fetch("/api/activity")
@@ -49,6 +57,32 @@ export default function CreateActivityPage() {
         if (result.length > 0) { setCats(result); setCategoryId(result[0].id); }
       }).catch(() => {});
   }, []);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const localPreview = URL.createObjectURL(file);
+    setCoverPreview(localPreview);
+    setCoverImageUrl(null);
+    setUploadError("");
+    setUploadingCover(true);
+
+    try {
+      const blob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload",
+      });
+      setCoverImageUrl(blob.url);
+    } catch (err) {
+      setUploadError(t({ th: "อัปโหลดรูปไม่สำเร็จ", en: "Upload failed" }));
+      setCoverPreview(null);
+    } finally {
+      setUploadingCover(false);
+      // reset so same file can be picked again
+      e.target.value = "";
+    }
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -69,6 +103,7 @@ export default function CreateActivityPage() {
         startAt,
         maxAttendees: maxAttendees ? Number(maxAttendees) : undefined,
         categoryId: categoryId || undefined,
+        coverImageUrl: coverImageUrl || undefined,
       }),
     });
     setSubmitting(false);
@@ -97,26 +132,79 @@ export default function CreateActivityPage() {
         </div>
       </div>
 
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/heic"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+
       <form onSubmit={submit} className="flex-1 overflow-y-auto pb-8">
 
-        {/* Cover image placeholder */}
-        <div className="flex flex-col items-center justify-center gap-2 mx-4 mt-4 rounded-2xl"
-          style={{ background: "var(--tint)", border: "1.5px dashed var(--brand)", minHeight: 140 }}>
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl"
-            style={{ background: "var(--brand)18" }}>
-            <svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <circle cx="8.5" cy="8.5" r="1.5" />
-              <path d="M21 15l-5-5L5 21" />
-            </svg>
+        {/* Cover image */}
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploadingCover}
+          className="relative mx-4 mt-4 w-[calc(100%-2rem)] overflow-hidden rounded-2xl"
+          style={{
+            minHeight: 140,
+            background: coverPreview ? "transparent" : "var(--tint)",
+            border: coverPreview ? "none" : "1.5px dashed var(--brand)",
+            display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center", gap: 8,
+          }}
+        >
+          {coverPreview ? (
+            <>
+              <Image
+                src={coverPreview}
+                alt="cover"
+                fill
+                className="object-cover"
+                unoptimized
+              />
+              <div className="absolute inset-0 flex items-center justify-center"
+                style={{ background: "rgba(0,0,0,.35)" }}>
+                {uploadingCover ? (
+                  <div style={{ font: "600 13px var(--font-sans)", color: "#fff" }}>
+                    {t({ th: "กำลังอัปโหลด…", en: "Uploading…" })}
+                  </div>
+                ) : (
+                  <div style={{ font: "600 13px var(--font-sans)", color: "#fff" }}>
+                    {coverImageUrl
+                      ? t({ th: "✓ อัปโหลดสำเร็จ · แตะเพื่อเปลี่ยน", en: "✓ Uploaded · tap to change" })
+                      : t({ th: "แตะเพื่อเปลี่ยนภาพ", en: "Tap to change" })}
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl"
+                style={{ background: "var(--brand)18" }}>
+                <svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <path d="M21 15l-5-5L5 21" />
+                </svg>
+              </div>
+              <div style={{ font: "600 13px var(--font-sans)", color: "var(--brand)" }}>
+                {t({ th: "เพิ่มภาพปก", en: "Add cover image" })}
+              </div>
+              <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)" }}>
+                {t({ th: "แตะเพื่ออัปโหลด · JPG, PNG สูงสุด 5MB", en: "Tap to upload · JPG, PNG max 5MB" })}
+              </div>
+            </>
+          )}
+        </button>
+        {uploadError && (
+          <div className="mx-4 mt-2" style={{ font: "500 11px var(--font-sans)", color: "var(--danger)" }}>
+            {uploadError}
           </div>
-          <div style={{ font: "600 13px var(--font-sans)", color: "var(--brand)" }}>
-            {t({ th: "เพิ่มภาพปก", en: "Add cover image" })}
-          </div>
-          <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)" }}>
-            {t({ th: "แตะเพื่ออัปโหลด · JPG, PNG สูงสุด 5MB", en: "Tap to upload · JPG, PNG max 5MB" })}
-          </div>
-        </div>
+        )}
 
         <div className="flex flex-col gap-4 px-4 pt-4">
 
@@ -199,11 +287,11 @@ export default function CreateActivityPage() {
 
           {error && <div style={{ font: "500 12px var(--font-sans)", color: "var(--danger)" }}>{error}</div>}
 
-          <button type="submit" disabled={submitting || !titleTh.trim() || !startDate}
+          <button type="submit" disabled={submitting || !titleTh.trim() || !startDate || uploadingCover}
             className="w-full rounded-2xl py-4"
             style={{
               background: "var(--brand)", font: "600 14px var(--font-sans)", color: "#fff",
-              opacity: (submitting || !titleTh.trim() || !startDate) ? 0.5 : 1,
+              opacity: (submitting || !titleTh.trim() || !startDate || uploadingCover) ? 0.5 : 1,
             }}>
             {submitting ? t({ th: "กำลังส่ง…", en: "Submitting…" }) : `✓ ${t({ th: "สร้างกิจกรรม", en: "Create Activity" })}`}
           </button>

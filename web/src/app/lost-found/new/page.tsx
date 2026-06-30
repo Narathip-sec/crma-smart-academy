@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTx } from "@/components/shell/bilingual-label";
+import { upload } from "@vercel/blob/client";
+import Image from "next/image";
 
 type Category = { id: string; nameTh: string };
 
@@ -26,15 +28,21 @@ function Field({ label, required, children }: { label: string; required?: boolea
 export default function LostFoundNewPage() {
   const t = useTx();
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [cats, setCats] = useState<Category[]>([]);
-  const [titleTh, setTitleTh] = useState("");
+  const [cats, setCats]               = useState<Category[]>([]);
+  const [titleTh, setTitleTh]         = useState("");
   const [descriptionTh, setDescriptionTh] = useState("");
   const [foundLocation, setFoundLocation] = useState("");
-  const [foundAt, setFoundAt] = useState("");
-  const [categoryId, setCategoryId] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
+  const [foundAt, setFoundAt]         = useState("");
+  const [categoryId, setCategoryId]   = useState("");
+  const [submitting, setSubmitting]   = useState(false);
+  const [error, setError]             = useState("");
+
+  const [photoPreview, setPhotoPreview]   = useState<string | null>(null);
+  const [photoUrl, setPhotoUrl]           = useState<string | null>(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [uploadError, setUploadError]     = useState("");
 
   useEffect(() => {
     fetch("/api/lost-found/meta").then(r => r.json()).then((d: { categories?: Category[] }) => {
@@ -42,10 +50,36 @@ export default function LostFoundNewPage() {
     }).catch(() => {});
   }, []);
 
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const local = URL.createObjectURL(file);
+    setPhotoPreview(local);
+    setPhotoUrl(null);
+    setUploadError("");
+    setUploadingPhoto(true);
+
+    try {
+      const blob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload",
+      });
+      setPhotoUrl(blob.url);
+    } catch {
+      setUploadError(t({ th: "อัปโหลดรูปไม่สำเร็จ", en: "Upload failed" }));
+      setPhotoPreview(null);
+    } finally {
+      setUploadingPhoto(false);
+      e.target.value = "";
+    }
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!titleTh.trim() || !descriptionTh.trim()) return;
     setSubmitting(true); setError("");
+
     const res = await fetch("/api/lost-found", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -55,6 +89,7 @@ export default function LostFoundNewPage() {
         categoryId: categoryId || undefined,
         foundAt: foundAt || undefined,
         foundLocation: foundLocation || undefined,
+        photoUrl: photoUrl || undefined,
       }),
     });
     setSubmitting(false);
@@ -78,15 +113,87 @@ export default function LostFoundNewPage() {
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
-        <div>
-          <div style={{ font: "700 15px var(--font-sans)", color: "var(--ink)" }}>
-            {t({ th: "แจ้งของพบ / ของหาย", en: "Report Lost or Found" })}
-          </div>
+        <div style={{ font: "700 15px var(--font-sans)", color: "var(--ink)" }}>
+          {t({ th: "แจ้งของพบ / ของหาย", en: "Report Lost or Found" })}
         </div>
       </div>
 
-      <form onSubmit={submit} className="flex-1 overflow-y-auto px-4 pb-8 pt-4">
-        <div className="flex flex-col gap-4">
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/heic"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+
+      <form onSubmit={submit} className="flex-1 overflow-y-auto pb-8">
+
+        {/* Photo upload */}
+        <div className="px-4 pt-4">
+          <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 8 }}>
+            {t({ th: "รูปภาพประกอบ", en: "Photo" })}
+            <span style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>
+              {t({ th: "(ไม่บังคับ)", en: "(optional)" })}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploadingPhoto}
+            className="relative w-full overflow-hidden rounded-2xl"
+            style={{
+              minHeight: 120,
+              background: photoPreview ? "transparent" : "var(--tint)",
+              border: photoPreview ? "none" : "1.5px dashed var(--brand)",
+              display: "flex", flexDirection: "column",
+              alignItems: "center", justifyContent: "center", gap: 6,
+            }}
+          >
+            {photoPreview ? (
+              <>
+                <Image src={photoPreview} alt="photo" fill className="object-cover" unoptimized />
+                <div className="absolute inset-0 flex items-center justify-center"
+                  style={{ background: "rgba(0,0,0,.35)" }}>
+                  {uploadingPhoto ? (
+                    <span style={{ font: "600 12px var(--font-sans)", color: "#fff" }}>
+                      {t({ th: "กำลังอัปโหลด…", en: "Uploading…" })}
+                    </span>
+                  ) : (
+                    <span style={{ font: "600 12px var(--font-sans)", color: "#fff" }}>
+                      {photoUrl
+                        ? t({ th: "✓ อัปโหลดสำเร็จ · แตะเพื่อเปลี่ยน", en: "✓ Uploaded · tap to change" })
+                        : t({ th: "แตะเพื่อเปลี่ยนภาพ", en: "Tap to change" })}
+                    </span>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <path d="M21 15l-5-5L5 21" />
+                </svg>
+                <span style={{ font: "600 12px var(--font-sans)", color: "var(--brand)" }}>
+                  {t({ th: "เพิ่มรูปภาพ", en: "Add photo" })}
+                </span>
+                <span style={{ font: "500 10px var(--font-sans)", color: "var(--muted)" }}>
+                  {t({ th: "แตะเพื่ออัปโหลด · JPG, PNG", en: "Tap to upload · JPG, PNG" })}
+                </span>
+              </>
+            )}
+          </button>
+
+          {uploadError && (
+            <div className="mt-1" style={{ font: "500 11px var(--font-sans)", color: "var(--danger)" }}>
+              {uploadError}
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-4 px-4 pt-4">
 
           <Field label={t({ th: "ชื่อสิ่งของ", en: "Item name" })} required>
             <input
@@ -142,14 +249,14 @@ export default function LostFoundNewPage() {
 
           <button
             type="submit"
-            disabled={submitting || !titleTh.trim() || !descriptionTh.trim()}
+            disabled={submitting || !titleTh.trim() || !descriptionTh.trim() || uploadingPhoto}
             className="w-full rounded-2xl py-4"
             style={{
               background: "var(--brand)",
               font: "600 14px var(--font-sans)",
               color: "#fff",
-              opacity: (submitting || !titleTh.trim() || !descriptionTh.trim()) ? 0.5 : 1,
-              cursor: (submitting || !titleTh.trim() || !descriptionTh.trim()) ? "not-allowed" : "pointer",
+              opacity: (submitting || !titleTh.trim() || !descriptionTh.trim() || uploadingPhoto) ? 0.5 : 1,
+              cursor: (submitting || !titleTh.trim() || !descriptionTh.trim() || uploadingPhoto) ? "not-allowed" : "pointer",
             }}>
             {submitting
               ? t({ th: "กำลังบันทึก…", en: "Saving…" })

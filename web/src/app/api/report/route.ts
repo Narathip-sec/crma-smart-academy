@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
     categoryId?: string;
     teamId?: string;
     locationNameTh?: string;
+    photoUrl?: string;
   };
 
   if (!body.titleTh || !body.descriptionTh) {
@@ -81,6 +82,18 @@ export async function POST(req: NextRequest) {
     },
     include: { category: true, team: true, location: true },
   });
+
+  if (body.photoUrl) {
+    const mimeType = body.photoUrl.match(/\.png(\?|$)/i) ? "image/png"
+      : body.photoUrl.match(/\.webp(\?|$)/i) ? "image/webp"
+      : "image/jpeg";
+    const asset = await prisma.fileAsset.create({
+      data: { url: body.photoUrl, mimeType },
+    });
+    await prisma.reportAttachment.create({
+      data: { ticketId: ticket.id, assetId: asset.id },
+    });
+  }
 
   await writeAuditLog({
     actorId: user.id,

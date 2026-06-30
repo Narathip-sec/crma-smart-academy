@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useTx } from "@/components/shell/bilingual-label";
 
@@ -78,8 +79,20 @@ function SectionLabel({ th, en }: { th: string; en: string }) {
   );
 }
 
+const ALL_SERVICES: ServiceRow[] = [...ACADEMIC, ...OTHER, ...SUPPORT];
+
 export default function ServicePage() {
   const t = useTx();
+  const [query, setQuery] = useState("");
+
+  const trimmed = query.trim().toLowerCase();
+  const searchResults = trimmed
+    ? ALL_SERVICES.filter(s =>
+        s.th.toLowerCase().includes(trimmed) ||
+        s.en.toLowerCase().includes(trimmed)
+      )
+    : null;
+
   return (
     <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
       {/* Header */}
@@ -87,26 +100,58 @@ export default function ServicePage() {
         className="sticky top-0 z-30 px-4 pb-3 pt-4"
         style={{ background: "var(--bg)", borderBottom: "1px solid var(--line)" }}
       >
-        <div style={{ font: "700 16px var(--font-sans)", color: "var(--ink)", marginBottom: 2 }}>
+        <div style={{ font: "700 16px var(--font-sans)", color: "var(--ink)", marginBottom: 8 }}>
           {t({ th: "บริการ", en: "Services" })}
           <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>All Services</span>
         </div>
         {/* Search bar */}
         <div
           className="flex items-center gap-2 rounded-xl px-3 py-2.5"
-          style={{ background: "var(--surface)", border: "1px solid var(--line)" }}
+          style={{ background: "var(--surface)", border: `1px solid ${trimmed ? "var(--brand)" : "var(--line)"}` }}
         >
           <svg width={16} height={16} viewBox="0 0 24 24" fill="none"
-            stroke="var(--muted)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+            stroke={trimmed ? "var(--brand)" : "var(--muted)"} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
           </svg>
-          <span style={{ font: "500 12px var(--font-sans)", color: "var(--muted)" }}>
-            {t({ th: "ค้นหาบริการ...", en: "Search services..." })}
-          </span>
+          <input
+            type="search"
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder={t({ th: "ค้นหาบริการ...", en: "Search services..." })}
+            style={{
+              flex: 1, border: "none", background: "transparent", outline: "none",
+              font: "500 12px var(--font-sans)", color: "var(--ink)",
+            }}
+          />
+          {trimmed && (
+            <button type="button" onClick={() => setQuery("")}
+              style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex" }}>
+              <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="var(--muted)" strokeWidth={2.5} strokeLinecap="round">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          )}
         </div>
       </header>
 
       <div className="flex-1 overflow-y-auto px-3 pb-6">
+        {/* Search results */}
+        {searchResults !== null && (
+          <div className="pt-3">
+            {searchResults.length === 0 ? (
+              <div className="py-12 text-center" style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
+                {t({ th: "ไม่พบบริการที่ค้นหา", en: "No services found" })}
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {searchResults.map(item => <ServiceListRow key={item.th} item={item} />)}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Normal layout — hidden when searching */}
+        {searchResults === null && <>
 
         {/* Recent */}
         <div style={{ marginTop: 16, marginBottom: 8, font: "700 14px var(--font-sans)", color: "var(--ink)" }}>
@@ -172,6 +217,7 @@ export default function ServicePage() {
         <div className="flex flex-col gap-2">
           {SUPPORT.map((item) => <ServiceListRow key={item.th} item={item} />)}
         </div>
+        </>}
       </div>
     </div>
   );

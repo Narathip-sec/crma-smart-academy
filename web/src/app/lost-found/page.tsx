@@ -51,7 +51,7 @@ export default function LostFoundPage() {
 
   return (
     <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
-      <AppBar th="ของหาย-ของพบ" en="Lost & Found" />
+      <AppBar th="ของหาย-ของพบ" en="Lost & Found" back />
       <div className="flex items-center gap-2 px-3 py-2.5"
         style={{ background: "var(--surface)", borderBottom: "1px solid var(--line)" }}>
         <div className="flex flex-1 gap-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>

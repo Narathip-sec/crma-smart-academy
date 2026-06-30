@@ -15,55 +15,59 @@ function FeaturedRow({ item }: { item: Announcement }) {
   const t = useTx();
   const p = PRIORITY_LABEL[item.priority];
   return (
-    <div className="flex items-start gap-3 rounded-2xl p-3.5"
-      style={{ background: "var(--surface)", border: "1px solid var(--line)", borderLeft: `3px solid ${item.accentColor}` }}>
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-        style={{ background: item.accentColor + "18" }}>
-        <span style={{ font: "700 16px var(--font-sans)", color: item.accentColor }}>📢</span>
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="mb-1 flex items-center gap-1.5">
-          <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: p.bg, color: p.color, font: "600 9px var(--font-sans)" }}>
-            {p.th}
-          </span>
-          <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: item.accentColor + "18", color: item.accentColor, font: "600 9px var(--font-sans)" }}>
-            {item.tag}
-          </span>
+    <Link href={`/announcements/f${item.id}`} style={{ textDecoration: "none" }}>
+      <div className="flex items-start gap-3 rounded-2xl p-3.5"
+        style={{ background: "var(--surface)", border: "1px solid var(--line)", borderLeft: `3px solid ${item.accentColor}` }}>
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+          style={{ background: item.accentColor + "18" }}>
+          <span style={{ font: "700 16px var(--font-sans)", color: item.accentColor }}>📢</span>
         </div>
-        <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.3 }}>
-          {t({ th: item.titleTh, en: item.titleEn })}
+        <div className="min-w-0 flex-1">
+          <div className="mb-1 flex items-center gap-1.5">
+            <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: p.bg, color: p.color, font: "600 9px var(--font-sans)" }}>
+              {p.th}
+            </span>
+            <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: item.accentColor + "18", color: item.accentColor, font: "600 9px var(--font-sans)" }}>
+              {item.tag}
+            </span>
+          </div>
+          <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.3 }}>
+            {t({ th: item.titleTh, en: item.titleEn })}
+          </div>
+          <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 3 }}>📅 {item.dateTh}</div>
         </div>
-        <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 3 }}>📅 {item.dateTh}</div>
       </div>
-    </div>
+    </Link>
   );
 }
 
 function NewsRow({ item }: { item: NewsItem }) {
   const t = useTx();
   return (
-    <div className="flex items-start gap-3 rounded-2xl p-3.5"
-      style={{ background: "var(--surface)", border: "1px solid var(--line)", borderLeft: `3px solid ${item.accentColor}` }}>
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-        style={{ background: item.accentColor + "18" }}>
-        <span style={{ font: "700 16px var(--font-sans)", color: item.accentColor }}>📋</span>
+    <Link href={`/announcements/n${item.id}`} style={{ textDecoration: "none" }}>
+      <div className="flex items-start gap-3 rounded-2xl p-3.5"
+        style={{ background: "var(--surface)", border: "1px solid var(--line)", borderLeft: `3px solid ${item.accentColor}` }}>
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+          style={{ background: item.accentColor + "18" }}>
+          <span style={{ font: "700 16px var(--font-sans)", color: item.accentColor }}>📋</span>
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="mb-1 flex flex-wrap items-center gap-1">
+            {item.tags.map(tag => (
+              <span key={tag} style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: (TAG_COLOR[tag] ?? "#888") + "18", color: TAG_COLOR[tag] ?? "#888", font: "600 9px var(--font-sans)" }}>
+                {tag}
+              </span>
+            ))}
+          </div>
+          <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.3 }}>
+            {t({ th: item.titleTh, en: item.titleEn })}
+          </div>
+          <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 3 }}>
+            {t(item.timeAgo)}
+          </div>
+        </div>
       </div>
-      <div className="min-w-0 flex-1">
-        <div className="mb-1 flex flex-wrap items-center gap-1">
-          {item.tags.map(tag => (
-            <span key={tag} style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: (TAG_COLOR[tag] ?? "#888") + "18", color: TAG_COLOR[tag] ?? "#888", font: "600 9px var(--font-sans)" }}>
-              {tag}
-            </span>
-          ))}
-        </div>
-        <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.3 }}>
-          {t({ th: item.titleTh, en: item.titleEn })}
-        </div>
-        <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 3 }}>
-          {t(item.timeAgo)}
-        </div>
-      </div>
-    </div>
+    </Link>
   );
 }
 
