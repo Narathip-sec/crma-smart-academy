@@ -23,7 +23,7 @@ export default function Error({
       <div style={{ font: "600 15px var(--font-sans)", color: "var(--ink)" }}>
         เกิดข้อผิดพลาดบางอย่าง
       </div>
-      <div style={{ font: "500 12px var(--font-sans)", color: "var(--muted)" }}>
+      <div style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
         Something went wrong. Please try again.
       </div>
       <button

@@ -97,7 +97,7 @@ export default function LostFoundPage() {
                 href={`/lost-found/${item.id}`}
                 chevron
                 style={{ background: "var(--surface)", border: "1px solid var(--line)", borderLeft: `3px solid ${typeColor}`, borderRadius: "var(--radius-card)", padding: "14px 16px" }}
-                icon={<span style={{ font: "700 18px var(--font-sans)", color: typeColor }}>{item.type === "lost" ? "?" : "✓"}</span>}
+                icon={<span style={{ font: "700 20px var(--font-sans)", color: typeColor }}>{item.type === "lost" ? "?" : "✓"}</span>}
                 iconBg={`color-mix(in srgb, ${typeColor} 10%, transparent)`}
                 title={
                   <>

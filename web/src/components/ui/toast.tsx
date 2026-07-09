@@ -29,7 +29,7 @@ export function Toast({
           color: "#fff",
           padding: "10px 16px",
           borderRadius: 999,
-          font: "600 12px var(--font-sans)",
+          font: "600 13px var(--font-sans)",
           boxShadow: "0 6px 20px rgba(15,23,42,.25)",
           whiteSpace: "nowrap",
         }}

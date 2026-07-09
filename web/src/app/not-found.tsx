@@ -9,7 +9,7 @@ export default function NotFound() {
         style={{
           background: "var(--tint)",
           color: "var(--brand-dark)",
-          font: "700 18px var(--font-sans)",
+          font: "700 20px var(--font-sans)",
         }}
       >
         404
@@ -17,7 +17,7 @@ export default function NotFound() {
       <div style={{ font: "600 15px var(--font-sans)", color: "var(--ink)" }}>
         ไม่พบหน้าที่ต้องการ
       </div>
-      <div style={{ font: "500 12px var(--font-sans)", color: "var(--muted)" }}>
+      <div style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
         Page not found.
       </div>
       <Link

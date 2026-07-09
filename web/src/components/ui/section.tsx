@@ -12,7 +12,7 @@ export function Sec({
 }) {
   return (
     <div className="flex items-center justify-between" style={{ marginBottom: 8 }}>
-      <div style={{ font: "700 14px var(--font-sans)", color: "var(--ink)" }}>
+      <div style={{ font: "700 15px var(--font-sans)", color: "var(--ink)" }}>
         {title}
       </div>
       {action ? (

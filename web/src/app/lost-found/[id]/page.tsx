@@ -116,7 +116,7 @@ export default function LostFoundDetailPage() {
                 {isLost ? t({ th: "ของหาย", en: "Lost" }) : t({ th: "ของพบ", en: "Found" })}
               </span>
             </div>
-            <div style={{ font: "700 18px var(--font-sans)", color: "#fff", lineHeight: 1.25 }}>{item.titleTh}</div>
+            <div style={{ font: "700 20px var(--font-sans)", color: "#fff", lineHeight: 1.25 }}>{item.titleTh}</div>
           </div>
         </div>
       </div>
@@ -142,7 +142,7 @@ export default function LostFoundDetailPage() {
           </div>
         )}
 
-        {error && <div style={{ font: "500 12px var(--font-sans)", color: "var(--danger)", textAlign: "center" }}>{error}</div>}
+        {error && <div style={{ font: "500 13px var(--font-sans)", color: "var(--danger)", textAlign: "center" }}>{error}</div>}
 
         {claimed ? (
           <div className="rounded-2xl py-4 text-center" style={{ background: "var(--tint)", font: "600 15px var(--font-sans)", color: "var(--brand)" }}>

@@ -21,7 +21,7 @@ export function ProfileBanner() {
         className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
         style={{
           background: "rgba(255,255,255,.25)",
-          font: "700 16px var(--font-sans)",
+          font: "700 15px var(--font-sans)",
           color: "#fff",
           letterSpacing: ".02em",
         }}

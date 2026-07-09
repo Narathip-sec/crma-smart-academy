@@ -25,7 +25,7 @@ export function Badge({ children, tone = "neutral" }: { children: ReactNode; ton
         borderRadius: 999,
         background: t.bg,
         color: t.color,
-        font: "600 10px var(--font-sans)",
+        font: "600 11px var(--font-sans)",
         whiteSpace: "nowrap",
       }}
     >

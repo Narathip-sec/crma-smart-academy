@@ -31,13 +31,13 @@ export function EmptyState({
       >
         ◌
       </div>
-      <div style={{ font: "700 14px var(--font-sans)", color: "var(--ink)" }}>{title}</div>
-      {hint ? <div style={{ font: "500 12px var(--font-sans)" }}>{hint}</div> : null}
+      <div style={{ font: "700 13px var(--font-sans)", color: "var(--ink)" }}>{title}</div>
+      {hint ? <div style={{ font: "500 13px var(--font-sans)" }}>{hint}</div> : null}
       {tag ? (
         <div
           style={{
             marginTop: 4,
-            font: "600 9px var(--font-mono)",
+            font: "600 11px var(--font-mono)",
             letterSpacing: ".15em",
             color: "var(--muted)",
           }}
@@ -57,7 +57,7 @@ export function LoadingState({ label }: { label?: ReactNode }) {
         className="h-7 w-7 animate-spin rounded-full"
         style={{ border: "3px solid var(--tint)", borderTopColor: "var(--brand)" }}
       />
-      {label ? <div style={{ font: "500 12px var(--font-sans)" }}>{label}</div> : null}
+      {label ? <div style={{ font: "500 13px var(--font-sans)" }}>{label}</div> : null}
     </Frame>
   );
 }
@@ -86,7 +86,7 @@ export function ErrorState({
           type="button"
           onClick={onRetry}
           className="active:opacity-70"
-          style={{ font: "600 12px var(--font-sans)", color: "var(--brand)", cursor: "pointer" }}
+          style={{ font: "600 13px var(--font-sans)", color: "var(--brand)", cursor: "pointer" }}
         >
           ลองอีกครั้ง · Retry
         </button>

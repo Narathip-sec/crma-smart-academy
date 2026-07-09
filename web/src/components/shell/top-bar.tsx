@@ -26,7 +26,7 @@ export function TopBar({
         <div style={{ font: "700 15px var(--font-sans)", color: "var(--brand)" }}>
           Smart Academy
         </div>
-        <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)" }}>
+        <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>
           โรงเรียนนายร้อยพระจุลจอมเกล้า
         </div>
       </div>
@@ -44,7 +44,7 @@ export function TopBar({
         {unread > 0 && (
           <span
             className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1"
-            style={{ background: "var(--danger)", color: "#fff", font: "700 9px var(--font-sans)" }}
+            style={{ background: "var(--danger)", color: "#fff", font: "700 11px var(--font-sans)" }}
           >
             {unread > 9 ? "9+" : unread}
           </span>
