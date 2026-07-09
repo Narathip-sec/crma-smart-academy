@@ -54,7 +54,7 @@ export function QuickServices() {
   const t = useTx();
   return (
     <section className="px-3 pt-4">
-      <div style={{ font: "700 14px var(--font-sans)", color: "var(--ink)", marginBottom: 10 }}>
+      <div style={{ font: "700 15px var(--font-sans)", color: "var(--ink)", marginBottom: 10 }}>
         {t({ th: "บริการด่วน", en: "Quick Services" })}
         <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>Quick services</span>
       </div>
@@ -72,7 +72,7 @@ export function QuickServices() {
             >
               {s.icon}
             </div>
-            <div style={{ font: "600 10px var(--font-sans)", color: "var(--ink)", textAlign: "center", lineHeight: 1.3 }}>
+            <div style={{ font: "600 11px var(--font-sans)", color: "var(--ink)", textAlign: "center", lineHeight: 1.3 }}>
               {t({ th: s.th, en: s.en })}
             </div>
           </Link>

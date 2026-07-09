@@ -34,7 +34,7 @@ function AnnouncementCard({ item }: { item: Announcement }) {
         {item.priority === "important" && (
           <span
             className="rounded px-1.5 py-0.5"
-            style={{ background: "#fff", color: item.accentColor, font: "700 9px var(--font-sans)", letterSpacing: ".06em" }}
+            style={{ background: "#fff", color: item.accentColor, font: "700 11px var(--font-sans)", letterSpacing: ".06em" }}
           >
             IMPORTANT
           </span>
@@ -42,14 +42,14 @@ function AnnouncementCard({ item }: { item: Announcement }) {
         {item.priority === "new" && (
           <span
             className="rounded px-1.5 py-0.5"
-            style={{ background: "#fff", color: item.accentColor, font: "700 9px var(--font-sans)", letterSpacing: ".06em" }}
+            style={{ background: "#fff", color: item.accentColor, font: "700 11px var(--font-sans)", letterSpacing: ".06em" }}
           >
             NEW
           </span>
         )}
         <span
           className="rounded-full px-2 py-0.5"
-          style={{ background: "rgba(255,255,255,.2)", font: "600 9px var(--font-sans)", color: "#fff" }}
+          style={{ background: "rgba(255,255,255,.2)", font: "600 11px var(--font-sans)", color: "#fff" }}
         >
           ● {item.tag}
         </span>
@@ -64,7 +64,7 @@ function AnnouncementCard({ item }: { item: Announcement }) {
         >
           {t({ th: item.titleTh, en: item.titleEn })}
         </div>
-        <div style={{ font: "500 10px var(--font-sans)", color: "rgba(255,255,255,.7)", marginTop: 4 }}>
+        <div style={{ font: "500 11px var(--font-sans)", color: "rgba(255,255,255,.7)", marginTop: 4 }}>
           📅 {item.dateTh}
         </div>
       </div>
@@ -79,7 +79,7 @@ export function HeroCarousel() {
   return (
     <section className="pt-3">
       <div className="mb-2 flex items-center justify-between px-3">
-        <div style={{ font: "700 14px var(--font-sans)", color: "var(--ink)" }}>
+        <div style={{ font: "700 15px var(--font-sans)", color: "var(--ink)" }}>
           {t({ th: "ประกาศสำคัญ", en: "Announcements" })}
           <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>Featured</span>
         </div>

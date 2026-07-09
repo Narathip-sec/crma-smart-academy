@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { useTx } from "@/components/shell/bilingual-label";
+import { ListItem } from "@/components/ui";
 import { MY_DAY } from "@/lib/mock-data";
 
 type ActivityItem = {
@@ -67,33 +67,22 @@ type RowProps = {
 function DayRow({ href, iconBg, icon, labelTh, labelEn, titleTh, titleEn, subTh, subEn }: RowProps) {
   const t = useTx();
   return (
-    <Link
+    <ListItem
       href={href}
-      className="flex items-center gap-3 rounded-xl p-2.5"
-      style={{ background: "var(--surface)", border: "1px solid var(--line)", textDecoration: "none" }}
-    >
-      <div
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-        style={{ background: iconBg }}
-      >
-        {icon}
-      </div>
-      <div className="min-w-0 flex-1">
-        <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginBottom: 1 }}>
-          {t({ th: labelTh, en: labelEn })}
-        </div>
-        <div style={{ font: "700 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.2 }}>
-          {t({ th: titleTh, en: titleEn })}
-        </div>
-        <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 1 }}>
-          {t({ th: subTh, en: subEn })}
-        </div>
-      </div>
-      <svg width={14} height={14} viewBox="0 0 24 24" fill="none"
-        stroke="var(--line)" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9 18l6-6-6-6" />
-      </svg>
-    </Link>
+      icon={icon}
+      iconBg={iconBg}
+      chevron
+      style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--radius-card)", padding: "14px 16px" }}
+      title={
+        <>
+          <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginBottom: 1 }}>
+            {t({ th: labelTh, en: labelEn })}
+          </div>
+          <div>{t({ th: titleTh, en: titleEn })}</div>
+        </>
+      }
+      subtitle={t({ th: subTh, en: subEn })}
+    />
   );
 }
 
@@ -134,7 +123,7 @@ export function MyDay() {
 
   return (
     <section className="px-3 pt-4">
-      <div style={{ font: "700 14px var(--font-sans)", color: "var(--ink)", marginBottom: 10 }}>
+      <div style={{ font: "700 15px var(--font-sans)", color: "var(--ink)", marginBottom: 10 }}>
         {t({ th: "วันนี้ของฉัน", en: "My Day" })}
         <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>My Day</span>
       </div>

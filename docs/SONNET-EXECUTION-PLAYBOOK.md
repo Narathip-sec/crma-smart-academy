@@ -125,8 +125,7 @@ Dense custom grid = mostly legitimate inline. Normalize fonts to scale, radii, a
 
 ### T9 — Sweep `/meals` (202), `/announcements` ×2 (116+127), `/class` (169), `/report/tickets` (122), `/notifications` (96) ☑ (done by Sonnet 5 2026-07-09 — announcements list rows (FeaturedRow/NewsRow) → ListItem; meals/class/tickets/notifications font-only normalization, off-scale 8/9/10/12/14/16px bumped to scale, structures kept custom — /class touched minimally per note)
 
-### T10 — Sweep home components ☐
-`components/home/*` (my-day 198, hero-carousel 128, news-feed 96, quick-services 84, profile-banner 65). Fonts → scale (lots of 9/10px → caption 11). Carousel/banner gradients legitimate. Keep `#4cff91` online dot.
+### T10 — Sweep home components ☑ (done by Sonnet 5 2026-07-09 — MyDay's DayRow and NewsFeed's NewsCard → ListItem with label/badges in title slot; hero-carousel + quick-services + profile-banner font-only normalization, structures kept custom; section eyebrow headers (700/14 → 700/15) unified across all 4 home sections; off-scale 9/10px bumped to caption 11; kept `#4cff91` online dot)
 
 ### T11 — Touch feedback + tap targets ☐
 Global pass: every tappable gets `active:opacity-70` (or `active:scale-[0.98]` for cards/tiles — pick ONE per element type and use it everywhere: opacity for buttons/rows, scale for cards). Verify BottomNav items and list rows ≥44px tall. Submit buttons: `disabled` during in-flight state (report, activity/new, lost-found/new, todo sheet — the state flags already exist).
