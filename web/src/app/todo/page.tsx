@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTx } from "@/components/shell/bilingual-label";
+import { Button, Chip, ChipRow, FormField } from "@/components/ui";
 
 const THAI_MONTHS = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
 
@@ -32,8 +33,8 @@ function StatBox({ value, labelTh, labelEn, color }: { value: number; labelTh: s
   return (
     <div className="flex flex-1 flex-col items-center rounded-2xl py-3"
       style={{ background: "var(--surface)", border: "1px solid var(--line)" }}>
-      <div style={{ font: "700 22px var(--font-sans)", color }}>{value}</div>
-      <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", textAlign: "center", marginTop: 2 }}>
+      <div style={{ font: "700 20px var(--font-sans)", color }}>{value}</div>
+      <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", textAlign: "center", marginTop: 2 }}>
         {t({ th: labelTh, en: labelEn })}
       </div>
     </div>
@@ -104,8 +105,8 @@ export default function TodoPage() {
       <header className="sticky top-0 z-30 flex h-14 items-center justify-between px-4"
         style={{ background: "var(--bg)", borderBottom: "1px solid var(--line)" }}>
         <div>
-          <div style={{ font: "700 16px var(--font-sans)", color: "var(--ink)" }}>{t({ th: "งานของฉัน", en: "My Tasks" })}</div>
-          <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)" }}>Todo &amp; Tasks</div>
+          <div style={{ font: "700 15px var(--font-sans)", color: "var(--ink)" }}>{t({ th: "งานของฉัน", en: "My Tasks" })}</div>
+          <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>Todo &amp; Tasks</div>
         </div>
         <button type="button" onClick={() => setShowCreate(true)}
           className="flex h-9 w-9 items-center justify-center rounded-full"
@@ -124,19 +125,14 @@ export default function TodoPage() {
         </div>
 
         {/* Filter */}
-        <div className="mb-3 flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
-          {(["ทั้งหมด","ค้างอยู่","เสร็จแล้ว"] as Filter[]).map(f => (
-            <button key={f} type="button" onClick={() => setFilter(f)}
-              className="shrink-0 rounded-full px-4 py-2"
-              style={{
-                background: filter === f ? "var(--brand)" : "var(--surface)",
-                color: filter === f ? "#fff" : "var(--muted)",
-                border: filter === f ? "none" : "1px solid var(--line)",
-                font: "600 12px var(--font-sans)",
-              }}>
-              {f}
-            </button>
-          ))}
+        <div className="mb-3">
+          <ChipRow>
+            {(["ทั้งหมด","ค้างอยู่","เสร็จแล้ว"] as Filter[]).map(f => (
+              <Chip key={f} active={filter === f} onClick={() => setFilter(f)}>
+                {f}
+              </Chip>
+            ))}
+          </ChipRow>
         </div>
 
         <div className="flex flex-col gap-2">
@@ -171,7 +167,7 @@ export default function TodoPage() {
                         padding: "1px 8px", borderRadius: 999,
                         background: urgent ? "color-mix(in srgb, var(--danger) 10%, transparent)" : "var(--stage)",
                         color: urgent ? "var(--danger)" : "var(--muted)",
-                        font: "600 9px var(--font-sans)",
+                        font: "600 11px var(--font-sans)",
                       }}>
                         ⏱ {t(due)}
                       </span>
@@ -205,79 +201,59 @@ export default function TodoPage() {
             style={{ background: "var(--surface)", maxWidth: 420, margin: "0 auto" }}>
             {/* Header */}
             <div className="mb-4 flex items-center justify-between">
-              <div style={{ font: "700 16px var(--font-sans)", color: "var(--ink)" }}>
+              <div style={{ font: "700 15px var(--font-sans)", color: "var(--ink)" }}>
                 {t({ th: "สร้างงานใหม่", en: "Create task" })}
               </div>
               <button type="button" onClick={() => setShowCreate(false)}
-                style={{ font: "500 22px var(--font-sans)", color: "var(--muted)", lineHeight: 1 }}>✕</button>
+                style={{ font: "500 20px var(--font-sans)", color: "var(--muted)", lineHeight: 1 }}>✕</button>
             </div>
 
-            {/* Title */}
-            <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 6 }}>
-              {t({ th: "ชื่องาน", en: "Task name" })} <span style={{ color: "var(--danger)" }}>*</span>
-            </div>
-            <input type="text" value={newTitle} onChange={(e) => setNewTitle(e.target.value)}
-              placeholder={t({ th: "เช่น อ่านบทที่ 5 เตรียมสอบ…", en: "e.g. Read chapter 5 for exam…" })}
-              className="mb-4 w-full rounded-xl px-4 py-3"
-              style={{ border: "1px solid var(--line)", background: "var(--bg)", font: "500 13px var(--font-sans)", color: "var(--ink)", outline: "none" }}
-            />
+            <div className="flex flex-col gap-4">
+              <FormField label={t({ th: "ชื่องาน", en: "Task name" })} required>
+                <input type="text" value={newTitle} onChange={(e) => setNewTitle(e.target.value)}
+                  placeholder={t({ th: "เช่น อ่านบทที่ 5 เตรียมสอบ…", en: "e.g. Read chapter 5 for exam…" })}
+                  className="w-full px-4 py-3"
+                  style={{ borderRadius: "var(--radius-control)", border: "1px solid var(--line)", background: "var(--bg)", font: "500 13px var(--font-sans)", color: "var(--ink)", outline: "none" }}
+                />
+              </FormField>
 
-            {/* Category chips */}
-            <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 8 }}>
-              {t({ th: "หมวดหมู่", en: "Category" })}
-            </div>
-            <div className="mb-4 flex gap-2 flex-wrap">
-              {CATEGORIES.map(c => (
-                <button key={c} type="button" onClick={() => setNewCategory(c)}
-                  className="rounded-full px-4 py-1.5"
-                  style={{
-                    background: newCategory === c ? "var(--brand)" : "var(--bg)",
-                    color: newCategory === c ? "#fff" : "var(--muted)",
-                    border: newCategory === c ? "none" : "1px solid var(--line)",
-                    font: "600 12px var(--font-sans)",
-                  }}>{c}</button>
-              ))}
-            </div>
+              <FormField label={t({ th: "หมวดหมู่", en: "Category" })}>
+                <div className="flex gap-2 flex-wrap">
+                  {CATEGORIES.map(c => (
+                    <Chip key={c} active={newCategory === c} onClick={() => setNewCategory(c)}>
+                      {c}
+                    </Chip>
+                  ))}
+                </div>
+              </FormField>
 
-            {/* Due date chips */}
-            <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 8 }}>
-              {t({ th: "กำหนดส่ง · Due date", en: "Due date" })}
-            </div>
-            <div className="mb-4 flex gap-2 flex-wrap">
-              {DUE_OPTS.map(d => (
-                <button key={d} type="button" onClick={() => setNewDue(d as typeof newDue)}
-                  className="rounded-full px-4 py-1.5"
-                  style={{
-                    background: newDue === d ? "var(--brand)" : "var(--bg)",
-                    color: newDue === d ? "#fff" : "var(--muted)",
-                    border: newDue === d ? "none" : "1px solid var(--line)",
-                    font: "600 12px var(--font-sans)",
-                  }}>{t({ th: d, en: d })}</button>
-              ))}
-            </div>
+              <FormField label={t({ th: "กำหนดส่ง", en: "Due date" })}>
+                <div className="flex gap-2 flex-wrap">
+                  {DUE_OPTS.map(d => (
+                    <Chip key={d} active={newDue === d} onClick={() => setNewDue(d as typeof newDue)}>
+                      {t({ th: d, en: d })}
+                    </Chip>
+                  ))}
+                </div>
+              </FormField>
 
-            {/* Note */}
-            <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 6 }}>
-              {t({ th: "โน้ต · Note", en: "Note" })}
-            </div>
-            <textarea value={newNote} onChange={e => setNewNote(e.target.value)} rows={2}
-              placeholder={t({ th: "รายละเอียดเพิ่มเติม…", en: "Additional details…" })}
-              className="mb-5 w-full rounded-xl px-4 py-3"
-              style={{ border: "1px solid var(--line)", background: "var(--bg)", font: "500 13px var(--font-sans)", color: "var(--ink)", outline: "none", resize: "none" }}
-            />
+              <FormField label={t({ th: "โน้ต", en: "Note" })}>
+                <textarea value={newNote} onChange={e => setNewNote(e.target.value)} rows={2}
+                  placeholder={t({ th: "รายละเอียดเพิ่มเติม…", en: "Additional details…" })}
+                  className="w-full px-4 py-3"
+                  style={{ borderRadius: "var(--radius-control)", border: "1px solid var(--line)", background: "var(--bg)", font: "500 13px var(--font-sans)", color: "var(--ink)", outline: "none", resize: "none" }}
+                />
+              </FormField>
 
-            {/* Actions */}
-            <div className="flex gap-3">
-              <button type="button" onClick={() => setShowCreate(false)}
-                className="flex-1 rounded-2xl py-3.5"
-                style={{ background: "var(--stage)", font: "600 14px var(--font-sans)", color: "var(--muted)" }}>
-                {t({ th: "ยกเลิก", en: "Cancel" })}
-              </button>
-              <button type="button" onClick={createTask} disabled={submitting || !newTitle.trim()}
-                className="flex-1 rounded-2xl py-3.5"
-                style={{ background: "var(--brand)", font: "600 14px var(--font-sans)", color: "#fff", opacity: (submitting || !newTitle.trim()) ? 0.5 : 1 }}>
-                + {t({ th: "สร้างงาน", en: "Create" })}
-              </button>
+              {/* Actions */}
+              <div className="mt-1 flex gap-3">
+                <Button variant="ghost" size="lg" onClick={() => setShowCreate(false)} style={{ flex: 1 }}>
+                  {t({ th: "ยกเลิก", en: "Cancel" })}
+                </Button>
+                <Button size="lg" onClick={createTask} disabled={submitting || !newTitle.trim()} style={{ flex: 1 }}>
+                  + {t({ th: "สร้างงาน", en: "Create" })}
+                </Button>
+              </div>
             </div>
           </div>
         </div>

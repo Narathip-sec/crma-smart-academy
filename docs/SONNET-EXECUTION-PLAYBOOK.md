@@ -108,7 +108,7 @@ Accept: lint+tsc green; no page visually changes yet (kit additions only).
 ### T2 — Sweep `/report` (329 lines, worst) ☑ (done by Fable 2026-07-09 — use as the reference example for T3–T10: FormField for labeled controls incl. photo/map sections, Button size="lg" full for submit, inputStyle radius via --radius-control, 12px→13 body / 10px→caption)
 `src/app/report/page.tsx`. Replace hand-rolled form rows with `FormField`, submit button with `Button size="lg" full`, input radius → `var(--radius-control)` (there's a shared `inputStyle` object at top — normalize it once), font shorthands → scale. Keep photo upload + fetch logic untouched.
 
-### T3 — Sweep `/todo` (288) ☐
+### T3 — Sweep `/todo` (288) ☑ (done by Fable 2026-07-09 — filter row + sheet chips use ui Chip/ChipRow; sheet form uses FormField + Button ghost/primary lg; FAB kept custom)
 `src/app/todo/page.tsx`. FAB stays custom (it's fine). Filter chips → check `ui/seg.tsx` or `ui/chip.tsx` fit; if props don't fit, normalize inline values only. Bottom-sheet form → `FormField` + `Button`. Off-scale 9/10px fonts → caption.
 
 ### T4 — Sweep `/profile` (155) + `/settings` (108) ☐
