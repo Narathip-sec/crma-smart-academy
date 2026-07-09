@@ -121,8 +121,7 @@ Dense custom grid = mostly legitimate inline. Normalize fonts to scale, radii, a
 
 ### T7 — Sweep `/activity`, `/activity/[id]`, `/activity/new` (170+177+303) ☑ (done by Sonnet 5 2026-07-09 — activity list rows → ListItem incl. category badge in title slot; filter chips → Chip/ChipRow; new form → FormField + Button lg full, inputStyle radius token; detail RSVP button → Button lg full with grey override style when disabled, hero gradient kept custom; off-scale fonts (9/10/12/14/16px) bumped to scale)
 
-### T8 — Sweep `/lost-found`, `/lost-found/[id]`, `/lost-found/new` (131+164+270) ☐
-Same recipe as T7. Claim button colored by `typeColor` — keep dynamic color, use `Button` only if it accepts style override cleanly (it spreads `style`, so it does).
+### T8 — Sweep `/lost-found`, `/lost-found/[id]`, `/lost-found/new` (131+164+270) ☑ (done by Sonnet 5 2026-07-09 — list rows → ListItem with dynamic typeColor left-border kept; filter pills → Chip/ChipRow; claim button → Button lg full with typeColor style override; new form's local `Field` helper replaced with kit FormField, inputStyle radius token; off-scale fonts (9/10/12/14/18/28px) bumped to scale)
 
 ### T9 — Sweep `/meals` (202), `/announcements` ×2 (116+127), `/class` (169), `/report/tickets` (122), `/notifications` (96) ☐
 Lighter pass: fonts → scale, radii → canon, hand-rolled rows → `ListItem` where obvious. `/class` and `/todo` are reference-quality — minimal touch.

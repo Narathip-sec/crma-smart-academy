@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTx } from "@/components/shell/bilingual-label";
+import { Button } from "@/components/ui";
 
 const THAI_MONTHS_SHORT = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
 function fmtDate(iso: string): string {
@@ -33,7 +34,7 @@ function InfoRow({ icon, labelTh, labelEn, value, t }: {
     <div className="flex items-start gap-3 px-4 py-3" style={{ borderBottom: "1px solid var(--line)" }}>
       <span style={{ fontSize: 15 }}>{icon}</span>
       <div>
-        <div style={{ font: "600 10px var(--font-sans)", color: "var(--muted)", marginBottom: 1 }}>
+        <div style={{ font: "600 11px var(--font-sans)", color: "var(--muted)", marginBottom: 1 }}>
           {t({ th: labelTh, en: labelEn })}
         </div>
         <div style={{ font: "500 13px var(--font-sans)", color: "var(--ink)" }}>{value}</div>
@@ -107,7 +108,7 @@ export default function LostFoundDetailPage() {
           </div>
           <div>
             <div className="mb-1">
-              <span style={{ display: "inline-block", padding: "2px 10px", borderRadius: 999, background: "rgba(255,255,255,.25)", color: "#fff", font: "700 10px var(--font-sans)" }}>
+              <span style={{ display: "inline-block", padding: "2px 10px", borderRadius: 999, background: "rgba(255,255,255,.25)", color: "#fff", font: "700 11px var(--font-sans)" }}>
                 {isLost ? t({ th: "ของหาย", en: "Lost" }) : t({ th: "ของพบ", en: "Found" })}
               </span>
             </div>
@@ -132,7 +133,7 @@ export default function LostFoundDetailPage() {
 
         {item.descriptionTh && (
           <div className="rounded-2xl p-4" style={{ border: "1px solid var(--line)", background: "var(--surface)" }}>
-            <div style={{ font: "700 12px var(--font-sans)", color: "var(--muted)", marginBottom: 6 }}>{t({ th: "รายละเอียด", en: "Details" })}</div>
+            <div style={{ font: "700 15px var(--font-sans)", color: "var(--ink)", marginBottom: 8 }}>{t({ th: "รายละเอียด", en: "Details" })}</div>
             <div style={{ font: "400 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.6 }}>{item.descriptionTh}</div>
           </div>
         )}
@@ -140,14 +141,15 @@ export default function LostFoundDetailPage() {
         {error && <div style={{ font: "500 12px var(--font-sans)", color: "var(--danger)", textAlign: "center" }}>{error}</div>}
 
         {claimed ? (
-          <div className="rounded-2xl py-4 text-center" style={{ background: "var(--tint)", font: "600 14px var(--font-sans)", color: "var(--brand)" }}>
+          <div className="rounded-2xl py-4 text-center" style={{ background: "var(--tint)", font: "600 15px var(--font-sans)", color: "var(--brand)" }}>
             ✓ {t({ th: "แจ้งขอรับของแล้ว", en: "Claim submitted" })}
           </div>
         ) : (
-          <button type="button" onClick={canClaim ? claim : undefined}
-            disabled={!canClaim || claimLoading}
-            className="w-full rounded-2xl py-4"
-            style={{ background: canClaim ? typeColor : "var(--line)", font: "600 14px var(--font-sans)", color: canClaim ? "#fff" : "var(--muted)", opacity: claimLoading ? 0.6 : 1, cursor: canClaim ? "pointer" : "not-allowed" }}>
+          <Button onClick={canClaim ? claim : undefined} disabled={!canClaim || claimLoading}
+            size="lg" full
+            style={canClaim
+              ? { background: typeColor, border: `1px solid ${typeColor}`, color: "#fff" }
+              : { background: "var(--line)", color: "var(--muted)", border: "1px solid var(--line)" }}>
             {claimLoading
               ? t({ th: "กำลังส่ง…", en: "Submitting…" })
               : item.status !== "open"
@@ -155,7 +157,7 @@ export default function LostFoundDetailPage() {
               : isLost
               ? t({ th: "ฉันพบของชิ้นนี้ → แจ้งเพื่อจับคู่", en: "I found this → Report match" })
               : t({ th: "นี่คือของฉัน → ขอรับคืน", en: "This is mine → Claim" })}
-          </button>
+          </Button>
         )}
       </div>
     </div>

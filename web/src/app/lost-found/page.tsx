@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { AppBar } from "@/components/shell/app-bar";
 import { useTx } from "@/components/shell/bilingual-label";
+import { Chip, ChipRow, ListItem } from "@/components/ui";
 
 const THAI_MONTHS_SHORT = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
 function fmtDate(iso: string): string {
@@ -54,19 +55,14 @@ export default function LostFoundPage() {
       <AppBar th="ของหาย-ของพบ" en="Lost & Found" back />
       <div className="flex items-center gap-2 px-3 py-2.5"
         style={{ background: "var(--surface)", borderBottom: "1px solid var(--line)" }}>
-        <div className="flex flex-1 gap-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-          {filters.map(f => (
-            <button key={f.key} type="button" onClick={() => setFilter(f.key)}
-              className="shrink-0 rounded-full px-3 py-1.5"
-              style={{
-                background: filter === f.key ? "var(--brand)" : "transparent",
-                color: filter === f.key ? "#fff" : "var(--muted)",
-                border: filter === f.key ? "none" : "1px solid var(--line)",
-                font: "600 11px var(--font-sans)",
-              }}>
-              {t({ th: f.labelTh, en: f.labelEn })}
-            </button>
-          ))}
+        <div className="flex-1">
+          <ChipRow>
+            {filters.map(f => (
+              <Chip key={f.key} active={filter === f.key} onClick={() => setFilter(f.key)}>
+                {t({ th: f.labelTh, en: f.labelEn })}
+              </Chip>
+            ))}
+          </ChipRow>
         </div>
         <Link href="/lost-found/new"
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
@@ -93,34 +89,33 @@ export default function LostFoundPage() {
             const typeLbl = TYPE_LABEL[item.type];
             const statusCfg = STATUS_CONFIG[item.status] ?? { th: item.status, color: "var(--muted)" };
             return (
-              <Link key={item.id} href={`/lost-found/${item.id}`}
-                className="flex items-start gap-3 rounded-2xl p-3.5"
-                style={{ background: "var(--surface)", border: "1px solid var(--line)", borderLeft: `3px solid ${typeColor}`, textDecoration: "none" }}>
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                  style={{ background: `color-mix(in srgb, ${typeColor} 10%, transparent)` }}>
-                  <span style={{ font: "700 18px var(--font-sans)", color: typeColor }}>{item.type === "lost" ? "?" : "✓"}</span>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="mb-1 flex items-center gap-1.5">
-                    <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${typeColor} 10%, transparent)`, color: typeColor, font: "700 9px var(--font-sans)" }}>
-                      {t(typeLbl)}
-                    </span>
-                    <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${statusCfg.color} 10%, transparent)`, color: statusCfg.color, font: "600 9px var(--font-sans)" }}>
-                      {statusCfg.th}
-                    </span>
+              <ListItem
+                key={item.id}
+                href={`/lost-found/${item.id}`}
+                chevron
+                style={{ background: "var(--surface)", border: "1px solid var(--line)", borderLeft: `3px solid ${typeColor}`, borderRadius: "var(--radius-card)", padding: "14px 16px" }}
+                icon={<span style={{ font: "700 18px var(--font-sans)", color: typeColor }}>{item.type === "lost" ? "?" : "✓"}</span>}
+                iconBg={`color-mix(in srgb, ${typeColor} 10%, transparent)`}
+                title={
+                  <>
+                    <div className="mb-1 flex items-center gap-1.5">
+                      <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${typeColor} 10%, transparent)`, color: typeColor, font: "700 11px var(--font-sans)" }}>
+                        {t(typeLbl)}
+                      </span>
+                      <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${statusCfg.color} 10%, transparent)`, color: statusCfg.color, font: "600 11px var(--font-sans)" }}>
+                        {statusCfg.th}
+                      </span>
+                    </div>
+                    <div>{item.titleTh}</div>
+                  </>
+                }
+                subtitle={
+                  <div className="flex flex-col gap-0.5">
+                    {item.category && <span>{item.category.nameTh}</span>}
+                    <span>{item.locationFound && `📍 ${item.locationFound} · `}{fmtDate(item.createdAt)}</span>
                   </div>
-                  <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.3 }}>{item.titleTh}</div>
-                  {item.category && (
-                    <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 1 }}>{item.category.nameTh}</div>
-                  )}
-                  <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 1 }}>
-                    {item.locationFound && `📍 ${item.locationFound} · `}{fmtDate(item.createdAt)}
-                  </div>
-                </div>
-                <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="var(--line)" strokeWidth={2} strokeLinecap="round" style={{ flexShrink: 0 }}>
-                  <path d="M9 18l6-6-6-6" />
-                </svg>
-              </Link>
+                }
+              />
             );
           })}
         </div>
