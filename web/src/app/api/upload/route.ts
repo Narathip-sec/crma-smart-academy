@@ -17,10 +17,13 @@ import { getCurrentUser } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
+// heic/heif included: default capture format on iOS Safari/LINE webview.
 const ALLOWED_CONTENT_TYPES = [
   "image/jpeg",
   "image/png",
   "image/webp",
+  "image/heic",
+  "image/heif",
 ];
 
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB

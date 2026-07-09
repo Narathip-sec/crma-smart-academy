@@ -8,14 +8,6 @@ import { upload } from "@vercel/blob/client";
 import Image from "next/image";
 
 type Category = { id: string; nameTh: string };
-type ActivityItem = { category: Category | null };
-
-const FALLBACK_CATS = [
-  { id: "กีฬา", nameTh: "กีฬา" },
-  { id: "วิชาการ", nameTh: "วิชาการ" },
-  { id: "สังคม", nameTh: "สังคม" },
-  { id: "กิจกรรม", nameTh: "กิจกรรม" },
-];
 
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "12px 16px", borderRadius: "var(--radius-control)",
@@ -28,14 +20,14 @@ export default function CreateActivityPage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [cats, setCats] = useState<Category[]>(FALLBACK_CATS);
+  const [cats, setCats] = useState<Category[]>([]);
   const [titleTh, setTitleTh] = useState("");
   const [descriptionTh, setDescriptionTh] = useState("");
   const [location, setLocation] = useState("");
   const [startDate, setStartDate] = useState("");
   const [startTime, setStartTime] = useState("");
   const [maxAttendees, setMaxAttendees] = useState("");
-  const [categoryId, setCategoryId] = useState("กีฬา");
+  const [categoryId, setCategoryId] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -45,17 +37,11 @@ export default function CreateActivityPage() {
   const [uploadError, setUploadError] = useState("");
 
   useEffect(() => {
-    fetch("/api/activity")
+    fetch("/api/activity/meta")
       .then(r => r.json())
-      .then((data: ActivityItem[]) => {
-        const seen = new Set<string>();
-        const result: Category[] = [];
-        for (const ev of data) {
-          if (ev.category && !seen.has(ev.category.id)) {
-            seen.add(ev.category.id); result.push(ev.category);
-          }
-        }
-        if (result.length > 0) { setCats(result); setCategoryId(result[0].id); }
+      .then((data: { categories: Category[] }) => {
+        setCats(data.categories);
+        if (data.categories.length > 0) setCategoryId(data.categories[0].id);
       }).catch(() => {});
   }, []);
 
