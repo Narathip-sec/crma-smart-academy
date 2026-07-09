@@ -99,13 +99,13 @@ Files: `web/src/components/ui/button.tsx`, new `list-item.tsx`, new `form-field.
 
 1. **Button**: add `size?: "sm" | "md" | "lg"` (md default). Padding: sm `6px 12px`, md `10px 16px`, lg `14px 16px` + `width:100%` when `full`. Font: sm caption-11/600, md body-13/600, lg 14→use 15/600. Radius: `var(--radius-control)`. Add `disabled` visual (opacity .5, cursor not-allowed). Keep existing variants and prop API — nothing that compiles today may break.
 2. **ListItem** (new): the row pattern hand-rolled on service/settings/notifications pages — `flex items-center gap-3` row with optional leading icon bubble (40×40, rounded-xl, tinted bg), title (body/600, ink), optional subtitle (caption, muted), optional trailing element or chevron. Props: `icon?, iconBg?, title: ReactNode, subtitle?, trailing?, chevron?, onClick?, href?` (render `Link` when href).
-3. **FormField** (new): label + control + error wrapper used by report/lost-found-new/activity-new forms. Props: `labelTh, labelEn, required?, error?, children`. Label row: caption/600 muted with required `*` in danger. Error line: caption in danger.
+3. **FormField** (new): label + control + error wrapper used by report/lost-found-new/activity-new forms. Props: `label: ReactNode, required?, error?, children` — caller localizes label via `useTx`/`t({th,en})` (API adjusted during T2: pages toggle languages at runtime, so a combined `labelTh · labelEn` render was wrong). Label row: caption/600 muted with required `*` in danger. Error line: caption in danger.
 4. **PageHeader** (new): thin wrapper around existing `AppBar` (`shell/app-bar.tsx`) adding optional subtitle — check AppBar first; if AppBar already covers everything the pages need, skip this component and note it.
 5. Export all from `ui/index.ts`.
 
 Accept: lint+tsc green; no page visually changes yet (kit additions only).
 
-### T2 — Sweep `/report` (329 lines, worst) ☐
+### T2 — Sweep `/report` (329 lines, worst) ☑ (done by Fable 2026-07-09 — use as the reference example for T3–T10: FormField for labeled controls incl. photo/map sections, Button size="lg" full for submit, inputStyle radius via --radius-control, 12px→13 body / 10px→caption)
 `src/app/report/page.tsx`. Replace hand-rolled form rows with `FormField`, submit button with `Button size="lg" full`, input radius → `var(--radius-control)` (there's a shared `inputStyle` object at top — normalize it once), font shorthands → scale. Keep photo upload + fetch logic untouched.
 
 ### T3 — Sweep `/todo` (288) ☐

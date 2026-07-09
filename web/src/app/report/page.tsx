@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/shell/app-bar";
 import { useTx } from "@/components/shell/bilingual-label";
+import { Button, FormField } from "@/components/ui";
 import { upload } from "@vercel/blob/client";
 import Image from "next/image";
 import type { PinLocation } from "@/components/map/CampusPinMap";
@@ -18,21 +19,10 @@ type Team = { id: string; nameTh: string };
 type MetaResponse = { categories?: Category[]; teams?: Team[] };
 
 const inputStyle: React.CSSProperties = {
-  width: "100%", padding: "12px 16px", borderRadius: 12,
+  width: "100%", padding: "12px 16px", borderRadius: "var(--radius-control)",
   border: "1px solid var(--line)", background: "var(--surface)",
   font: "500 13px var(--font-sans)", color: "var(--ink)", outline: "none",
 };
-
-function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
-  return (
-    <div>
-      <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 6 }}>
-        {label} {required && <span style={{ color: "var(--danger)" }}>*</span>}
-      </div>
-      {children}
-    </div>
-  );
-}
 
 export default function ReportPage() {
   const t = useTx();
@@ -125,11 +115,11 @@ export default function ReportPage() {
 
       <div className="flex items-center justify-between px-4 py-3"
         style={{ background: "var(--surface)", borderBottom: "1px solid var(--line)" }}>
-        <div style={{ font: "500 12px var(--font-sans)", color: "var(--muted)" }}>
+        <div style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
           {t({ th: "แจ้งปัญหาซ่อมแซมหรือเหตุการณ์ผิดปกติ", en: "Report maintenance or incidents" })}
         </div>
         <Link href="/report/tickets"
-          style={{ font: "600 12px var(--font-sans)", color: "var(--brand)", textDecoration: "none", whiteSpace: "nowrap", marginLeft: 8 }}>
+          style={{ font: "600 13px var(--font-sans)", color: "var(--brand)", textDecoration: "none", whiteSpace: "nowrap", marginLeft: 8 }}>
           {t({ th: "รายการของฉัน →", en: "My tickets →" })}
         </Link>
       </div>
@@ -146,26 +136,23 @@ export default function ReportPage() {
       <form onSubmit={submit} className="flex-1 overflow-y-auto px-4 pb-8 pt-4">
         <div className="flex flex-col gap-5">
 
-          <Field label={t({ th: "หัวข้อ", en: "Title" })} required>
+          <FormField label={t({ th: "หัวข้อ", en: "Title" })} required>
             <input type="text" value={titleTh} onChange={e => setTitleTh(e.target.value)}
               placeholder={t({ th: "เช่น ไฟฟ้าดับห้อง 301…", en: "e.g. Power outage room 301…" })}
               style={inputStyle} required />
-          </Field>
+          </FormField>
 
-          <Field label={t({ th: "รายละเอียด", en: "Details" })}>
+          <FormField label={t({ th: "รายละเอียด", en: "Details" })}>
             <textarea value={descriptionTh} onChange={e => setDescriptionTh(e.target.value)}
               rows={3} placeholder={t({ th: "อธิบายปัญหาเพิ่มเติม…", en: "Describe the issue…" })}
               style={{ ...inputStyle, resize: "none" }} />
-          </Field>
+          </FormField>
 
           {/* Photo */}
-          <div>
-            <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 8 }}>
-              {t({ th: "แนบรูปภาพ", en: "Attach photo" })}
-              <span style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>
-                {t({ th: "(ไม่บังคับ)", en: "(optional)" })}
-              </span>
-            </div>
+          <FormField
+            label={t({ th: "แนบรูปภาพ (ไม่บังคับ)", en: "Attach photo (optional)" })}
+            error={uploadError || undefined}
+          >
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
@@ -184,7 +171,7 @@ export default function ReportPage() {
                   <Image src={photoPreview} alt="attachment" fill className="object-cover" unoptimized />
                   <div className="absolute inset-0 flex items-center justify-center"
                     style={{ background: "rgba(0,0,0,.35)" }}>
-                    <span style={{ font: "600 12px var(--font-sans)", color: "#fff" }}>
+                    <span style={{ font: "600 13px var(--font-sans)", color: "#fff" }}>
                       {uploadingPhoto
                         ? t({ th: "กำลังอัปโหลด…", en: "Uploading…" })
                         : photoUrl
@@ -199,26 +186,18 @@ export default function ReportPage() {
                     <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
                     <circle cx="12" cy="13" r="4" />
                   </svg>
-                  <span style={{ font: "600 12px var(--font-sans)", color: "var(--brand)" }}>
+                  <span style={{ font: "600 13px var(--font-sans)", color: "var(--brand)" }}>
                     {t({ th: "ถ่ายหรือเลือกรูปภาพ", en: "Take or choose photo" })}
                   </span>
                 </>
               )}
             </button>
-            {uploadError && (
-              <div className="mt-1" style={{ font: "500 11px var(--font-sans)", color: "var(--danger)" }}>
-                {uploadError}
-              </div>
-            )}
-          </div>
+          </FormField>
 
           {/* Map pin */}
-          <div>
-            <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 4 }}>
-              {t({ th: "ปักหมุดสถานที่", en: "Pin location" })}
-              <span style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>
-                {t({ th: "(ไม่บังคับ)", en: "(optional)" })}
-              </span>
+          <div className="flex flex-col gap-1.5">
+            <div style={{ font: "600 11px var(--font-sans)", color: "var(--muted)" }}>
+              {t({ th: "ปักหมุดสถานที่ (ไม่บังคับ)", en: "Pin location (optional)" })}
             </div>
 
             {/* Toggle map open */}
@@ -240,7 +219,7 @@ export default function ReportPage() {
               <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--line)" }}>
                 <Suspense fallback={
                   <div className="flex h-60 items-center justify-center" style={{ background: "var(--surface)" }}>
-                    <span style={{ font: "500 12px var(--font-sans)", color: "var(--muted)" }}>
+                    <span style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
                       {t({ th: "กำลังโหลดแผนที่…", en: "Loading map…" })}
                     </span>
                   </div>
@@ -285,42 +264,37 @@ export default function ReportPage() {
           </div>
 
           {/* Room detail */}
-          <Field label={t({ th: "ห้อง / จุดเฉพาะ", en: "Room / Specific spot" })}>
+          <FormField label={t({ th: "ห้อง / จุดเฉพาะ", en: "Room / Specific spot" })}>
             <input type="text" value={roomDetail} onChange={e => setRoomDetail(e.target.value)}
               placeholder={t({ th: "เช่น ชั้น 2 ห้อง 204, บันไดทางขวา…", en: "e.g. Floor 2 Rm 204, right stairway…" })}
               style={inputStyle} />
-          </Field>
+          </FormField>
 
           {cats.length > 0 && (
-            <Field label={t({ th: "ประเภทปัญหา", en: "Category" })}>
+            <FormField label={t({ th: "ประเภทปัญหา", en: "Category" })}>
               <select value={categoryId} onChange={e => setCategoryId(e.target.value)} style={inputStyle}>
                 <option value="">{t({ th: "— เลือกประเภท —", en: "— Select category —" })}</option>
                 {cats.map(c => <option key={c.id} value={c.id}>{c.nameTh}</option>)}
               </select>
-            </Field>
+            </FormField>
           )}
 
           {teams.length > 0 && (
-            <Field label={t({ th: "ส่งให้ทีม", en: "Assign to team" })}>
+            <FormField label={t({ th: "ส่งให้ทีม", en: "Assign to team" })}>
               <select value={teamId} onChange={e => setTeamId(e.target.value)} style={inputStyle}>
                 <option value="">{t({ th: "— เลือกทีม (ไม่บังคับ) —", en: "— Assign team (optional) —" })}</option>
                 {teams.map(tm => <option key={tm.id} value={tm.id}>{tm.nameTh}</option>)}
               </select>
-            </Field>
+            </FormField>
           )}
 
           {error && (
-            <div style={{ font: "500 12px var(--font-sans)", color: "var(--danger)" }}>{error}</div>
+            <div style={{ font: "500 13px var(--font-sans)", color: "var(--danger)" }}>{error}</div>
           )}
 
-          <button type="submit" disabled={submitting || uploadingPhoto}
-            className="w-full rounded-2xl py-4"
-            style={{
-              background: "var(--brand)", font: "600 14px var(--font-sans)", color: "#fff",
-              opacity: (submitting || uploadingPhoto) ? 0.6 : 1,
-            }}>
+          <Button type="submit" size="lg" full disabled={submitting || uploadingPhoto}>
             {submitting ? t({ th: "กำลังส่ง…", en: "Submitting…" }) : t({ th: "แจ้งซ่อม / เหตุ", en: "Submit Report" })}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

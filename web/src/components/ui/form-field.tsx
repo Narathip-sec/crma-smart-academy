@@ -4,15 +4,14 @@ import type { ReactNode } from "react";
 
 // Label + control + error wrapper for form screens
 // (report, lost-found/new, activity/new).
+// Caller localizes the label (usually via useTx), so it is a ReactNode.
 export function FormField({
-  labelTh,
-  labelEn,
+  label,
   required,
   error,
   children,
 }: {
-  labelTh: string;
-  labelEn?: string;
+  label: ReactNode;
   required?: boolean;
   error?: string;
   children: ReactNode;
@@ -20,8 +19,7 @@ export function FormField({
   return (
     <div className="flex flex-col gap-1.5">
       <label style={{ font: "600 11px var(--font-sans)", color: "var(--muted)" }}>
-        {labelTh}
-        {labelEn ? ` · ${labelEn}` : ""}
+        {label}
         {required && <span style={{ color: "var(--danger)" }}> *</span>}
       </label>
       {children}
