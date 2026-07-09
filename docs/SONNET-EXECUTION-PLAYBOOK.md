@@ -114,7 +114,7 @@ Accept: lint+tsc green; no page visually changes yet (kit additions only).
 ### T4 — Sweep `/profile` (155) + `/settings` (108) ☑ (done by Fable 2026-07-09 — SettingRow wraps ListItem; grade rows are ListItem with card styling; semester filter uses Chip; large stat numbers 28px kept as display exception)
 Settings rows → `ListItem`. Profile stat tiles/semester segments: token-normalize; hero header (teal gradient) is legitimate-inline, leave structure.
 
-### T5 — Sweep `/calendar` (293) ☐
+### T5 — Sweep `/calendar` (293) ☑ (done by Fable 2026-07-09 — grid kept custom; shadows unified to card canon `0 1px 3px rgba(15,23,42,.06)` + 1px line border; fonts to scale; event cards intentionally NOT ListItem, layout richer)
 Dense custom grid = mostly legitimate inline. Normalize fonts to scale, radii, and any `rgba(0,0,0,…)` shadows → copy the shadow used by `ui/card.tsx` for consistency.
 
 ### T6 — Sweep `/service` (225) ☐

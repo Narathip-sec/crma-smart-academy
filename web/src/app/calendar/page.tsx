@@ -108,7 +108,7 @@ export default function CalendarPage() {
       <AppBar th="ปฏิทินการศึกษา" en="Academic Calendar" />
 
       {/* Calendar card */}
-      <div className="mx-3 mt-3 rounded-2xl p-4" style={{ background: "var(--surface)", boxShadow: "0 1px 6px rgba(0,0,0,.07)" }}>
+      <div className="mx-3 mt-3 rounded-2xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--line)", boxShadow: "0 1px 3px rgba(15,23,42,.06)" }}>
 
         {/* Month nav */}
         <div className="flex items-center justify-between mb-4">
@@ -123,7 +123,7 @@ export default function CalendarPage() {
           </button>
 
           <div className="text-center">
-            <div style={{ font: "700 16px var(--font-sans)", color: "var(--ink)" }}>
+            <div style={{ font: "700 15px var(--font-sans)", color: "var(--ink)" }}>
               {THAI_MONTHS[viewMonth]} {thaiYear}
             </div>
             <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>
@@ -146,7 +146,7 @@ export default function CalendarPage() {
         <div className="grid grid-cols-7 mb-1">
           {DAY_HEADERS.map((d, i) => (
             <div key={d} className="flex justify-center py-1">
-              <span style={{ font: "600 12px var(--font-sans)", color: i === 0 ? "var(--danger)" : "var(--muted)" }}>
+              <span style={{ font: "600 11px var(--font-sans)", color: i === 0 ? "var(--danger)" : "var(--muted)" }}>
                 {d}
               </span>
             </div>
@@ -175,7 +175,7 @@ export default function CalendarPage() {
                   style={{ background: active ? "var(--brand)" : "transparent" }}
                 >
                   <span style={{
-                    font: `${active ? "700" : "500"} 14px var(--font-sans)`,
+                    font: `${active ? "700" : "500"} 13px var(--font-sans)`,
                     color: active ? "#fff" : isSunday ? "var(--danger)" : "var(--ink)",
                   }}>
                     {day}
@@ -204,7 +204,7 @@ export default function CalendarPage() {
           {(Object.keys(CAT_LABEL) as CalendarCategory[]).map(cat => (
             <div key={cat} className="flex items-center gap-1">
               <span style={{ width: 7, height: 7, borderRadius: 999, background: CAT_COLOR[cat], display: "inline-block", flexShrink: 0 }} />
-              <span style={{ font: "500 10px var(--font-sans)", color: "var(--muted)" }}>{CAT_LABEL[cat]}</span>
+              <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>{CAT_LABEL[cat]}</span>
             </div>
           ))}
         </div>
@@ -222,7 +222,7 @@ export default function CalendarPage() {
               <span style={{ font: "700 15px var(--font-sans)", color: "var(--ink)" }}>
                 วันที่ {selectedDay} {THAI_MONTHS[viewMonth]}
               </span>
-              <span style={{ font: "500 12px var(--font-sans)", color: "var(--muted)" }}>
+              <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>
                 {selectedEvents.length} events
               </span>
             </div>
@@ -239,7 +239,7 @@ export default function CalendarPage() {
                     <div
                       key={ev.id}
                       className="flex items-start gap-3 rounded-2xl p-3.5"
-                      style={{ background: "var(--surface)", boxShadow: "0 1px 4px rgba(0,0,0,.06)" }}
+                      style={{ background: "var(--surface)", border: "1px solid var(--line)", boxShadow: "0 1px 3px rgba(15,23,42,.06)" }}
                     >
                       {/* Category icon badge */}
                       <div
@@ -259,7 +259,7 @@ export default function CalendarPage() {
                             {CAT_LABEL[ev.category]}
                           </span>
                         </div>
-                        <div style={{ font: "600 14px var(--font-sans)", color: "var(--ink)", lineHeight: 1.35 }}>
+                        <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.35 }}>
                           {ev.titleTh}
                         </div>
                         {ev.titleEn && (
