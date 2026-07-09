@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useTx } from "@/components/shell/bilingual-label";
-import { Chip, ChipRow, ListItem } from "@/components/ui";
+import { Chip, ChipRow, ListItem, LoadingState, EmptyState, ErrorState } from "@/components/ui";
 
 type DbActivity = {
   id: string;
@@ -74,24 +74,27 @@ function ActivityRow({ item }: { item: DbActivity }) {
 
 export default function ActivityPage() {
   const t = useTx();
-  const [activities, setActivities] = useState<DbActivity[]>([]);
+  const [activities, setActivities] = useState<DbActivity[] | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
   const [filter, setFilter] = useState<string>("ทั้งหมด");
-  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     fetch("/api/activity")
       .then(r => r.json())
       .then((data: DbActivity[]) => {
-        if (!Array.isArray(data)) return;
+        if (!Array.isArray(data)) throw new Error("bad response");
         setActivities(data);
+        setError(false);
         const cats = [...new Set(data.map(a => a.category?.nameTh).filter(Boolean))] as string[];
         setCategories(cats);
       })
-      .finally(() => setLoading(false));
+      .catch(() => setError(true));
   }, []);
 
-  const visible = filter === "ทั้งหมด"
+  useEffect(() => { load(); }, [load]);
+
+  const visible = activities === null ? [] : filter === "ทั้งหมด"
     ? activities
     : activities.filter(a => a.category?.nameTh === filter);
 
@@ -124,19 +127,17 @@ export default function ActivityPage() {
               {visible.length} {t({ th: "กิจกรรม", en: "events" })}
             </span>
           </div>
-          {loading && (
-            <div className="py-12 text-center" style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
-              {t({ th: "กำลังโหลด…", en: "Loading…" })}
+          {error ? (
+            <ErrorState onRetry={load} />
+          ) : activities === null ? (
+            <LoadingState label={t({ th: "กำลังโหลด…", en: "Loading…" })} />
+          ) : visible.length === 0 ? (
+            <EmptyState title={t({ th: "ยังไม่มีกิจกรรม", en: "No activities yet" })} />
+          ) : (
+            <div className="flex flex-col gap-2">
+              {visible.map(item => <ActivityRow key={item.id} item={item} />)}
             </div>
           )}
-          {!loading && visible.length === 0 && (
-            <div className="py-12 text-center" style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
-              {t({ th: "ยังไม่มีกิจกรรม", en: "No activities yet" })}
-            </div>
-          )}
-          <div className="flex flex-col gap-2">
-            {visible.map(item => <ActivityRow key={item.id} item={item} />)}
-          </div>
         </div>
       </div>
 

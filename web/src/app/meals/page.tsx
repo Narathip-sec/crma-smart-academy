@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AppBar } from "@/components/shell/app-bar";
+import { LoadingState, ErrorState } from "@/components/ui";
 
 type MealRow = {
   id: string;
@@ -50,7 +51,8 @@ export default function MealsPage() {
   });
   // Keyed by week range so switching weeks shows the loading state
   // without a synchronous setState reset inside the effect.
-  const [fetched, setFetched] = useState<{ key: string; rows: MealRow[] } | null>(null);
+  const [fetched, setFetched] = useState<{ key: string; rows: MealRow[]; error?: boolean } | null>(null);
+  const [retryTick, setRetryTick] = useState(0);
 
   const from = toIso(weekStart);
   const to   = toIso(addDays(weekStart, 7));
@@ -65,12 +67,13 @@ export default function MealsPage() {
         if (!cancelled) setFetched({ key, rows: Array.isArray(data) ? data : [] });
       })
       .catch(() => {
-        if (!cancelled) setFetched({ key, rows: [] });
+        if (!cancelled) setFetched({ key, rows: [], error: true });
       });
     return () => { cancelled = true; };
-  }, [from, to]);
+  }, [from, to, retryTick]);
 
   const meals = fetched?.key === rangeKey ? fetched.rows : null;
+  const mealsError = fetched?.key === rangeKey ? !!fetched.error : false;
 
   const weekDays = Array.from({ length: 5 }, (_, i) => addDays(weekStart, i));
 
@@ -148,10 +151,10 @@ export default function MealsPage() {
 
       {/* Meals panel */}
       <div className="flex-1 overflow-y-auto px-3 pb-6 pt-3">
-        {meals === null ? (
-          <div className="flex h-32 items-center justify-center">
-            <span style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>กำลังโหลด…</span>
-          </div>
+        {mealsError ? (
+          <ErrorState onRetry={() => setRetryTick(n => n + 1)} />
+        ) : meals === null ? (
+          <LoadingState label="กำลังโหลด…" />
         ) : (
           <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--line)", background: "var(--surface)" }}>
 

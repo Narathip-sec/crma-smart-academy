@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { AppBar } from "@/components/shell/app-bar";
 import { useTx } from "@/components/shell/bilingual-label";
-import { Chip, ChipRow, ListItem } from "@/components/ui";
+import { Chip, ChipRow, ListItem, LoadingState, EmptyState, ErrorState } from "@/components/ui";
 
 const THAI_MONTHS_SHORT = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
 function fmtDate(iso: string): string {
@@ -31,18 +31,24 @@ type Filter = "all" | "lost" | "found";
 
 export default function LostFoundPage() {
   const t = useTx();
-  const [items, setItems] = useState<LFItem[]>([]);
+  const [items, setItems] = useState<LFItem[] | null>(null);
   const [filter, setFilter] = useState<Filter>("all");
-  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     fetch("/api/lost-found")
       .then(r => r.json())
-      .then((data: LFItem[]) => { if (Array.isArray(data)) setItems(data); })
-      .finally(() => setLoading(false));
+      .then((data: LFItem[]) => {
+        if (!Array.isArray(data)) throw new Error("bad response");
+        setItems(data);
+        setError(false);
+      })
+      .catch(() => setError(true));
   }, []);
 
-  const visible = filter === "all" ? items : items.filter(i => i.type === filter);
+  useEffect(() => { load(); }, [load]);
+
+  const visible = items === null ? [] : filter === "all" ? items : items.filter(i => i.type === filter);
 
   const filters: { key: Filter; labelTh: string; labelEn: string }[] = [
     { key: "all",   labelTh: "ทั้งหมด", labelEn: "All" },
@@ -73,16 +79,13 @@ export default function LostFoundPage() {
         </Link>
       </div>
       <div className="flex-1 overflow-y-auto px-3 pb-6 pt-3">
-        {loading && (
-          <div className="py-12 text-center" style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
-            {t({ th: "กำลังโหลด…", en: "Loading…" })}
-          </div>
-        )}
-        {!loading && visible.length === 0 && (
-          <div className="py-12 text-center" style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
-            {t({ th: "ยังไม่มีรายการ", en: "Nothing here yet" })}
-          </div>
-        )}
+        {error ? (
+          <ErrorState onRetry={load} />
+        ) : items === null ? (
+          <LoadingState label={t({ th: "กำลังโหลด…", en: "Loading…" })} />
+        ) : visible.length === 0 ? (
+          <EmptyState title={t({ th: "ยังไม่มีรายการ", en: "Nothing here yet" })} />
+        ) : (
         <div className="flex flex-col gap-2">
           {visible.map(item => {
             const typeColor = TYPE_COLOR[item.type];
@@ -119,6 +122,7 @@ export default function LostFoundPage() {
             );
           })}
         </div>
+        )}
       </div>
     </div>
   );

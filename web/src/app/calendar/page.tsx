@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { AppBar } from "@/components/shell/app-bar";
+import { LoadingState, ErrorState } from "@/components/ui";
 
 type CalendarCategory = "academic" | "exam" | "military" | "activity" | "holiday" | "deadline";
 
@@ -50,13 +51,20 @@ export default function CalendarPage() {
   const [viewMonth, setViewMonth]     = useState(today.getMonth());
   const [selectedDay, setSelectedDay] = useState<number | null>(today.getDate());
   const [events, setEvents] = useState<CalEvent[] | null>(null);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     fetch(`/api/calendar?year=${viewYear}`)
       .then(r => r.json())
-      .then((data: CalEvent[]) => setEvents(data))
-      .catch(() => setEvents([]));
+      .then((data: CalEvent[]) => {
+        if (!Array.isArray(data)) throw new Error("bad response");
+        setEvents(data);
+        setError(false);
+      })
+      .catch(() => setError(true));
   }, [viewYear]);
+
+  useEffect(() => { load(); }, [load]);
 
   function prevMonth() {
     if (viewMonth === 0) { setViewYear(y => y - 1); setViewMonth(11); setEvents(null); }
@@ -212,10 +220,10 @@ export default function CalendarPage() {
 
       {/* Selected day events */}
       <div className="flex-1 overflow-y-auto px-3 pb-6 pt-3">
-        {loading ? (
-          <div className="flex h-20 items-center justify-center">
-            <span style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>กำลังโหลด…</span>
-          </div>
+        {error ? (
+          <ErrorState message="โหลดข้อมูลไม่สำเร็จ · Failed to load" onRetry={load} />
+        ) : loading ? (
+          <LoadingState label="กำลังโหลด…" />
         ) : selectedDay !== null ? (
           <>
             <div className="flex items-center justify-between mb-3">

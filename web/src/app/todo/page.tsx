@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTx } from "@/components/shell/bilingual-label";
-import { Button, Chip, ChipRow, FormField } from "@/components/ui";
+import { Button, Chip, ChipRow, FormField, LoadingState, EmptyState, ErrorState } from "@/components/ui";
 
 const THAI_MONTHS = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
 
@@ -43,7 +43,8 @@ function StatBox({ value, labelTh, labelEn, color }: { value: number; labelTh: s
 
 export default function TodoPage() {
   const t = useTx();
-  const [items, setItems] = useState<DbTask[]>([]);
+  const [items, setItems] = useState<DbTask[] | null>(null);
+  const [loadError, setLoadError] = useState(false);
   const [filter, setFilter] = useState<Filter>("ทั้งหมด");
   const [showCreate, setShowCreate] = useState(false);
   const [newTitle, setNewTitle] = useState("");
@@ -64,16 +65,28 @@ export default function TodoPage() {
   }
 
   const load = useCallback(() => {
-    fetch("/api/todo").then(r => r.json()).then((data: DbTask[]) => {
-      if (Array.isArray(data)) setItems(data);
-    });
+    fetch("/api/todo")
+      .then(r => r.json())
+      .then((data: DbTask[]) => {
+        if (!Array.isArray(data)) throw new Error("bad response");
+        setItems(data);
+        setLoadError(false);
+      })
+      .catch(() => {
+        // Only surface a blocking error if we've never loaded data —
+        // a background refresh (e.g. after toggling a task) fails silently.
+        setItems(prev => {
+          if (prev === null) setLoadError(true);
+          return prev;
+        });
+      });
   }, []);
 
   useEffect(() => { load(); }, [load]);
 
   async function toggle(task: DbTask) {
     if (task.done) return; // no un-complete in P3
-    setItems(prev => prev.map(i => i.id === task.id ? { ...i, done: true } : i));
+    setItems(prev => prev && prev.map(i => i.id === task.id ? { ...i, done: true } : i));
     await fetch(`/api/todo/${task.id}/complete`, { method: "POST" });
     load();
   }
@@ -95,10 +108,10 @@ export default function TodoPage() {
     load();
   }
 
-  const pending = items.filter(i => !i.done);
-  const dueToday = items.filter(i => !i.done && isUrgent(i.dueAt));
-  const done = items.filter(i => i.done);
-  const visible = filter === "ค้างอยู่" ? pending : filter === "เสร็จแล้ว" ? done : items;
+  const pending = (items ?? []).filter(i => !i.done);
+  const dueToday = (items ?? []).filter(i => !i.done && isUrgent(i.dueAt));
+  const done = (items ?? []).filter(i => i.done);
+  const visible = filter === "ค้างอยู่" ? pending : filter === "เสร็จแล้ว" ? done : (items ?? []);
 
   return (
     <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
@@ -118,6 +131,12 @@ export default function TodoPage() {
       </header>
 
       <div className="flex-1 overflow-y-auto px-3 pb-6 pt-3">
+        {loadError ? (
+          <ErrorState onRetry={load} />
+        ) : items === null ? (
+          <LoadingState label={t({ th: "กำลังโหลด…", en: "Loading…" })} />
+        ) : (
+        <>
         <div className="mb-3 flex gap-2">
           <StatBox value={pending.length} labelTh="ค้างอยู่" labelEn="Pending" color="var(--ink)" />
           <StatBox value={dueToday.length} labelTh="ครบกำหนดวันนี้" labelEn="Due today" color="var(--danger)" />
@@ -135,6 +154,9 @@ export default function TodoPage() {
           </ChipRow>
         </div>
 
+        {visible.length === 0 ? (
+          <EmptyState title={t({ th: "ไม่มีงาน", en: "No tasks" })} />
+        ) : (
         <div className="flex flex-col gap-2">
           {visible.map(item => {
             const due = formatDue(item.dueAt);
@@ -181,12 +203,10 @@ export default function TodoPage() {
               </div>
             );
           })}
-          {visible.length === 0 && (
-            <div className="py-12 text-center" style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
-              {t({ th: "ไม่มีงาน", en: "No tasks" })}
-            </div>
-          )}
         </div>
+        )}
+        </>
+        )}
       </div>
 
       <button type="button" onClick={() => setShowCreate(true)}

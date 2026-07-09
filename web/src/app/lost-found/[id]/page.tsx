@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTx } from "@/components/shell/bilingual-label";
-import { Button } from "@/components/ui";
+import { Button, LoadingState, ErrorState } from "@/components/ui";
 
 const THAI_MONTHS_SHORT = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
 function fmtDate(iso: string): string {
@@ -50,18 +50,22 @@ export default function LostFoundDetailPage() {
   const t = useTx();
 
   const [item, setItem] = useState<LFItem | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [claimLoading, setClaimLoading] = useState(false);
   const [claimed, setClaimed] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
+  const load = useCallback(() => {
     fetch(`/api/lost-found/${id}`)
       .then(r => r.json())
-      .then((data: LFItem) => { if (data?.id) setItem(data); else setError("ไม่พบรายการ"); })
-      .catch(() => setError("โหลดไม่สำเร็จ"))
-      .finally(() => setLoading(false));
+      .then((data: LFItem) => {
+        if (data?.id) { setItem(data); setLoadError(""); }
+        else setLoadError("ไม่พบรายการ");
+      })
+      .catch(() => setLoadError("โหลดไม่สำเร็จ"));
   }, [id]);
+
+  useEffect(() => { load(); }, [load]);
 
   async function claim() {
     setClaimLoading(true); setError("");
@@ -74,15 +78,15 @@ export default function LostFoundDetailPage() {
     setClaimLoading(false);
   }
 
-  if (loading) return (
-    <div className="flex flex-1 items-center justify-center" style={{ background: "var(--bg)" }}>
-      <div style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>{t({ th: "กำลังโหลด…", en: "Loading…" })}</div>
+  if (loadError) return (
+    <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
+      <ErrorState message={loadError} onRetry={load} />
     </div>
   );
 
   if (!item) return (
-    <div className="flex flex-1 items-center justify-center" style={{ background: "var(--bg)" }}>
-      <div style={{ font: "500 13px var(--font-sans)", color: "var(--danger)" }}>{error || "ไม่พบรายการ"}</div>
+    <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
+      <LoadingState label={t({ th: "กำลังโหลด…", en: "Loading…" })} />
     </div>
   );
 

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTx } from "@/components/shell/bilingual-label";
-import { Button } from "@/components/ui";
+import { Button, LoadingState, ErrorState } from "@/components/ui";
 
 const THAI_MONTHS_SHORT = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
 const THAI_DAYS = ["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
@@ -61,21 +61,22 @@ export default function ActivityDetailPage() {
   const t = useTx();
 
   const [event, setEvent] = useState<Event | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [rsvpLoading, setRsvpLoading] = useState(false);
   const [rsvpDone, setRsvpDone] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
+  const load = useCallback(() => {
     fetch(`/api/activity/${id}`)
       .then(r => r.json())
       .then((data: Event) => {
-        if (data && data.id) setEvent(data);
-        else setError("ไม่พบกิจกรรม");
+        if (data && data.id) { setEvent(data); setLoadError(""); }
+        else setLoadError("ไม่พบกิจกรรม");
       })
-      .catch(() => setError("โหลดข้อมูลไม่สำเร็จ"))
-      .finally(() => setLoading(false));
+      .catch(() => setLoadError("โหลดข้อมูลไม่สำเร็จ"));
   }, [id]);
+
+  useEffect(() => { load(); }, [load]);
 
   async function rsvp() {
     setRsvpLoading(true);
@@ -88,15 +89,15 @@ export default function ActivityDetailPage() {
     setRsvpLoading(false);
   }
 
-  if (loading) return (
-    <div className="flex flex-1 items-center justify-center" style={{ background: "var(--bg)" }}>
-      <div style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>{t({ th: "กำลังโหลด…", en: "Loading…" })}</div>
+  if (loadError) return (
+    <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
+      <ErrorState message={loadError} onRetry={load} />
     </div>
   );
 
   if (!event) return (
-    <div className="flex flex-1 items-center justify-center" style={{ background: "var(--bg)" }}>
-      <div style={{ font: "500 13px var(--font-sans)", color: "var(--danger)" }}>{error || "ไม่พบกิจกรรม"}</div>
+    <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
+      <LoadingState label={t({ th: "กำลังโหลด…", en: "Loading…" })} />
     </div>
   );
 

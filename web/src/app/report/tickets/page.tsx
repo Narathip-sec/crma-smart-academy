@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { AppBar } from "@/components/shell/app-bar";
 import { useTx } from "@/components/shell/bilingual-label";
+import { LoadingState, EmptyState, ErrorState } from "@/components/ui";
 
 const THAI_MONTHS_SHORT = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
 function fmtDate(iso: string): string {
@@ -29,16 +30,22 @@ const STATUS_CONFIG: Record<string, { th: string; color: string }> = {
 
 export default function MyTicketsPage() {
   const t = useTx();
-  const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [tickets, setTickets] = useState<Ticket[] | null>(null);
+  const [error, setError] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     fetch("/api/report")
       .then(r => r.json())
-      .then((data: Ticket[]) => { if (Array.isArray(data)) setTickets(data); })
-      .finally(() => setLoading(false));
+      .then((data: Ticket[]) => {
+        if (!Array.isArray(data)) throw new Error("bad response");
+        setTickets(data);
+        setError(false);
+      })
+      .catch(() => setError(true));
   }, []);
+
+  useEffect(() => { load(); }, [load]);
 
   return (
     <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
@@ -46,7 +53,7 @@ export default function MyTicketsPage() {
       <div className="flex items-center justify-between px-4 py-2.5"
         style={{ background: "var(--surface)", borderBottom: "1px solid var(--line)" }}>
         <span style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
-          {tickets.length} {t({ th: "รายการ", en: "tickets" })}
+          {tickets?.length ?? 0} {t({ th: "รายการ", en: "tickets" })}
         </span>
         <Link href="/report"
           className="active:opacity-70"
@@ -55,16 +62,13 @@ export default function MyTicketsPage() {
         </Link>
       </div>
       <div className="flex-1 overflow-y-auto px-3 pb-6 pt-3">
-        {loading && (
-          <div className="py-12 text-center" style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
-            {t({ th: "กำลังโหลด…", en: "Loading…" })}
-          </div>
-        )}
-        {!loading && tickets.length === 0 && (
-          <div className="py-12 text-center" style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
-            {t({ th: "ยังไม่มีรายการแจ้งซ่อม", en: "No tickets yet" })}
-          </div>
-        )}
+        {error ? (
+          <ErrorState onRetry={load} />
+        ) : tickets === null ? (
+          <LoadingState label={t({ th: "กำลังโหลด…", en: "Loading…" })} />
+        ) : tickets.length === 0 ? (
+          <EmptyState title={t({ th: "ยังไม่มีรายการแจ้งซ่อม", en: "No tickets yet" })} />
+        ) : (
         <div className="flex flex-col gap-2">
           {tickets.map(tk => {
             const cfg = STATUS_CONFIG[tk.status] ?? { th: tk.status, color: "var(--muted)" };
@@ -116,6 +120,7 @@ export default function MyTicketsPage() {
             );
           })}
         </div>
+        )}
       </div>
     </div>
   );

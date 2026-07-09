@@ -37,7 +37,7 @@ export default function ProfilePage() {
   const t = useTx();
 
   useEffect(() => {
-    fetch("/api/me").then(r => r.json()).then((data: MeData) => setMe(data));
+    fetch("/api/me").then(r => r.json()).then((data: MeData) => setMe(data)).catch(() => {});
   }, []);
 
   const rows = GRADES_BY_SEMESTER[sem] ?? [];
