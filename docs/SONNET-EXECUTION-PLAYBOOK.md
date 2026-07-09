@@ -117,8 +117,7 @@ Settings rows → `ListItem`. Profile stat tiles/semester segments: token-normal
 ### T5 — Sweep `/calendar` (293) ☑ (done by Fable 2026-07-09 — grid kept custom; shadows unified to card canon `0 1px 3px rgba(15,23,42,.06)` + 1px line border; fonts to scale; event cards intentionally NOT ListItem, layout richer)
 Dense custom grid = mostly legitimate inline. Normalize fonts to scale, radii, and any `rgba(0,0,0,…)` shadows → copy the shadow used by `ui/card.tsx` for consistency.
 
-### T6 — Sweep `/service` (225) ☐
-Service list rows → `ListItem`. Popular tiles keep custom layout, tokens only. This file has an uncommitted 1-line change in the working tree — look at `git diff` first; keep it if it's the version-label tweak, and fold it into your commit.
+### T6 — Sweep `/service` (225) ☑ (done by Fable 2026-07-09 — ServiceListRow wraps ListItem incl. soon-badge trailing; Recent tiles + Popular grid kept custom; pre-existing 1-line diff already folded into the earlier foundation commit)
 
 ### T7 — Sweep `/activity`, `/activity/[id]`, `/activity/new` (170+177+303) ☐
 `activity/new` form → `FormField`/`Button` (same treatment as T2, reuse its shared `inputStyle` normalization). Detail hero gradient legitimate. RSVP button → `Button size="lg" full` only if visual identical-or-better; otherwise token-normalize.
