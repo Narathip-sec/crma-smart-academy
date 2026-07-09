@@ -123,8 +123,7 @@ Dense custom grid = mostly legitimate inline. Normalize fonts to scale, radii, a
 
 ### T8 — Sweep `/lost-found`, `/lost-found/[id]`, `/lost-found/new` (131+164+270) ☑ (done by Sonnet 5 2026-07-09 — list rows → ListItem with dynamic typeColor left-border kept; filter pills → Chip/ChipRow; claim button → Button lg full with typeColor style override; new form's local `Field` helper replaced with kit FormField, inputStyle radius token; off-scale fonts (9/10/12/14/18/28px) bumped to scale)
 
-### T9 — Sweep `/meals` (202), `/announcements` ×2 (116+127), `/class` (169), `/report/tickets` (122), `/notifications` (96) ☐
-Lighter pass: fonts → scale, radii → canon, hand-rolled rows → `ListItem` where obvious. `/class` and `/todo` are reference-quality — minimal touch.
+### T9 — Sweep `/meals` (202), `/announcements` ×2 (116+127), `/class` (169), `/report/tickets` (122), `/notifications` (96) ☑ (done by Sonnet 5 2026-07-09 — announcements list rows (FeaturedRow/NewsRow) → ListItem; meals/class/tickets/notifications font-only normalization, off-scale 8/9/10/12/14/16px bumped to scale, structures kept custom — /class touched minimally per note)
 
 ### T10 — Sweep home components ☐
 `components/home/*` (my-day 198, hero-carousel 128, news-feed 96, quick-services 84, profile-banner 65). Fonts → scale (lots of 9/10px → caption 11). Carousel/banner gradients legitimate. Keep `#4cff91` online dot.

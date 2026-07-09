@@ -83,12 +83,12 @@ export default function AnnouncementDetailPage() {
         {/* Tags */}
         <div className="flex flex-wrap gap-1.5">
           {isFeatured ? (
-            <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: 999, background: `color-mix(in srgb, ${accentColor} 10%, transparent)`, color: accentColor, font: "600 10px var(--font-sans)" }}>
+            <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: 999, background: `color-mix(in srgb, ${accentColor} 10%, transparent)`, color: accentColor, font: "600 11px var(--font-sans)" }}>
               {(item as typeof FEATURED[0]).tag}
             </span>
           ) : (
             (item as typeof NEWS[0]).tags.map(tg => (
-              <span key={tg} style={{ display: "inline-block", padding: "3px 10px", borderRadius: 999, background: `color-mix(in srgb, ${TAG_COLOR[tg] ?? accentColor} 10%, transparent)`, color: TAG_COLOR[tg] ?? accentColor, font: "600 10px var(--font-sans)" }}>
+              <span key={tg} style={{ display: "inline-block", padding: "3px 10px", borderRadius: 999, background: `color-mix(in srgb, ${TAG_COLOR[tg] ?? accentColor} 10%, transparent)`, color: TAG_COLOR[tg] ?? accentColor, font: "600 11px var(--font-sans)" }}>
                 {tg}
               </span>
             ))
@@ -108,7 +108,7 @@ export default function AnnouncementDetailPage() {
 
         {/* Body */}
         <div className="rounded-2xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--line)" }}>
-          <div style={{ font: "400 14px var(--font-sans)", color: "var(--ink)", lineHeight: 1.75, whiteSpace: "pre-line" }}>
+          <div style={{ font: "400 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.75, whiteSpace: "pre-line" }}>
             {t({ th: bodyTh, en: bodyEn })}
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function AnnouncementDetailPage() {
         {/* Source badge */}
         <div className="flex items-center gap-2 px-1">
           <div style={{ width: 8, height: 8, borderRadius: 999, background: accentColor, flexShrink: 0 }} />
-          <span style={{ font: "500 10px var(--font-sans)", color: "var(--muted)" }}>
+          <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>
             กองการศึกษา โรงเรียนนายร้อยพระจุลจอมเกล้า
           </span>
         </div>

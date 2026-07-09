@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTx } from "@/components/shell/bilingual-label";
+import { ListItem } from "@/components/ui";
 import { FEATURED, NEWS, TAG_COLOR, type Announcement, type NewsItem } from "@/lib/data/announcements";
 
 const PRIORITY_LABEL: Record<string, { th: string; bg: string; color: string }> = {
@@ -15,59 +15,51 @@ function FeaturedRow({ item }: { item: Announcement }) {
   const t = useTx();
   const p = PRIORITY_LABEL[item.priority];
   return (
-    <Link href={`/announcements/f${item.id}`} style={{ textDecoration: "none" }}>
-      <div className="flex items-start gap-3 rounded-2xl p-3.5"
-        style={{ background: "var(--surface)", border: "1px solid var(--line)", borderLeft: `3px solid ${item.accentColor}` }}>
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-          style={{ background: `color-mix(in srgb, ${item.accentColor} 10%, transparent)` }}>
-          <span style={{ font: "700 16px var(--font-sans)", color: item.accentColor }}>📢</span>
-        </div>
-        <div className="min-w-0 flex-1">
+    <ListItem
+      href={`/announcements/f${item.id}`}
+      style={{ background: "var(--surface)", border: "1px solid var(--line)", borderLeft: `3px solid ${item.accentColor}`, borderRadius: "var(--radius-card)", padding: "14px 16px" }}
+      icon={<span style={{ fontSize: 16, color: item.accentColor }}>📢</span>}
+      iconBg={`color-mix(in srgb, ${item.accentColor} 10%, transparent)`}
+      title={
+        <>
           <div className="mb-1 flex items-center gap-1.5">
-            <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: p.bg, color: p.color, font: "600 9px var(--font-sans)" }}>
+            <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: p.bg, color: p.color, font: "600 11px var(--font-sans)" }}>
               {p.th}
             </span>
-            <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${item.accentColor} 10%, transparent)`, color: item.accentColor, font: "600 9px var(--font-sans)" }}>
+            <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${item.accentColor} 10%, transparent)`, color: item.accentColor, font: "600 11px var(--font-sans)" }}>
               {item.tag}
             </span>
           </div>
-          <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.3 }}>
-            {t({ th: item.titleTh, en: item.titleEn })}
-          </div>
-          <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 3 }}>📅 {item.dateTh}</div>
-        </div>
-      </div>
-    </Link>
+          <div>{t({ th: item.titleTh, en: item.titleEn })}</div>
+        </>
+      }
+      subtitle={`📅 ${item.dateTh}`}
+    />
   );
 }
 
 function NewsRow({ item }: { item: NewsItem }) {
   const t = useTx();
   return (
-    <Link href={`/announcements/n${item.id}`} style={{ textDecoration: "none" }}>
-      <div className="flex items-start gap-3 rounded-2xl p-3.5"
-        style={{ background: "var(--surface)", border: "1px solid var(--line)", borderLeft: `3px solid ${item.accentColor}` }}>
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-          style={{ background: `color-mix(in srgb, ${item.accentColor} 10%, transparent)` }}>
-          <span style={{ font: "700 16px var(--font-sans)", color: item.accentColor }}>📋</span>
-        </div>
-        <div className="min-w-0 flex-1">
+    <ListItem
+      href={`/announcements/n${item.id}`}
+      style={{ background: "var(--surface)", border: "1px solid var(--line)", borderLeft: `3px solid ${item.accentColor}`, borderRadius: "var(--radius-card)", padding: "14px 16px" }}
+      icon={<span style={{ fontSize: 16, color: item.accentColor }}>📋</span>}
+      iconBg={`color-mix(in srgb, ${item.accentColor} 10%, transparent)`}
+      title={
+        <>
           <div className="mb-1 flex flex-wrap items-center gap-1">
             {item.tags.map(tag => (
-              <span key={tag} style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${TAG_COLOR[tag] ?? "var(--muted)"} 10%, transparent)`, color: TAG_COLOR[tag] ?? "var(--muted)", font: "600 9px var(--font-sans)" }}>
+              <span key={tag} style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${TAG_COLOR[tag] ?? "var(--muted)"} 10%, transparent)`, color: TAG_COLOR[tag] ?? "var(--muted)", font: "600 11px var(--font-sans)" }}>
                 {tag}
               </span>
             ))}
           </div>
-          <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.3 }}>
-            {t({ th: item.titleTh, en: item.titleEn })}
-          </div>
-          <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 3 }}>
-            {t(item.timeAgo)}
-          </div>
-        </div>
-      </div>
-    </Link>
+          <div>{t({ th: item.titleTh, en: item.titleEn })}</div>
+        </>
+      }
+      subtitle={t(item.timeAgo)}
+    />
   );
 }
 
@@ -95,7 +87,7 @@ export default function AnnouncementsPage() {
 
       <div className="flex-1 overflow-y-auto px-3 pb-6 pt-3">
         {/* Featured */}
-        <div style={{ font: "700 12px var(--font-sans)", color: "var(--muted)", marginBottom: 8, letterSpacing: ".04em" }}>
+        <div style={{ font: "700 13px var(--font-sans)", color: "var(--muted)", marginBottom: 8, letterSpacing: ".04em" }}>
           {t({ th: "ประกาศสำคัญ", en: "FEATURED" })}
         </div>
         <div className="mb-4 flex flex-col gap-2">
@@ -103,7 +95,7 @@ export default function AnnouncementsPage() {
         </div>
 
         {/* All news */}
-        <div style={{ font: "700 12px var(--font-sans)", color: "var(--muted)", marginBottom: 8, letterSpacing: ".04em" }}>
+        <div style={{ font: "700 13px var(--font-sans)", color: "var(--muted)", marginBottom: 8, letterSpacing: ".04em" }}>
           {t({ th: "ข่าวสาร", en: "NEWS" })}
         </div>
         <div className="flex flex-col gap-2">

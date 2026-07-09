@@ -53,7 +53,7 @@ export default function ClassPage() {
               className="flex flex-1 flex-col items-center rounded-xl py-1.5"
               style={{ background: active ? "var(--brand)" : "transparent", color: active ? "#fff" : "var(--muted)" }}>
               <span style={{ font: "700 13px var(--font-sans)" }}>{lbl.short}</span>
-              <span style={{ font: "500 9px var(--font-sans)", marginTop: 1, opacity: .75 }}>{lbl.en.slice(0, 3)}</span>
+              <span style={{ font: "500 11px var(--font-sans)", marginTop: 1, opacity: .75 }}>{lbl.en.slice(0, 3)}</span>
             </button>
           );
         })}
@@ -78,7 +78,7 @@ export default function ClassPage() {
         </div>
         {isToday && (
           <span className="flex items-center gap-1 rounded-full px-2.5 py-1"
-            style={{ background: "var(--tint)", font: "600 10px var(--font-sans)", color: "var(--brand-dark)" }}>
+            style={{ background: "var(--tint)", font: "600 11px var(--font-sans)", color: "var(--brand-dark)" }}>
             <span style={{ width: 6, height: 6, borderRadius: 999, background: "var(--brand)", display: "inline-block" }} />
             {t({ th: "วันนี้", en: "Today" })}
           </span>
@@ -89,7 +89,7 @@ export default function ClassPage() {
       <div className="flex-1 overflow-y-auto px-3 pb-4">
         {periods.length === 0 && (
           <div className="flex flex-col items-center gap-2 py-12" style={{ color: "var(--muted)" }}>
-            <div style={{ font: "600 14px var(--font-sans)" }}>
+            <div style={{ font: "600 15px var(--font-sans)" }}>
               {t({ th: "ไม่มีคาบเรียน", en: "No classes" })}
             </div>
           </div>
@@ -103,10 +103,10 @@ export default function ClassPage() {
             return (
               <div key={idx} className="flex gap-3">
                 <div className="w-14 shrink-0 pt-1 text-right">
-                  <div style={{ font: "700 12px var(--font-sans)", color: active ? "var(--brand)" : "var(--ink)" }}>
+                  <div style={{ font: "700 13px var(--font-sans)", color: active ? "var(--brand)" : "var(--ink)" }}>
                     {period.startTime}
                   </div>
-                  <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)" }}>
+                  <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>
                     {period.endTime}
                   </div>
                 </div>
@@ -134,7 +134,7 @@ export default function ClassPage() {
                       display: "inline-flex", alignItems: "center", gap: 3,
                       padding: "1px 8px", borderRadius: 999,
                       background: `color-mix(in srgb, ${catColor} 10%, transparent)`, color: catColor,
-                      font: "600 9px var(--font-sans)",
+                      font: "600 11px var(--font-sans)",
                     }}>
                       ● {t(catLabel)}
                     </span>
@@ -143,17 +143,17 @@ export default function ClassPage() {
                         display: "inline-flex", alignItems: "center", gap: 3,
                         padding: "1px 8px", borderRadius: 999,
                         border: "1px solid var(--brand)", color: "var(--brand)",
-                        font: "600 9px var(--font-sans)",
+                        font: "600 11px var(--font-sans)",
                       }}>
                         {t({ th: "เรียนอยู่", en: "In session" })}
                       </span>
                     )}
                   </div>
-                  <div style={{ font: "700 14px var(--font-sans)", color: "var(--ink)", lineHeight: 1.25 }}>
+                  <div style={{ font: "700 15px var(--font-sans)", color: "var(--ink)", lineHeight: 1.25 }}>
                     {t({ th: period.subjectNameTh, en: period.subjectNameEn || period.subjectNameTh })}
                   </div>
                   {period.subjectCode && (
-                    <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 4 }}>
+                    <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginTop: 4 }}>
                       {period.subjectCode}
                     </div>
                   )}

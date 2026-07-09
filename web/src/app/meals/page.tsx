@@ -105,7 +105,7 @@ export default function MealsPage() {
         <div className="text-center">
           <div style={{ font: "700 13px var(--font-sans)", color: "var(--ink)" }}>{weekLabel}</div>
           {isCurrentWeek && (
-            <div style={{ font: "600 10px var(--font-sans)", color: "var(--brand)", marginTop: 1 }}>สัปดาห์นี้</div>
+            <div style={{ font: "600 11px var(--font-sans)", color: "var(--brand)", marginTop: 1 }}>สัปดาห์นี้</div>
           )}
         </div>
 
@@ -132,13 +132,13 @@ export default function MealsPage() {
                 background: active ? "var(--brand)" : isToday ? "var(--tint)" : "var(--surface)",
                 border: `1.5px solid ${active ? "var(--brand)" : isToday ? "var(--brand)" : "var(--line)"}`,
               }}>
-              <span style={{ font: "600 10px var(--font-sans)", color: active ? "rgba(255,255,255,.8)" : "var(--muted)" }}>
+              <span style={{ font: "600 11px var(--font-sans)", color: active ? "rgba(255,255,255,.8)" : "var(--muted)" }}>
                 {DAY_SHORT[d.getDay()]}
               </span>
-              <span style={{ font: "700 16px var(--font-sans)", color: active ? "#fff" : isToday ? "var(--brand)" : "var(--ink)", marginTop: 2 }}>
+              <span style={{ font: "700 15px var(--font-sans)", color: active ? "#fff" : isToday ? "var(--brand)" : "var(--ink)", marginTop: 2 }}>
                 {d.getDate()}
               </span>
-              <span style={{ font: "500 9px var(--font-sans)", color: active ? "rgba(255,255,255,.65)" : "var(--muted)", marginTop: 1 }}>
+              <span style={{ font: "500 11px var(--font-sans)", color: active ? "rgba(255,255,255,.65)" : "var(--muted)", marginTop: 1 }}>
                 {MONTH_SHORT[d.getMonth()]}
               </span>
             </button>
@@ -162,7 +162,7 @@ export default function MealsPage() {
                 วัน{DAY_FULL[selectedDate.getDay()]} {selectedDate.getDate()} {MONTH_SHORT[selectedDate.getMonth()]} {selectedDate.getFullYear() + 543}
               </span>
               {isTodaySelected && (
-                <span style={{ font: "700 10px var(--font-sans)", color: "var(--brand)", background: "color-mix(in srgb, var(--brand) 10%, transparent)", padding: "2px 8px", borderRadius: 999 }}>
+                <span style={{ font: "700 11px var(--font-sans)", color: "var(--brand)", background: "color-mix(in srgb, var(--brand) 10%, transparent)", padding: "2px 8px", borderRadius: 999 }}>
                   วันนี้
                 </span>
               )}
@@ -177,7 +177,7 @@ export default function MealsPage() {
                   <div key={type} className="flex items-start gap-3 px-4 py-4">
                     <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
                       style={{ background: `color-mix(in srgb, ${lbl.color} 10%, transparent)` }}>
-                      <span style={{ font: "700 8px var(--font-sans)", color: lbl.color }}>{lbl.th}</span>
+                      <span style={{ font: "700 11px var(--font-sans)", color: lbl.color }}>{lbl.th}</span>
                     </div>
                     <div className="min-w-0 flex-1">
                       {meal ? (
@@ -186,18 +186,18 @@ export default function MealsPage() {
                             {meal.menuTh}
                           </div>
                           {meal.menuEn && (
-                            <div style={{ font: "400 10px var(--font-sans)", color: "var(--muted)", marginTop: 1 }}>
+                            <div style={{ font: "400 11px var(--font-sans)", color: "var(--muted)", marginTop: 1 }}>
                               {meal.menuEn}
                             </div>
                           )}
                           {meal.note && (
-                            <div style={{ font: "500 10px var(--font-sans)", color: lbl.color, marginTop: 2 }}>
+                            <div style={{ font: "500 11px var(--font-sans)", color: lbl.color, marginTop: 2 }}>
                               {meal.note}
                             </div>
                           )}
                         </>
                       ) : (
-                        <div style={{ font: "400 12px var(--font-sans)", color: "var(--muted)" }}>—</div>
+                        <div style={{ font: "400 13px var(--font-sans)", color: "var(--muted)" }}>—</div>
                       )}
                     </div>
                   </div>

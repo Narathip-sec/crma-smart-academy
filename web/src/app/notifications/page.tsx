@@ -41,11 +41,11 @@ export default async function NotificationsPage() {
       <AppBar th="การแจ้งเตือน" en="Notifications" back />
       <div className="flex items-center justify-between px-4 py-2.5"
         style={{ background: "var(--surface)", borderBottom: "1px solid var(--line)" }}>
-        <span style={{ font: "500 12px var(--font-sans)", color: "var(--muted)" }}>
+        <span style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
           {deliveries.length} รายการ
         </span>
         {hasUnread && (
-          <span style={{ display: "inline-block", padding: "2px 10px", borderRadius: 999, background: "var(--brand)", color: "#fff", font: "600 10px var(--font-sans)" }}>
+          <span style={{ display: "inline-block", padding: "2px 10px", borderRadius: 999, background: "var(--brand)", color: "#fff", font: "600 11px var(--font-sans)" }}>
             มีอ่านใหม่
           </span>
         )}
@@ -54,7 +54,7 @@ export default async function NotificationsPage() {
         {deliveries.length === 0 ? (
           <div className="flex flex-col items-center py-16">
             <div style={{ font: "700 32px var(--font-sans)", marginBottom: 8 }}>🔔</div>
-            <div style={{ font: "600 14px var(--font-sans)", color: "var(--ink)" }}>ยังไม่มีการแจ้งเตือน</div>
+            <div style={{ font: "600 15px var(--font-sans)", color: "var(--ink)" }}>ยังไม่มีการแจ้งเตือน</div>
             <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginTop: 4 }}>No notifications</div>
           </div>
         ) : (
@@ -77,7 +77,7 @@ export default async function NotificationsPage() {
                     {n.bodyTh && (
                       <div style={{ font: "400 11px var(--font-sans)", color: "var(--muted)", marginTop: 2, lineHeight: 1.4 }}>{n.bodyTh}</div>
                     )}
-                    <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 4 }}>
+                    <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginTop: 4 }}>
                       {fmtDate(new Date(d.createdAt))}
                     </div>
                   </div>

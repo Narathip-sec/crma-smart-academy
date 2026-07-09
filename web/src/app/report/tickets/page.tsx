@@ -45,11 +45,11 @@ export default function MyTicketsPage() {
       <AppBar th="รายการแจ้งซ่อมของฉัน" en="My Tickets" back />
       <div className="flex items-center justify-between px-4 py-2.5"
         style={{ background: "var(--surface)", borderBottom: "1px solid var(--line)" }}>
-        <span style={{ font: "500 12px var(--font-sans)", color: "var(--muted)" }}>
+        <span style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
           {tickets.length} {t({ th: "รายการ", en: "tickets" })}
         </span>
         <Link href="/report"
-          style={{ font: "600 12px var(--font-sans)", color: "var(--brand)", textDecoration: "none" }}>
+          style={{ font: "600 13px var(--font-sans)", color: "var(--brand)", textDecoration: "none" }}>
           + {t({ th: "แจ้งใหม่", en: "New report" })}
         </Link>
       </div>
@@ -77,11 +77,11 @@ export default function MyTicketsPage() {
                   <div className="min-w-0 flex-1">
                     <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.3 }}>{tk.titleTh}</div>
                     <div className="mt-1 flex items-center gap-2">
-                      <span style={{ font: "500 10px var(--font-sans)", color: "var(--muted)" }}>#{tk.ticketNumber}</span>
-                      <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${cfg.color} 10%, transparent)`, color: cfg.color, font: "600 9px var(--font-sans)" }}>
+                      <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>#{tk.ticketNumber}</span>
+                      <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${cfg.color} 10%, transparent)`, color: cfg.color, font: "600 11px var(--font-sans)" }}>
                         {cfg.th}
                       </span>
-                      <span style={{ font: "500 10px var(--font-sans)", color: "var(--muted)" }}>{fmtDate(tk.createdAt)}</span>
+                      <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>{fmtDate(tk.createdAt)}</span>
                     </div>
                   </div>
                   <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="var(--line)" strokeWidth={2} strokeLinecap="round"
@@ -102,7 +102,7 @@ export default function MyTicketsPage() {
                             <div style={{ width: 6, height: 6, borderRadius: 999, background: eCfg.color, marginTop: 5, flexShrink: 0 }} />
                             <div>
                               <span style={{ font: "600 11px var(--font-sans)", color: eCfg.color }}>{eCfg.th}</span>
-                              <span style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>{fmtDate(ev.createdAt)}</span>
+                              <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>{fmtDate(ev.createdAt)}</span>
                               {ev.note && <div style={{ font: "400 11px var(--font-sans)", color: "var(--muted)", marginTop: 2 }}>{ev.note}</div>}
                             </div>
                           </div>
