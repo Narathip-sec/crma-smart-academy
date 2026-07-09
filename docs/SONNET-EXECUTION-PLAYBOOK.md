@@ -146,4 +146,4 @@ Dense custom grid = mostly legitimate inline. Normalize fonts to scale, radii, a
 
 ## Notes (Sonnet sessions write below this line)
 
-- (empty)
+- 2026-07-09 (Sonnet 5): Ran full §4 definition-of-done check after T14. Off-scale font grep still hit 18 spots across 11 files (ui kit: `states.tsx`, `badge.tsx`, `section.tsx`, `toast.tsx`; pages/shell missed by earlier per-page sweeps: `top-bar.tsx`, `profile-banner.tsx`, `not-found.tsx`, `error.tsx`, `activity/[id]`, `lost-found` list + detail). Bumped all to the 4-size scale per rule 68, committed separately (`fix(ui): playbook definition-of-done — bump remaining off-scale fonts`). Re-ran all four §4 gates (lint, tsc, build, both greps) — all green now. Playbook is fully done.
