@@ -111,7 +111,7 @@ Accept: lint+tsc green; no page visually changes yet (kit additions only).
 ### T3 — Sweep `/todo` (288) ☑ (done by Fable 2026-07-09 — filter row + sheet chips use ui Chip/ChipRow; sheet form uses FormField + Button ghost/primary lg; FAB kept custom)
 `src/app/todo/page.tsx`. FAB stays custom (it's fine). Filter chips → check `ui/seg.tsx` or `ui/chip.tsx` fit; if props don't fit, normalize inline values only. Bottom-sheet form → `FormField` + `Button`. Off-scale 9/10px fonts → caption.
 
-### T4 — Sweep `/profile` (155) + `/settings` (108) ☐
+### T4 — Sweep `/profile` (155) + `/settings` (108) ☑ (done by Fable 2026-07-09 — SettingRow wraps ListItem; grade rows are ListItem with card styling; semester filter uses Chip; large stat numbers 28px kept as display exception)
 Settings rows → `ListItem`. Profile stat tiles/semester segments: token-normalize; hero header (teal gradient) is legitimate-inline, leave structure.
 
 ### T5 — Sweep `/calendar` (293) ☐

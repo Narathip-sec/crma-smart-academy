@@ -3,12 +3,12 @@
 import { useTx } from "@/components/shell/bilingual-label";
 import { useLang } from "@/lib/i18n";
 import { AppBar } from "@/components/shell/app-bar";
-import Link from "next/link";
+import { ListItem } from "@/components/ui";
 
 function SectionHeader({ label }: { label: string }) {
   return (
     <div className="px-4 pb-1 pt-5"
-      style={{ font: "700 10px var(--font-sans)", color: "var(--muted)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+      style={{ font: "700 11px var(--font-sans)", color: "var(--muted)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
       {label}
     </div>
   );
@@ -19,28 +19,17 @@ function SettingRow({ icon, labelTh, labelEn, right, onClick, href }: {
   right?: React.ReactNode; onClick?: () => void; href?: string;
 }) {
   const t = useTx();
-  const inner = (
-    <div className="flex items-center gap-3 px-4 py-4"
-      style={{ borderBottom: "1px solid var(--line)", cursor: onClick ? "pointer" : "default" }}
-      onClick={onClick}>
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-        style={{ background: "var(--tint)", fontSize: 18 }}>
-        {icon}
-      </div>
-      <div className="flex-1">
-        <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)" }}>
-          {t({ th: labelTh, en: labelEn })}
-        </div>
-      </div>
-      {right ?? (
-        <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="var(--line)" strokeWidth={2} strokeLinecap="round">
-          <path d="M9 18l6-6-6-6" />
-        </svg>
-      )}
-    </div>
+  return (
+    <ListItem
+      icon={<span style={{ fontSize: 18 }}>{icon}</span>}
+      title={t({ th: labelTh, en: labelEn })}
+      trailing={right}
+      chevron={!right}
+      href={href}
+      onClick={onClick}
+      style={{ padding: "14px 16px", borderBottom: "1px solid var(--line)" }}
+    />
   );
-  if (href) return <Link href={href} style={{ textDecoration: "none" }}>{inner}</Link>;
-  return inner;
 }
 
 function LangToggle() {
@@ -98,7 +87,7 @@ export default function SettingsPage() {
           <SettingRow icon="🔒" labelTh="นโยบาย PDPA" labelEn="PDPA Policy"
             right={<span style={{ font: "600 11px var(--font-sans)", color: "var(--muted)" }}>→</span>} />
         </div>
-        <div className="px-4 py-6 text-center" style={{ font: "500 10px var(--font-sans)", color: "var(--muted)" }}>
+        <div className="px-4 py-6 text-center" style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>
           CRMA Smart Academy LIFF · v0.1.0 · กรมยุทธศึกษาทหารบก
         </div>
       </div>

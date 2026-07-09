@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTx } from "@/components/shell/bilingual-label";
+import { Chip, ListItem } from "@/components/ui";
 import { GRADES_BY_SEMESTER, SEMESTERS, CURRENT_SEMESTER, YEAR_RANK, gpaFor, type SemesterKey } from "@/lib/mock-data";
 
 type MeData = {
@@ -68,9 +69,9 @@ export default function ProfilePage() {
             {initials}
           </div>
           <div>
-            <div style={{ font: "700 17px var(--font-sans)", color: "#fff", lineHeight: 1.2 }}>{thaiName}</div>
+            <div style={{ font: "700 20px var(--font-sans)", color: "#fff", lineHeight: 1.2 }}>{thaiName}</div>
             {englishName && (
-              <div style={{ font: "500 12px var(--font-sans)", color: "rgba(255,255,255,.8)", marginTop: 3 }}>{englishName}</div>
+              <div style={{ font: "500 13px var(--font-sans)", color: "rgba(255,255,255,.8)", marginTop: 3 }}>{englishName}</div>
             )}
           </div>
         </div>
@@ -81,8 +82,8 @@ export default function ProfilePage() {
             { labelTh: "หน่วย", labelEn: "Unit", value: profile ? `${profile.battalion} / ${profile.company}` : "—" },
           ].map(s => (
             <div key={s.labelTh} className="text-center">
-              <div style={{ font: "600 10px var(--font-sans)", color: "rgba(255,255,255,.65)" }}>{t({ th: s.labelTh, en: s.labelEn })}</div>
-              <div style={{ font: "700 14px var(--font-sans)", color: "#fff", marginTop: 1 }}>{s.value}</div>
+              <div style={{ font: "600 11px var(--font-sans)", color: "rgba(255,255,255,.65)" }}>{t({ th: s.labelTh, en: s.labelEn })}</div>
+              <div style={{ font: "700 13px var(--font-sans)", color: "#fff", marginTop: 1 }}>{s.value}</div>
             </div>
           ))}
         </div>
@@ -92,12 +93,12 @@ export default function ProfilePage() {
         <div className="rounded-2xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--line)" }}>
           <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>{t({ th: "GPAX สะสม", en: "Cumulative GPAX" })}</div>
           <div style={{ font: "700 28px var(--font-sans)", color: "var(--brand)", lineHeight: 1.1, marginTop: 4 }}>{gpax === "—" ? "—" : gpax}</div>
-          <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 2 }}>{t({ th: "จาก 4.00", en: "out of 4.00" })}</div>
+          <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginTop: 2 }}>{t({ th: "จาก 4.00", en: "out of 4.00" })}</div>
         </div>
         <div className="rounded-2xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--line)" }}>
           <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>{t({ th: "อันดับในชั้นปี", en: "Year Rank" })}</div>
           <div style={{ font: "700 28px var(--font-sans)", color: "var(--ink)", lineHeight: 1.1, marginTop: 4 }}>{YEAR_RANK.rank}</div>
-          <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 2 }}>{t({ th: `จาก ${YEAR_RANK.total} นาย`, en: `of ${YEAR_RANK.total} cadets` })}</div>
+          <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginTop: 2 }}>{t({ th: `จาก ${YEAR_RANK.total} นาย`, en: `of ${YEAR_RANK.total} cadets` })}</div>
         </div>
       </div>
 
@@ -105,47 +106,39 @@ export default function ProfilePage() {
         <div style={{ font: "700 15px var(--font-sans)", color: "var(--ink)", marginBottom: 12 }}>
           {t({ th: "ผลการเรียนรายภาค", en: "Grades by Term" })}
         </div>
-        <div className="flex gap-2 overflow-x-auto pb-3" style={{ scrollbarWidth: "none" }}>
-          {SEMESTERS.map(s => (
-            <button key={s} type="button" onClick={() => setSem(s)}
-              className="shrink-0 rounded-full px-4 py-2"
-              style={{
-                background: s === sem ? "var(--brand)" : "var(--surface)",
-                color: s === sem ? "#fff" : "var(--muted)",
-                border: s === sem ? "none" : "1px solid var(--line)",
-                font: "600 11px var(--font-sans)", whiteSpace: "nowrap",
-              }}>
-              {t({ th: `ภาค ${s}`, en: `Sem ${s}` })}
-            </button>
-          ))}
+        <div className="pb-3">
+          <div className="flex gap-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+            {SEMESTERS.map(s => (
+              <Chip key={s} active={s === sem} onClick={() => setSem(s)}>
+                {t({ th: `ภาค ${s}`, en: `Sem ${s}` })}
+              </Chip>
+            ))}
+          </div>
         </div>
         {isPending && (
           <div className="mb-3 flex items-center gap-3 rounded-2xl p-3.5" style={{ background: "color-mix(in srgb, var(--warning) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--warning) 35%, transparent)" }}>
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full" style={{ background: "var(--warning)", color: "#fff", font: "700 14px var(--font-sans)" }}>⏱</div>
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full" style={{ background: "var(--warning)", color: "#fff", font: "700 13px var(--font-sans)" }}>⏱</div>
             <div>
-              <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)" }}>{t({ th: "ผลการเรียนยังไม่ประกาศ", en: "Grades Not Yet Released" })}</div>
-              <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 2 }}>{t({ th: "ภาคเรียนกำลังดำเนินอยู่", en: "Semester in progress" })}</div>
+              <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)" }}>{t({ th: "ผลการเรียนยังไม่ประกาศ", en: "Grades Not Yet Released" })}</div>
+              <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginTop: 2 }}>{t({ th: "ภาคเรียนกำลังดำเนินอยู่", en: "Semester in progress" })}</div>
             </div>
           </div>
         )}
         <div className="flex flex-col gap-2">
           {rows.map(row => (
-            <div key={row.code} className="flex items-center rounded-2xl px-4 py-3.5"
-              style={{ background: "var(--surface)", border: "1px solid var(--line)" }}>
-              <div className="min-w-0 flex-1">
-                <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)" }}>{t(row.course)}</div>
-                <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)", marginTop: 2 }}>
-                  {row.code} · {t({ th: `${row.credits} หน่วยกิต`, en: `${row.credits} cr` })}
-                </div>
-              </div>
-              {row.grade === null ? (
-                <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: 999, background: "var(--tint)", color: "var(--muted)", font: "600 10px var(--font-sans)" }}>
+            <ListItem
+              key={row.code}
+              title={t(row.course)}
+              subtitle={`${row.code} · ${t({ th: `${row.credits} หน่วยกิต`, en: `${row.credits} cr` })}`}
+              trailing={row.grade === null ? (
+                <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: 999, background: "var(--tint)", color: "var(--muted)", font: "600 11px var(--font-sans)" }}>
                   {t({ th: "รอผล", en: "Pending" })}
                 </span>
               ) : (
-                <span style={{ font: "700 18px var(--font-sans)", color: row.grade.startsWith("A") ? "var(--brand)" : "var(--ink)" }}>{row.grade}</span>
+                <span style={{ font: "700 20px var(--font-sans)", color: row.grade.startsWith("A") ? "var(--brand)" : "var(--ink)" }}>{row.grade}</span>
               )}
-            </div>
+              style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--radius-card)", padding: "14px 16px" }}
+            />
           ))}
         </div>
       </div>
