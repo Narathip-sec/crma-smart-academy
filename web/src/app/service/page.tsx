@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useTx } from "@/components/shell/bilingual-label";
+import { ListItem } from "@/components/ui";
 
 type ServiceRow = { href: string; th: string; en: string; soon?: boolean };
 
@@ -36,43 +37,31 @@ const POPULAR = [
 function ServiceListRow({ item }: { item: ServiceRow }) {
   const t = useTx();
   return (
-    <Link
+    <ListItem
       href={item.href}
-      className="flex items-center rounded-2xl px-4 py-3.5"
-      style={{ background: "var(--surface)", border: "1px solid var(--line)", textDecoration: "none" }}
-    >
-      <div className="min-w-0 flex-1">
-        <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)" }}>
-          {t({ th: item.th, en: item.en })}
-        </div>
-        <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)" }}>
-          {item.en}
-        </div>
-      </div>
-      {item.soon ? (
+      title={t({ th: item.th, en: item.en })}
+      subtitle={item.en}
+      chevron={!item.soon}
+      style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--radius-card)", padding: "14px 16px" }}
+      trailing={item.soon ? (
         <span
           style={{
             display: "inline-block", padding: "2px 8px", borderRadius: 999,
             background: "var(--tint)", color: "var(--brand)",
-            font: "600 9px var(--font-sans)",
+            font: "600 11px var(--font-sans)",
           }}
         >
           {t({ th: "เร็วๆ นี้", en: "Soon" })}
         </span>
-      ) : (
-        <svg width={14} height={14} viewBox="0 0 24 24" fill="none"
-          stroke="var(--line)" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M9 18l6-6-6-6" />
-        </svg>
-      )}
-    </Link>
+      ) : undefined}
+    />
   );
 }
 
 function SectionLabel({ th, en }: { th: string; en: string }) {
   const t = useTx();
   return (
-    <div style={{ font: "700 14px var(--font-sans)", color: "var(--ink)", marginBottom: 8, marginTop: 20 }}>
+    <div style={{ font: "700 15px var(--font-sans)", color: "var(--ink)", marginBottom: 8, marginTop: 20 }}>
       {t({ th, en })}
       <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>{en}</span>
     </div>
@@ -100,7 +89,7 @@ export default function ServicePage() {
         className="sticky top-0 z-30 px-4 pb-3 pt-4"
         style={{ background: "var(--bg)", borderBottom: "1px solid var(--line)" }}
       >
-        <div style={{ font: "700 16px var(--font-sans)", color: "var(--ink)", marginBottom: 8 }}>
+        <div style={{ font: "700 20px var(--font-sans)", color: "var(--ink)", marginBottom: 8 }}>
           {t({ th: "บริการ", en: "Services" })}
           <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>All Services</span>
         </div>
@@ -120,7 +109,7 @@ export default function ServicePage() {
             placeholder={t({ th: "ค้นหาบริการ...", en: "Search services..." })}
             style={{
               flex: 1, border: "none", background: "transparent", outline: "none",
-              font: "500 12px var(--font-sans)", color: "var(--ink)",
+              font: "500 13px var(--font-sans)", color: "var(--ink)",
             }}
           />
           {trimmed && (
@@ -154,7 +143,7 @@ export default function ServicePage() {
         {searchResults === null && <>
 
         {/* Recent */}
-        <div style={{ marginTop: 16, marginBottom: 8, font: "700 14px var(--font-sans)", color: "var(--ink)" }}>
+        <div style={{ marginTop: 16, marginBottom: 8, font: "700 15px var(--font-sans)", color: "var(--ink)" }}>
           {t({ th: "ใช้ล่าสุด", en: "Recent" })}
           <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>Recent</span>
         </div>
@@ -169,7 +158,7 @@ export default function ServicePage() {
               className="flex shrink-0 flex-col items-center gap-1.5 rounded-2xl px-4 py-3"
               style={{ background: "var(--surface)", border: "1px solid var(--line)", textDecoration: "none", minWidth: 72 }}>
               <span style={{ fontSize: 22 }}>{r.icon}</span>
-              <span style={{ font: "600 10px var(--font-sans)", color: "var(--ink)", textAlign: "center", lineHeight: 1.3 }}>
+              <span style={{ font: "600 11px var(--font-sans)", color: "var(--ink)", textAlign: "center", lineHeight: 1.3 }}>
                 {t({ th: r.th, en: r.en })}
               </span>
             </Link>
@@ -177,7 +166,7 @@ export default function ServicePage() {
         </div>
 
         {/* Popular 2×2 grid */}
-        <div style={{ marginTop: 16, marginBottom: 4, font: "700 14px var(--font-sans)", color: "var(--ink)" }}>
+        <div style={{ marginTop: 16, marginBottom: 4, font: "700 15px var(--font-sans)", color: "var(--ink)" }}>
           {t({ th: "บริการยอดนิยม", en: "Popular" })}
           <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>Popular</span>
         </div>
@@ -190,7 +179,7 @@ export default function ServicePage() {
               style={{ background: p.color, minHeight: 90, textDecoration: "none", position: "relative", overflow: "hidden" }}
             >
               <div style={{ position: "absolute", right: -10, bottom: -10, width: 60, height: 60, borderRadius: "50%", background: "rgba(255,255,255,.12)" }} />
-              <div style={{ font: "700 14px var(--font-sans)", color: "#fff" }}>
+              <div style={{ font: "700 13px var(--font-sans)", color: "#fff" }}>
                 {t({ th: p.th, en: p.en })}
               </div>
               <div style={{ font: "500 11px var(--font-sans)", color: "rgba(255,255,255,.75)" }}>
