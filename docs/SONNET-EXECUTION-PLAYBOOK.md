@@ -119,8 +119,7 @@ Dense custom grid = mostly legitimate inline. Normalize fonts to scale, radii, a
 
 ### T6 — Sweep `/service` (225) ☑ (done by Fable 2026-07-09 — ServiceListRow wraps ListItem incl. soon-badge trailing; Recent tiles + Popular grid kept custom; pre-existing 1-line diff already folded into the earlier foundation commit)
 
-### T7 — Sweep `/activity`, `/activity/[id]`, `/activity/new` (170+177+303) ☐
-`activity/new` form → `FormField`/`Button` (same treatment as T2, reuse its shared `inputStyle` normalization). Detail hero gradient legitimate. RSVP button → `Button size="lg" full` only if visual identical-or-better; otherwise token-normalize.
+### T7 — Sweep `/activity`, `/activity/[id]`, `/activity/new` (170+177+303) ☑ (done by Sonnet 5 2026-07-09 — activity list rows → ListItem incl. category badge in title slot; filter chips → Chip/ChipRow; new form → FormField + Button lg full, inputStyle radius token; detail RSVP button → Button lg full with grey override style when disabled, hero gradient kept custom; off-scale fonts (9/10/12/14/16px) bumped to scale)
 
 ### T8 — Sweep `/lost-found`, `/lost-found/[id]`, `/lost-found/new` (131+164+270) ☐
 Same recipe as T7. Claim button colored by `typeColor` — keep dynamic color, use `Button` only if it accepts style override cleanly (it spreads `style`, so it does).

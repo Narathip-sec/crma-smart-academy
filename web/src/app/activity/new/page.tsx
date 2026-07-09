@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTx } from "@/components/shell/bilingual-label";
+import { Button, Chip, ChipRow, FormField } from "@/components/ui";
 import { upload } from "@vercel/blob/client";
 import Image from "next/image";
 
@@ -17,7 +18,7 @@ const FALLBACK_CATS = [
 ];
 
 const inputStyle: React.CSSProperties = {
-  width: "100%", padding: "12px 16px", borderRadius: 12,
+  width: "100%", padding: "12px 16px", borderRadius: "var(--radius-control)",
   border: "1px solid var(--line)", background: "var(--surface)",
   font: "500 13px var(--font-sans)", color: "var(--ink)", outline: "none",
 };
@@ -194,7 +195,7 @@ export default function CreateActivityPage() {
               <div style={{ font: "600 13px var(--font-sans)", color: "var(--brand)" }}>
                 {t({ th: "เพิ่มภาพปก", en: "Add cover image" })}
               </div>
-              <div style={{ font: "500 10px var(--font-sans)", color: "var(--muted)" }}>
+              <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>
                 {t({ th: "แตะเพื่ออัปโหลด · JPG, PNG สูงสุด 5MB", en: "Tap to upload · JPG, PNG max 5MB" })}
               </div>
             </>
@@ -208,93 +209,62 @@ export default function CreateActivityPage() {
 
         <div className="flex flex-col gap-4 px-4 pt-4">
 
-          {/* Title */}
-          <div>
-            <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 6 }}>
-              {t({ th: "ชื่อกิจกรรม", en: "Activity name" })} <span style={{ color: "var(--danger)" }}>*</span>
-            </div>
+          <FormField label={t({ th: "ชื่อกิจกรรม", en: "Activity name" })} required>
             <input type="text" value={titleTh} onChange={e => setTitleTh(e.target.value)}
               placeholder={t({ th: "เช่น วิ่งเข้าเขาชนไก่…", en: "e.g. Mountain run…" })}
               style={inputStyle} />
-          </div>
+          </FormField>
 
           {/* Category chips */}
-          <div>
-            <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 8 }}>
-              {t({ th: "หมวดหมู่", en: "Category" })} <span style={{ color: "var(--danger)" }}>*</span>
-            </div>
-            <div className="flex flex-wrap gap-2">
+          <FormField label={t({ th: "หมวดหมู่", en: "Category" })} required>
+            <ChipRow>
               {cats.map(c => (
-                <button key={c.id} type="button" onClick={() => setCategoryId(c.id)}
-                  className="rounded-full px-4 py-2"
-                  style={{
-                    background: categoryId === c.id ? "var(--brand)" : "var(--surface)",
-                    color: categoryId === c.id ? "#fff" : "var(--muted)",
-                    border: categoryId === c.id ? "none" : "1px solid var(--line)",
-                    font: "600 13px var(--font-sans)",
-                  }}>{c.nameTh}</button>
+                <Chip key={c.id} active={categoryId === c.id} onClick={() => setCategoryId(c.id)}>
+                  {c.nameTh}
+                </Chip>
               ))}
-            </div>
-          </div>
+            </ChipRow>
+          </FormField>
 
           {/* Date + Time row */}
           <div className="flex gap-3">
             <div className="flex-1">
-              <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 6 }}>
-                {t({ th: "วันที่", en: "Date" })} <span style={{ color: "var(--danger)" }}>*</span>
-              </div>
-              <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
-                style={inputStyle} />
+              <FormField label={t({ th: "วันที่", en: "Date" })} required>
+                <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
+                  style={inputStyle} />
+              </FormField>
             </div>
             <div className="flex-1">
-              <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 6 }}>
-                {t({ th: "เวลา", en: "Time" })}
-              </div>
-              <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)}
-                style={inputStyle} />
+              <FormField label={t({ th: "เวลา", en: "Time" })}>
+                <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)}
+                  style={inputStyle} />
+              </FormField>
             </div>
           </div>
 
-          {/* Location */}
-          <div>
-            <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 6 }}>
-              {t({ th: "สถานที่", en: "Location" })} <span style={{ color: "var(--danger)" }}>*</span>
-            </div>
+          <FormField label={t({ th: "สถานที่", en: "Location" })} required>
             <input type="text" value={location} onChange={e => setLocation(e.target.value)}
               placeholder={t({ th: "เลือกหรือพิมพ์สถานที่ในค่าย…", en: "Location in camp…" })}
               style={{ ...inputStyle, paddingLeft: 40, backgroundImage: `url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "12px center" }} />
-          </div>
+          </FormField>
 
-          {/* Capacity */}
-          <div>
-            <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 6 }}>
-              {t({ th: "จำนวนที่รับ · Capacity", en: "Capacity" })}
-            </div>
+          <FormField label={t({ th: "จำนวนที่รับ · Capacity", en: "Capacity" })}>
             <input type="number" value={maxAttendees} onChange={e => setMaxAttendees(e.target.value)}
               min={1} placeholder={t({ th: "เช่น 40 (เว้นว่าง = ไม่จำกัด)", en: "e.g. 40 (blank = unlimited)" })}
               style={inputStyle} />
-          </div>
+          </FormField>
 
-          {/* Description */}
-          <div>
-            <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)", marginBottom: 6 }}>
-              {t({ th: "รายละเอียด", en: "Description" })}
-            </div>
+          <FormField label={t({ th: "รายละเอียด", en: "Description" })}>
             <textarea value={descriptionTh} onChange={e => setDescriptionTh(e.target.value)}
               rows={3} placeholder={t({ th: "บอกรายละเอียดกิจกรรม…", en: "Describe the activity…" })}
               style={{ ...inputStyle, resize: "none" }} />
-          </div>
+          </FormField>
 
-          {error && <div style={{ font: "500 12px var(--font-sans)", color: "var(--danger)" }}>{error}</div>}
+          {error && <div style={{ font: "500 13px var(--font-sans)", color: "var(--danger)" }}>{error}</div>}
 
-          <button type="submit" disabled={submitting || !titleTh.trim() || !startDate || uploadingCover}
-            className="w-full rounded-2xl py-4"
-            style={{
-              background: "var(--brand)", font: "600 14px var(--font-sans)", color: "#fff",
-              opacity: (submitting || !titleTh.trim() || !startDate || uploadingCover) ? 0.5 : 1,
-            }}>
+          <Button type="submit" size="lg" full disabled={submitting || !titleTh.trim() || !startDate || uploadingCover}>
             {submitting ? t({ th: "กำลังส่ง…", en: "Submitting…" }) : `✓ ${t({ th: "สร้างกิจกรรม", en: "Create Activity" })}`}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

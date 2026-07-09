@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTx } from "@/components/shell/bilingual-label";
+import { Button } from "@/components/ui";
 
 const THAI_MONTHS_SHORT = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
 const THAI_DAYS = ["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
@@ -44,7 +45,7 @@ function InfoRow({ icon, labelTh, labelEn, value, t }: {
     <div className="flex items-start gap-3 px-4 py-3" style={{ borderBottom: "1px solid var(--line)" }}>
       <span style={{ fontSize: 16 }}>{icon}</span>
       <div>
-        <div style={{ font: "600 10px var(--font-sans)", color: "var(--muted)", marginBottom: 1 }}>
+        <div style={{ font: "600 11px var(--font-sans)", color: "var(--muted)", marginBottom: 1 }}>
           {t({ th: labelTh, en: labelEn })}
         </div>
         <div style={{ font: "500 13px var(--font-sans)", color: "var(--ink)" }}>{value}</div>
@@ -115,7 +116,7 @@ export default function ActivityDetailPage() {
         </button>
         {event.category && (
           <div className="mb-2">
-            <span style={{ display: "inline-block", padding: "2px 10px", borderRadius: 999, background: "rgba(255,255,255,.2)", color: "#fff", font: "600 10px var(--font-sans)" }}>
+            <span style={{ display: "inline-block", padding: "2px 10px", borderRadius: 999, background: "rgba(255,255,255,.2)", color: "#fff", font: "600 11px var(--font-sans)" }}>
               {event.category.nameTh}
             </span>
           </div>
@@ -145,7 +146,7 @@ export default function ActivityDetailPage() {
 
         {event.descriptionTh && (
           <div className="rounded-2xl p-4" style={{ border: "1px solid var(--line)", background: "var(--surface)" }}>
-            <div style={{ font: "700 13px var(--font-sans)", color: "var(--ink)", marginBottom: 8 }}>{t({ th: "รายละเอียด", en: "Details" })}</div>
+            <div style={{ font: "700 15px var(--font-sans)", color: "var(--ink)", marginBottom: 8 }}>{t({ th: "รายละเอียด", en: "Details" })}</div>
             <div style={{ font: "400 13px var(--font-sans)", color: "var(--muted)", lineHeight: 1.6 }}>{event.descriptionTh}</div>
           </div>
         )}
@@ -153,14 +154,13 @@ export default function ActivityDetailPage() {
         {error && <div style={{ font: "500 12px var(--font-sans)", color: "var(--danger)", textAlign: "center" }}>{error}</div>}
 
         {rsvpDone ? (
-          <div className="rounded-2xl py-4 text-center" style={{ background: "var(--tint)", font: "600 14px var(--font-sans)", color: "var(--brand)" }}>
+          <div className="rounded-2xl py-4 text-center" style={{ background: "var(--tint)", font: "600 15px var(--font-sans)", color: "var(--brand)" }}>
             ✓ {t({ th: "ลงทะเบียนแล้ว", en: "Registered" })}
           </div>
         ) : (
-          <button type="button" onClick={canRsvp ? rsvp : undefined}
-            disabled={!canRsvp || rsvpLoading}
-            className="w-full rounded-2xl py-4"
-            style={{ background: canRsvp ? "var(--brand)" : "var(--line)", font: "600 14px var(--font-sans)", color: canRsvp ? "#fff" : "var(--muted)", opacity: rsvpLoading ? 0.6 : 1, cursor: canRsvp ? "pointer" : "not-allowed" }}>
+          <Button onClick={canRsvp ? rsvp : undefined} disabled={!canRsvp || rsvpLoading}
+            size="lg" full
+            style={!canRsvp ? { background: "var(--line)", color: "var(--muted)", border: "1px solid var(--line)" } : undefined}>
             {rsvpLoading
               ? t({ th: "กำลังลงทะเบียน…", en: "Registering…" })
               : full
@@ -168,7 +168,7 @@ export default function ActivityDetailPage() {
               : event.status !== "approved"
               ? t({ th: "ยังไม่เปิดรับสมัคร", en: "Not open yet" })
               : t({ th: "ลงทะเบียนเข้าร่วม", en: "Register" })}
-          </button>
+          </Button>
         )}
       </div>
     </div>
