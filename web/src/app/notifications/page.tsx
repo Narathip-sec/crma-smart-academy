@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { prisma } from "@/lib/db";
+import { getCurrentUser } from "@/lib/auth";
 import { AppBar } from "@/components/shell/app-bar";
 import { NotificationChannel } from "@prisma/client";
 
@@ -20,10 +21,8 @@ const CHANNEL_ICON: Record<NotificationChannel, string> = {
   line_push: "💬",
 };
 
-const DEV_EMAIL = process.env.DEV_USER_EMAIL ?? "dev.cadet@crma.ac.th";
-
 export default async function NotificationsPage() {
-  const user = await prisma.user.findUnique({ where: { email: DEV_EMAIL } });
+  const user = await getCurrentUser();
 
   const deliveries = user
     ? await prisma.notificationDelivery.findMany({

@@ -2,12 +2,11 @@
 // Returns: today's first class, today's lunch, pending task count, next activity.
 
 import { prisma } from "@/lib/db";
+import { getCurrentUser } from "@/lib/auth";
 import { ActivityStatus, ModerationStatus, MealType } from "@prisma/client";
 
-const DEV_EMAIL = process.env.DEV_USER_EMAIL ?? "dev.cadet@crma.ac.th";
-
 export async function GET() {
-  const user = await prisma.user.findUnique({ where: { email: DEV_EMAIL } });
+  const user = await getCurrentUser();
   if (!user) return Response.json({ error: "unauthenticated" }, { status: 401 });
 
   const now = new Date();

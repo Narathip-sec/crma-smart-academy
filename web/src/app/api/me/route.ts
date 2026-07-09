@@ -1,14 +1,18 @@
 // GET /api/me — current user identity.
-// P4: replace dev lookup with real LIFF profile binding.
-// Until then: DEV_USER_EMAIL env var selects the user; defaults to seeded dev cadet.
+// Real path: resolved via the session cookie set by POST /api/auth/line.
+// Dev fallback (getCurrentUser): DEV_USER_EMAIL, only when LIFF is unconfigured.
 
 import { prisma } from "@/lib/db";
-
-const DEV_EMAIL = process.env.DEV_USER_EMAIL ?? "dev.cadet@crma.ac.th";
+import { getCurrentUser } from "@/lib/auth";
 
 export async function GET() {
+  const identity = await getCurrentUser();
+  if (!identity) {
+    return Response.json({ error: "user not found" }, { status: 404 });
+  }
+
   const user = await prisma.user.findUnique({
-    where: { email: DEV_EMAIL },
+    where: { id: identity.id },
     include: {
       cadetProfile: { include: { company: true } },
       lineAccount: true,

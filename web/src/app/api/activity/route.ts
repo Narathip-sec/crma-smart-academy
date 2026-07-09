@@ -4,10 +4,9 @@
 import { prisma } from "@/lib/db";
 import { writeAuditLog, ipFrom } from "@/lib/audit";
 import { requireCadet } from "@/lib/rbac";
+import { getCurrentUser } from "@/lib/auth";
 import { ActivityStatus, ModerationStatus } from "@prisma/client";
 import type { NextRequest } from "next/server";
-
-const DEV_EMAIL = process.env.DEV_USER_EMAIL ?? "dev.cadet@crma.ac.th";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
@@ -46,7 +45,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const user = await prisma.user.findUnique({ where: { email: DEV_EMAIL } });
+  const user = await getCurrentUser();
   if (!user) return Response.json({ error: "unauthenticated" }, { status: 401 });
 
   const denied = requireCadet(user.role);

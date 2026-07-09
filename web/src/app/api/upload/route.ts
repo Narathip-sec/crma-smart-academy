@@ -13,11 +13,9 @@
 
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import type { NextRequest } from "next/server";
-import { prisma } from "@/lib/db";
+import { getCurrentUser } from "@/lib/auth";
 
 export const runtime = "nodejs";
-
-const DEV_EMAIL = process.env.DEV_USER_EMAIL ?? "dev.cadet@crma.ac.th";
 
 const ALLOWED_CONTENT_TYPES = [
   "image/jpeg",
@@ -28,7 +26,7 @@ const ALLOWED_CONTENT_TYPES = [
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 
 export async function POST(request: NextRequest): Promise<Response> {
-  const user = await prisma.user.findUnique({ where: { email: DEV_EMAIL } });
+  const user = await getCurrentUser();
   if (!user) return Response.json({ error: "unauthenticated" }, { status: 401 });
 
   const body = (await request.json()) as HandleUploadBody;

@@ -1,16 +1,15 @@
 // POST /api/todo/:id/complete — mark a task done for current user.
 
 import { prisma } from "@/lib/db";
+import { getCurrentUser } from "@/lib/auth";
 import type { NextRequest } from "next/server";
-
-const DEV_EMAIL = process.env.DEV_USER_EMAIL ?? "dev.cadet@crma.ac.th";
 
 export async function POST(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const user = await prisma.user.findUnique({ where: { email: DEV_EMAIL } });
+  const user = await getCurrentUser();
   if (!user) return Response.json({ error: "unauthenticated" }, { status: 401 });
 
   const task = await prisma.task.findUnique({ where: { id } });
