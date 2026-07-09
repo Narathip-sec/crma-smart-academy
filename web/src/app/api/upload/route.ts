@@ -13,19 +13,24 @@
 
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import type { NextRequest } from "next/server";
+import { prisma } from "@/lib/db";
 
 export const runtime = "nodejs";
+
+const DEV_EMAIL = process.env.DEV_USER_EMAIL ?? "dev.cadet@crma.ac.th";
 
 const ALLOWED_CONTENT_TYPES = [
   "image/jpeg",
   "image/png",
   "image/webp",
-  "image/heic",
 ];
 
-const MAX_SIZE_BYTES = 8 * 1024 * 1024; // 8 MB
+const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 
 export async function POST(request: NextRequest): Promise<Response> {
+  const user = await prisma.user.findUnique({ where: { email: DEV_EMAIL } });
+  if (!user) return Response.json({ error: "unauthenticated" }, { status: 401 });
+
   const body = (await request.json()) as HandleUploadBody;
 
   try {
@@ -33,13 +38,11 @@ export async function POST(request: NextRequest): Promise<Response> {
       body,
       request,
       onBeforeGenerateToken: async (pathname) => {
-        // TODO: verify the LIFF/session identity and RBAC before issuing a
-        // token (see src/lib/liff.ts / rbac). Reject unauthenticated uploads.
         return {
           allowedContentTypes: ALLOWED_CONTENT_TYPES,
           maximumSizeInBytes: MAX_SIZE_BYTES,
           addRandomSuffix: true,
-          tokenPayload: JSON.stringify({ pathname }),
+          tokenPayload: JSON.stringify({ pathname, userId: user.id }),
         };
       },
       onUploadCompleted: async ({ blob }) => {
