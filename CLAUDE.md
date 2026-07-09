@@ -60,6 +60,9 @@ Active routes:
 - `/report/tickets`
 - `/lost-found`
 - `/lost-found/[id]`
+- `/lost-found/new`
+- `/announcements`
+- `/announcements/[id]`
 - `/notifications`
 - `/settings`
 
