@@ -22,7 +22,7 @@ const TYPE_COLOR = { lost: "var(--danger)", found: "var(--brand)" };
 const TYPE_LABEL = { lost: { th: "หาย", en: "Lost" }, found: { th: "พบ", en: "Found" } };
 const STATUS_CONFIG: Record<string, { th: string; color: string }> = {
   open:    { th: "รับเรื่อง",  color: "var(--brand)" },
-  matched: { th: "จับคู่แล้ว", color: "#7c3aed" },
+  matched: { th: "จับคู่แล้ว", color: "var(--cat-notice)" },
   closed:  { th: "ปิด",        color: "var(--muted)" },
 };
 
@@ -97,15 +97,15 @@ export default function LostFoundPage() {
                 className="flex items-start gap-3 rounded-2xl p-3.5"
                 style={{ background: "var(--surface)", border: "1px solid var(--line)", borderLeft: `3px solid ${typeColor}`, textDecoration: "none" }}>
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                  style={{ background: typeColor + "18" }}>
+                  style={{ background: `color-mix(in srgb, ${typeColor} 10%, transparent)` }}>
                   <span style={{ font: "700 18px var(--font-sans)", color: typeColor }}>{item.type === "lost" ? "?" : "✓"}</span>
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="mb-1 flex items-center gap-1.5">
-                    <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: typeColor + "18", color: typeColor, font: "700 9px var(--font-sans)" }}>
+                    <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${typeColor} 10%, transparent)`, color: typeColor, font: "700 9px var(--font-sans)" }}>
                       {t(typeLbl)}
                     </span>
-                    <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: statusCfg.color + "18", color: statusCfg.color, font: "600 9px var(--font-sans)" }}>
+                    <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${statusCfg.color} 10%, transparent)`, color: statusCfg.color, font: "600 9px var(--font-sans)" }}>
                       {statusCfg.th}
                     </span>
                   </div>

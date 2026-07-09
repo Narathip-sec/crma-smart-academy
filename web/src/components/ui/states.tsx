@@ -74,7 +74,7 @@ export function ErrorState({
     <Frame>
       <div
         className="flex h-14 w-14 items-center justify-center rounded-full"
-        style={{ background: "#fdeaec", color: "var(--danger)", font: "700 20px var(--font-sans)" }}
+        style={{ background: "color-mix(in srgb, var(--danger) 10%, transparent)", color: "var(--danger)", font: "700 20px var(--font-sans)" }}
       >
         !
       </div>

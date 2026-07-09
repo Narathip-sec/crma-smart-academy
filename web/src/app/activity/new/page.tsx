@@ -74,7 +74,7 @@ export default function CreateActivityPage() {
         handleUploadUrl: "/api/upload",
       });
       setCoverImageUrl(blob.url);
-    } catch (err) {
+    } catch {
       setUploadError(t({ th: "อัปโหลดรูปไม่สำเร็จ", en: "Upload failed" }));
       setCoverPreview(null);
     } finally {
@@ -184,7 +184,7 @@ export default function CreateActivityPage() {
           ) : (
             <>
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl"
-                style={{ background: "var(--brand)18" }}>
+                style={{ background: "color-mix(in srgb, var(--brand) 10%, transparent)" }}>
                 <svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="3" width="18" height="18" rx="2" />
                   <circle cx="8.5" cy="8.5" r="1.5" />

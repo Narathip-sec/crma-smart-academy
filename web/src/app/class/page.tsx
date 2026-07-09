@@ -133,7 +133,7 @@ export default function ClassPage() {
                     <span style={{
                       display: "inline-flex", alignItems: "center", gap: 3,
                       padding: "1px 8px", borderRadius: 999,
-                      background: catColor + "18", color: catColor,
+                      background: `color-mix(in srgb, ${catColor} 10%, transparent)`, color: catColor,
                       font: "600 9px var(--font-sans)",
                     }}>
                       ● {t(catLabel)}

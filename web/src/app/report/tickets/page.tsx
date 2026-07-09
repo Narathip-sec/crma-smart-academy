@@ -21,7 +21,7 @@ type Ticket = {
 
 const STATUS_CONFIG: Record<string, { th: string; color: string }> = {
   open:        { th: "รับเรื่อง",      color: "var(--brand)" },
-  in_progress: { th: "กำลังดำเนินการ", color: "#b45309" },
+  in_progress: { th: "กำลังดำเนินการ", color: "var(--warning)" },
   resolved:    { th: "แก้ไขแล้ว",     color: "var(--success)" },
   closed:      { th: "ปิด",            color: "var(--muted)" },
   rejected:    { th: "ปฏิเสธ",        color: "var(--danger)" },
@@ -78,7 +78,7 @@ export default function MyTicketsPage() {
                     <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.3 }}>{tk.titleTh}</div>
                     <div className="mt-1 flex items-center gap-2">
                       <span style={{ font: "500 10px var(--font-sans)", color: "var(--muted)" }}>#{tk.ticketNumber}</span>
-                      <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: cfg.color + "18", color: cfg.color, font: "600 9px var(--font-sans)" }}>
+                      <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${cfg.color} 10%, transparent)`, color: cfg.color, font: "600 9px var(--font-sans)" }}>
                         {cfg.th}
                       </span>
                       <span style={{ font: "500 10px var(--font-sans)", color: "var(--muted)" }}>{fmtDate(tk.createdAt)}</span>

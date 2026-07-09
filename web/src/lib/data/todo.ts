@@ -80,7 +80,7 @@ export const TODO_CATEGORIES: { key: TodoCategory | "ทั้งหมด"; lab
 
 export const CATEGORY_COLOR: Record<TodoCategory, string> = {
   "วิชาการ": "var(--brand)",
-  "ทหาร":    "#1565c0",
-  "ส่วนตัว": "#6a1a9a",
-  "กิจกรรม": "#2e7d32",
+  "ทหาร":    "var(--cat-military)",
+  "ส่วนตัว": "var(--cat-notice)",
+  "กิจกรรม": "var(--cat-activity)",
 };

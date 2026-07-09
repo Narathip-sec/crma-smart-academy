@@ -169,7 +169,7 @@ export default function TodoPage() {
                       <span style={{
                         display: "inline-flex", alignItems: "center", gap: 3,
                         padding: "1px 8px", borderRadius: 999,
-                        background: urgent ? "#fdeaec" : "var(--stage)",
+                        background: urgent ? "color-mix(in srgb, var(--danger) 10%, transparent)" : "var(--stage)",
                         color: urgent ? "var(--danger)" : "var(--muted)",
                         font: "600 9px var(--font-sans)",
                       }}>

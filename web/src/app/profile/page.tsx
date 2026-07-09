@@ -120,7 +120,7 @@ export default function ProfilePage() {
           ))}
         </div>
         {isPending && (
-          <div className="mb-3 flex items-center gap-3 rounded-2xl p-3.5" style={{ background: "#fbf1dc", border: "1px solid #f0d080" }}>
+          <div className="mb-3 flex items-center gap-3 rounded-2xl p-3.5" style={{ background: "color-mix(in srgb, var(--warning) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--warning) 35%, transparent)" }}>
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full" style={{ background: "var(--warning)", color: "#fff", font: "700 14px var(--font-sans)" }}>⏱</div>
             <div>
               <div style={{ font: "600 12px var(--font-sans)", color: "var(--ink)" }}>{t({ th: "ผลการเรียนยังไม่ประกาศ", en: "Grades Not Yet Released" })}</div>

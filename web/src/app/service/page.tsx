@@ -27,10 +27,10 @@ const SUPPORT: ServiceRow[] = [
 ];
 
 const POPULAR = [
-  { href: "/profile",  th: "ผลการเรียน", en: "Grades",      sub: "GPAX 3.62", color: "#1a237e" },
-  { href: "/meals",    th: "เมนูอาหาร",  en: "Meals",       sub: "มื้อวันนี้",  color: "#e65100" },
-  { href: "/activity", th: "ศูนย์กิจกรรม", en: "Activities", sub: "5 กิจกรรม", color: "#0BA8A0" },
-  { href: "/report",   th: "แจ้งซ่อม",   en: "Reports",     sub: "1 รายการ",   color: "#b71c1c" },
+  { href: "/profile",  th: "ผลการเรียน", en: "Grades",      sub: "GPAX 3.62", color: "var(--cat-academic)" },
+  { href: "/meals",    th: "เมนูอาหาร",  en: "Meals",       sub: "มื้อวันนี้",  color: "var(--warning)" },
+  { href: "/activity", th: "ศูนย์กิจกรรม", en: "Activities", sub: "5 กิจกรรม", color: "var(--brand)" },
+  { href: "/report",   th: "แจ้งซ่อม",   en: "Reports",     sub: "1 รายการ",   color: "var(--danger)" },
 ];
 
 function ServiceListRow({ item }: { item: ServiceRow }) {
@@ -161,7 +161,7 @@ export default function ServicePage() {
         <div className="flex gap-3 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
           {[
             { href: "/profile",   th: "ผลการเรียน", en: "Grades",    icon: "🎓" },
-            { href: "/meals",     th: "เมนูโรงจ",   en: "Meals",     icon: "🍽" },
+            { href: "/meals",     th: "เมนูอาหาร",   en: "Meals",     icon: "🍽" },
             { href: "/report",    th: "แจ้งซ่อม",   en: "Report",    icon: "⚠️" },
             { href: "/calendar",  th: "ปฏิทิน",     en: "Calendar",  icon: "📅" },
           ].map(r => (

@@ -14,8 +14,9 @@ export type ColorToken = typeof COLOR_TOKENS[number];
 // Brand teal — confirmed 2026-06-16 from the mock.
 export const BRAND = "#0BA8A0";
 
-// Card radius range from the mock / UX style guide.
-export const CARD_RADIUS = 20; // 16–24px range
+// Unified geometry: cards 16px (rounded-2xl), buttons/inputs 12px (rounded-xl).
+export const CARD_RADIUS = 16;
+export const CONTROL_RADIUS = 12;
 
 // LIFF is mobile-only (no responsive desktop). Container is full-width
 // on device; capped width keeps it phone-like when previewed on desktop.

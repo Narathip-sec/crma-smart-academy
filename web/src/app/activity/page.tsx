@@ -18,8 +18,6 @@ type DbActivity = {
   category: { id: string; nameTh: string; nameEn: string | null } | null;
 };
 
-const BRAND = "#0BA8A0";
-
 function formatDate(iso: string): string {
   const d = new Date(iso);
   const THAI_DAYS = ["อา","จ","อ","พ","พฤ","ศ","ส"];
@@ -38,7 +36,7 @@ function ActivityRow({ item }: { item: DbActivity }) {
       className="flex items-start gap-3 rounded-2xl p-3.5"
       style={{ background: "var(--surface)", border: "1px solid var(--line)", textDecoration: "none" }}>
       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
-        style={{ background: BRAND }}>
+        style={{ background: "var(--brand)" }}>
         <svg width={22} height={22} viewBox="0 0 24 24" fill="none"
           stroke="rgba(255,255,255,.9)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
           <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
@@ -52,7 +50,7 @@ function ActivityRow({ item }: { item: DbActivity }) {
             <span style={{
               display: "inline-flex", alignItems: "center", gap: 3,
               padding: "1px 8px", borderRadius: 999,
-              background: BRAND + "18", color: BRAND,
+              background: "color-mix(in srgb, var(--brand) 10%, transparent)", color: "var(--brand)",
               font: "600 9px var(--font-sans)",
             }}>
               ● {item.category.nameTh}

@@ -6,8 +6,8 @@ import { useTx } from "@/components/shell/bilingual-label";
 import { FEATURED, NEWS, TAG_COLOR, type Announcement, type NewsItem } from "@/lib/data/announcements";
 
 const PRIORITY_LABEL: Record<string, { th: string; bg: string; color: string }> = {
-  important: { th: "สำคัญ",  bg: "#fdeaec", color: "#c62828" },
-  new:       { th: "ใหม่",   bg: "#e3f0ff", color: "#1565c0" },
+  important: { th: "สำคัญ",  bg: "color-mix(in srgb, var(--danger) 10%, transparent)", color: "var(--danger)" },
+  new:       { th: "ใหม่",   bg: "color-mix(in srgb, var(--cat-academic) 10%, transparent)", color: "var(--cat-academic)" },
   normal:    { th: "ทั่วไป", bg: "var(--tint)", color: "var(--brand)" },
 };
 
@@ -19,7 +19,7 @@ function FeaturedRow({ item }: { item: Announcement }) {
       <div className="flex items-start gap-3 rounded-2xl p-3.5"
         style={{ background: "var(--surface)", border: "1px solid var(--line)", borderLeft: `3px solid ${item.accentColor}` }}>
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-          style={{ background: item.accentColor + "18" }}>
+          style={{ background: `color-mix(in srgb, ${item.accentColor} 10%, transparent)` }}>
           <span style={{ font: "700 16px var(--font-sans)", color: item.accentColor }}>📢</span>
         </div>
         <div className="min-w-0 flex-1">
@@ -27,7 +27,7 @@ function FeaturedRow({ item }: { item: Announcement }) {
             <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: p.bg, color: p.color, font: "600 9px var(--font-sans)" }}>
               {p.th}
             </span>
-            <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: item.accentColor + "18", color: item.accentColor, font: "600 9px var(--font-sans)" }}>
+            <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${item.accentColor} 10%, transparent)`, color: item.accentColor, font: "600 9px var(--font-sans)" }}>
               {item.tag}
             </span>
           </div>
@@ -48,13 +48,13 @@ function NewsRow({ item }: { item: NewsItem }) {
       <div className="flex items-start gap-3 rounded-2xl p-3.5"
         style={{ background: "var(--surface)", border: "1px solid var(--line)", borderLeft: `3px solid ${item.accentColor}` }}>
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-          style={{ background: item.accentColor + "18" }}>
+          style={{ background: `color-mix(in srgb, ${item.accentColor} 10%, transparent)` }}>
           <span style={{ font: "700 16px var(--font-sans)", color: item.accentColor }}>📋</span>
         </div>
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex flex-wrap items-center gap-1">
             {item.tags.map(tag => (
-              <span key={tag} style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: (TAG_COLOR[tag] ?? "#888") + "18", color: TAG_COLOR[tag] ?? "#888", font: "600 9px var(--font-sans)" }}>
+              <span key={tag} style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${TAG_COLOR[tag] ?? "var(--muted)"} 10%, transparent)`, color: TAG_COLOR[tag] ?? "var(--muted)", font: "600 9px var(--font-sans)" }}>
                 {tag}
               </span>
             ))}

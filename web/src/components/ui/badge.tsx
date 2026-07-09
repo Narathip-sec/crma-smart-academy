@@ -7,9 +7,9 @@ type Tone = "brand" | "neutral" | "danger" | "success" | "warning";
 const TONES: Record<Tone, { bg: string; color: string }> = {
   brand:   { bg: "var(--tint)",   color: "var(--brand-dark)" },
   neutral: { bg: "var(--stage)",  color: "var(--muted)" },
-  danger:  { bg: "#fdeaec",       color: "var(--danger)" },
-  success: { bg: "#e6f6ef",       color: "var(--success)" },
-  warning: { bg: "#fbf1dc",       color: "var(--warning)" },
+  danger:  { bg: "color-mix(in srgb, var(--danger) 10%, transparent)",  color: "var(--danger)" },
+  success: { bg: "color-mix(in srgb, var(--success) 10%, transparent)", color: "var(--success)" },
+  warning: { bg: "color-mix(in srgb, var(--warning) 12%, transparent)", color: "var(--warning)" },
 };
 
 // Small status/label badge.

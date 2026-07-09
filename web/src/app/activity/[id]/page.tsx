@@ -30,7 +30,7 @@ type Event = {
 
 const STATUS_LABEL: Record<string, { th: string; color: string }> = {
   draft:    { th: "ร่าง",           color: "var(--muted)" },
-  pending:  { th: "รอพิจารณา",     color: "#b45309" },
+  pending:  { th: "รอพิจารณา",     color: "var(--warning)" },
   approved: { th: "อนุมัติแล้ว",   color: "var(--brand)" },
   rejected: { th: "ปฏิเสธ",        color: "var(--danger)" },
   cancelled:{ th: "ยกเลิก",        color: "var(--muted)" },
@@ -127,7 +127,7 @@ export default function ActivityDetailPage() {
 
       <div className="flex flex-col gap-4 px-4 pb-8 pt-5">
         <div className="flex gap-2">
-          <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: 999, background: statusLbl.color + "18", color: statusLbl.color, font: "600 11px var(--font-sans)" }}>
+          <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: 999, background: `color-mix(in srgb, ${statusLbl.color} 10%, transparent)`, color: statusLbl.color, font: "600 11px var(--font-sans)" }}>
             {statusLbl.th}
           </span>
           {event.maxAttendees && (

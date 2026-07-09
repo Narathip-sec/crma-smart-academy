@@ -18,11 +18,11 @@ type CalEvent = {
 
 const CAT_COLOR: Record<CalendarCategory, string> = {
   academic: "var(--brand)",
-  exam:     "#c62828",
-  military: "#1565c0",
-  activity: "#2e7d32",
-  holiday:  "#e65100",
-  deadline: "#ad1457",
+  exam:     "var(--cat-exam)",
+  military: "var(--cat-military)",
+  activity: "var(--cat-activity)",
+  holiday:  "var(--warning)",
+  deadline: "var(--cat-notice)",
 };
 
 const CAT_LABEL: Record<CalendarCategory, string> = {
@@ -146,7 +146,7 @@ export default function CalendarPage() {
         <div className="grid grid-cols-7 mb-1">
           {DAY_HEADERS.map((d, i) => (
             <div key={d} className="flex justify-center py-1">
-              <span style={{ font: "600 12px var(--font-sans)", color: i === 0 ? "#c62828" : "var(--muted)" }}>
+              <span style={{ font: "600 12px var(--font-sans)", color: i === 0 ? "var(--danger)" : "var(--muted)" }}>
                 {d}
               </span>
             </div>
@@ -176,7 +176,7 @@ export default function CalendarPage() {
                 >
                   <span style={{
                     font: `${active ? "700" : "500"} 14px var(--font-sans)`,
-                    color: active ? "#fff" : isSunday ? "#c62828" : "var(--ink)",
+                    color: active ? "#fff" : isSunday ? "var(--danger)" : "var(--ink)",
                   }}>
                     {day}
                   </span>
@@ -244,7 +244,7 @@ export default function CalendarPage() {
                       {/* Category icon badge */}
                       <div
                         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                        style={{ background: color + "1a" }}
+                        style={{ background: `color-mix(in srgb, ${color} 10%, transparent)` }}
                       >
                         <span style={{ font: "700 13px var(--font-sans)", color }}>
                           {CAT_LABEL[ev.category][0]}

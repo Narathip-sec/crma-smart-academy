@@ -19,7 +19,7 @@ export function DevToolbar() {
         className="rounded-full px-2.5 py-1 text-[10px] font-semibold"
         style={{
           background: "var(--ink)",
-          color: "var(--paper)",
+          color: "var(--surface)",
           letterSpacing: ".1em",
         }}
       >
@@ -29,8 +29,8 @@ export function DevToolbar() {
         <div
           className="flex flex-col gap-1 rounded-md p-1.5"
           style={{
-            background: "var(--paper)",
-            border: "1px solid var(--rule)",
+            background: "var(--surface)",
+            border: "1px solid var(--line)",
             boxShadow: "0 6px 18px rgba(0,0,0,.12)",
           }}
         >
@@ -43,8 +43,8 @@ export function DevToolbar() {
                 className="rounded px-2 py-0.5 text-[10px]"
                 style={{
                   background: lang === l ? "var(--ink)" : "transparent",
-                  color: lang === l ? "var(--paper)" : "var(--ink)",
-                  border: "1px solid var(--rule)",
+                  color: lang === l ? "var(--surface)" : "var(--ink)",
+                  border: "1px solid var(--line)",
                 }}
               >
                 {l.toUpperCase()}
@@ -60,8 +60,8 @@ export function DevToolbar() {
                 className="rounded px-2 py-0.5 text-[10px]"
                 style={{
                   background: theme === t ? "var(--ink)" : "transparent",
-                  color: theme === t ? "var(--paper)" : "var(--ink)",
-                  border: "1px solid var(--rule)",
+                  color: theme === t ? "var(--surface)" : "var(--ink)",
+                  border: "1px solid var(--line)",
                 }}
               >
                 {t === "light" ? "☼ Light" : "☾ Dark"}

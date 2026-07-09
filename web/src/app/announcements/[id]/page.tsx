@@ -50,7 +50,7 @@ export default function AnnouncementDetailPage() {
 
       {/* Hero header */}
       <div style={{
-        background: `linear-gradient(145deg, ${accentColor} 0%, ${accentColor}bb 100%)`,
+        background: `linear-gradient(145deg, ${accentColor} 0%, color-mix(in srgb, ${accentColor} 75%, transparent) 100%)`,
         padding: "16px 16px 36px",
         position: "relative",
         overflow: "hidden",
@@ -83,12 +83,12 @@ export default function AnnouncementDetailPage() {
         {/* Tags */}
         <div className="flex flex-wrap gap-1.5">
           {isFeatured ? (
-            <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: 999, background: accentColor + "18", color: accentColor, font: "600 10px var(--font-sans)" }}>
+            <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: 999, background: `color-mix(in srgb, ${accentColor} 10%, transparent)`, color: accentColor, font: "600 10px var(--font-sans)" }}>
               {(item as typeof FEATURED[0]).tag}
             </span>
           ) : (
             (item as typeof NEWS[0]).tags.map(tg => (
-              <span key={tg} style={{ display: "inline-block", padding: "3px 10px", borderRadius: 999, background: (TAG_COLOR[tg] ?? accentColor) + "18", color: TAG_COLOR[tg] ?? accentColor, font: "600 10px var(--font-sans)" }}>
+              <span key={tg} style={{ display: "inline-block", padding: "3px 10px", borderRadius: 999, background: `color-mix(in srgb, ${TAG_COLOR[tg] ?? accentColor} 10%, transparent)`, color: TAG_COLOR[tg] ?? accentColor, font: "600 10px var(--font-sans)" }}>
                 {tg}
               </span>
             ))

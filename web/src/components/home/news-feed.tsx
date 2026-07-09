@@ -47,7 +47,7 @@ function NewsCard({ item }: { item: NewsItem }) {
               style={{
                 display: "inline-flex", alignItems: "center", gap: 3,
                 padding: "1px 7px", borderRadius: 999,
-                background: TAG_COLOR[tag] + "22",
+                background: `color-mix(in srgb, ${TAG_COLOR[tag]} 13%, transparent)`,
                 color: TAG_COLOR[tag],
                 font: "600 9px var(--font-sans)",
               }}

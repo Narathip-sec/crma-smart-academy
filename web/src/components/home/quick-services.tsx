@@ -45,9 +45,9 @@ function ReportIcon() {
 // Per spec §4.1: Grades · Meals · Lost & Found · Reports.
 const SERVICES: Service[] = [
   { href: "/profile",    th: "ผลการเรียน",   en: "Grades",       icon: <GradesIcon />,    iconBg: "var(--tint)" },
-  { href: "/meals",      th: "เมนูอาหาร",    en: "Meals",        icon: <MealsIcon />,     iconBg: "#fbf1dc" },
+  { href: "/meals",      th: "เมนูอาหาร",    en: "Meals",        icon: <MealsIcon />,     iconBg: "color-mix(in srgb, var(--warning) 12%, transparent)" },
   { href: "/lost-found", th: "ของหาย",       en: "Lost",        icon: <LostFoundIcon />, iconBg: "var(--tint)" },
-  { href: "/report",     th: "แจ้งซ่อม",     en: "Reports",      icon: <ReportIcon />,    iconBg: "#fdeaec" },
+  { href: "/report",     th: "แจ้งซ่อม",     en: "Reports",      icon: <ReportIcon />,    iconBg: "color-mix(in srgb, var(--danger) 10%, transparent)" },
 ];
 
 export function QuickServices() {

@@ -33,21 +33,13 @@
   --grad-from:    #0FB6AD;
   --grad-to:      #0A8E87;
 
-  /* ---- Legacy aliases (old prototype screens until P1 rebuild) ----
-     Repointed onto the teal palette so pre-existing pages keep
-     compiling and recolor automatically. Remove when P1 rebuilds. */
-  --paper:  var(--surface);
-  --ink2:   var(--muted);
-  --crimson: var(--brand);
-  --gold:   var(--warning);
-  --bone:   var(--tint);
-  --bone2:  #cfe9e6;
-  --gray:   #94a3b8;
-  --gray2:  var(--muted);
-  --rule:   var(--line);
-  --shade:  #eef4f4;
-  --shade2: #e3eded;
-  --good:   var(--success);
+  /* Category accents — hue-shifted to sit beside Academy Teal
+     (softer saturation than the old Material palette). */
+  --cat-exam:     #c2453f;  /* สอบ / exams, urgent */
+  --cat-academic: #2e7da6;  /* วิชาการ / academic */
+  --cat-military: #4c6570;  /* ทหาร / military */
+  --cat-activity: #2e8b6e;  /* กิจกรรม / activities, sports */
+  --cat-notice:   #7b5ea7;  /* ประกาศ / general notices */
 }
 
 /* Optional teal-dark (theme toggle); design ships light by default. */
@@ -69,18 +61,11 @@
   --grad-from:    #0FB6AD;
   --grad-to:      #0A8E87;
 
-  --paper:  var(--surface);
-  --ink2:   var(--muted);
-  --crimson: var(--brand);
-  --gold:   var(--warning);
-  --bone:   var(--tint);
-  --bone2:  #1b3a38;
-  --gray:   #6f8785;
-  --gray2:  var(--muted);
-  --rule:   var(--line);
-  --shade:  #15302e;
-  --shade2: #102624;
-  --good:   var(--success);
+  --cat-exam:     #e07b76;
+  --cat-academic: #5fa8cc;
+  --cat-military: #8fa8b3;
+  --cat-activity: #5bbe9c;
+  --cat-notice:   #a88fd0;
 }
 
 @theme inline {
@@ -99,23 +84,32 @@
   --color-danger:       var(--danger);
   --color-success:      var(--success);
   --color-warning:      var(--warning);
-
-  /* Legacy color utilities (kept until P1 rebuild) */
-  --color-paper:    var(--paper);
-  --color-ink2:     var(--ink2);
-  --color-crimson:  var(--crimson);
-  --color-gold:     var(--gold);
-  --color-bone:     var(--bone);
-  --color-bone2:    var(--bone2);
-  --color-gray:     var(--gray);
-  --color-gray2:    var(--gray2);
-  --color-rule:     var(--rule);
-  --color-shade:    var(--shade);
-  --color-shade2:   var(--shade2);
-  --color-good:     var(--good);
+  --color-cat-exam:     var(--cat-exam);
+  --color-cat-academic: var(--cat-academic);
+  --color-cat-military: var(--cat-military);
+  --color-cat-activity: var(--cat-activity);
+  --color-cat-notice:   var(--cat-notice);
 
   --font-sans:  var(--font-sarabun), system-ui, sans-serif;
   --font-mono:  var(--font-grotesk), ui-monospace, monospace;
+
+  /* Type scale — the only four sizes screens should use
+     (text-caption / text-body / text-title / text-heading). */
+  --text-caption: 11px;
+  --text-caption--line-height: 1.4;
+  --text-body: 13px;
+  --text-body--line-height: 1.5;
+  --text-title: 15px;
+  --text-title--line-height: 1.35;
+  --text-heading: 20px;
+  --text-heading--line-height: 1.3;
+}
+
+:root {
+  /* Geometry — cards 16px (rounded-2xl), buttons/inputs 12px (rounded-xl),
+     chips pill. No other radii. */
+  --radius-card: 16px;
+  --radius-control: 12px;
 }
 
 html, body {

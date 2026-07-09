@@ -44,7 +44,7 @@ export const DAY_LABELS: Record<DayOfWeek, { th: string; en: string; short: stri
 
 export const CATEGORY_COLOR: Record<Category, string> = {
   academic: "var(--brand)",
-  military: "#1565c0",
+  military: "var(--cat-military)",
   advisory: "var(--warning)",
   pe:       "var(--success)",
 };

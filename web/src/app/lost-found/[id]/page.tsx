@@ -21,7 +21,7 @@ type LFItem = {
 
 const STATUS_CONFIG: Record<string, { th: string; color: string }> = {
   open:    { th: "รับเรื่อง",  color: "var(--brand)" },
-  matched: { th: "จับคู่แล้ว", color: "#7c3aed" },
+  matched: { th: "จับคู่แล้ว", color: "var(--cat-notice)" },
   closed:  { th: "ปิด",        color: "var(--muted)" },
 };
 
@@ -118,7 +118,7 @@ export default function LostFoundDetailPage() {
 
       <div className="flex flex-col gap-4 px-4 pb-8 pt-4">
         <div>
-          <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: 999, background: statusCfg.color + "18", color: statusCfg.color, font: "600 11px var(--font-sans)" }}>
+          <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: 999, background: `color-mix(in srgb, ${statusCfg.color} 10%, transparent)`, color: statusCfg.color, font: "600 11px var(--font-sans)" }}>
             {statusCfg.th}
           </span>
         </div>

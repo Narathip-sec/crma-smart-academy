@@ -2,11 +2,11 @@
 
 import type { CSSProperties, ReactNode } from "react";
 
-// White rounded card — soft shadow, radius 16–24px (mock UX style guide).
+// White rounded card — soft shadow, unified 16px radius (rounded-2xl).
 export function Card({
   children,
   pad = 16,
-  radius = 20,
+  radius = 16,
   className,
   style,
   onClick,

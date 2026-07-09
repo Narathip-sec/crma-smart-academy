@@ -13,9 +13,9 @@ type MealRow = {
 };
 
 const MEAL_LABEL = {
-  breakfast: { th: "เช้า",    en: "Breakfast", color: "#f59e0b" },
+  breakfast: { th: "เช้า",    en: "Breakfast", color: "var(--warning)" },
   lunch:     { th: "กลางวัน", en: "Lunch",     color: "var(--brand)" },
-  dinner:    { th: "เย็น",    en: "Dinner",    color: "#7c3aed" },
+  dinner:    { th: "เย็น",    en: "Dinner",    color: "var(--cat-notice)" },
 };
 
 const DAY_SHORT  = ["อา","จ","อ","พ","พฤ","ศ","ส"];
@@ -48,18 +48,29 @@ export default function MealsPage() {
     const dow = today.getDay();
     return dow === 0 || dow === 6 ? 0 : dow - 1; // Mon=0..Fri=4
   });
-  const [meals, setMeals] = useState<MealRow[] | null>(null);
+  // Keyed by week range so switching weeks shows the loading state
+  // without a synchronous setState reset inside the effect.
+  const [fetched, setFetched] = useState<{ key: string; rows: MealRow[] } | null>(null);
 
   const from = toIso(weekStart);
   const to   = toIso(addDays(weekStart, 7));
+  const rangeKey = `${from}:${to}`;
 
   useEffect(() => {
-    setMeals(null);
+    let cancelled = false;
+    const key = `${from}:${to}`;
     fetch(`/api/meals?from=${from}&to=${to}`)
       .then(r => r.json())
-      .then((data: MealRow[]) => setMeals(Array.isArray(data) ? data : []))
-      .catch(() => setMeals([]));
+      .then((data: MealRow[]) => {
+        if (!cancelled) setFetched({ key, rows: Array.isArray(data) ? data : [] });
+      })
+      .catch(() => {
+        if (!cancelled) setFetched({ key, rows: [] });
+      });
+    return () => { cancelled = true; };
   }, [from, to]);
+
+  const meals = fetched?.key === rangeKey ? fetched.rows : null;
 
   const weekDays = Array.from({ length: 5 }, (_, i) => addDays(weekStart, i));
 
@@ -151,7 +162,7 @@ export default function MealsPage() {
                 วัน{DAY_FULL[selectedDate.getDay()]} {selectedDate.getDate()} {MONTH_SHORT[selectedDate.getMonth()]} {selectedDate.getFullYear() + 543}
               </span>
               {isTodaySelected && (
-                <span style={{ font: "700 10px var(--font-sans)", color: "var(--brand)", background: "var(--brand)18", padding: "2px 8px", borderRadius: 999 }}>
+                <span style={{ font: "700 10px var(--font-sans)", color: "var(--brand)", background: "color-mix(in srgb, var(--brand) 10%, transparent)", padding: "2px 8px", borderRadius: 999 }}>
                   วันนี้
                 </span>
               )}
@@ -165,7 +176,7 @@ export default function MealsPage() {
                 return (
                   <div key={type} className="flex items-start gap-3 px-4 py-4">
                     <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
-                      style={{ background: lbl.color + "18" }}>
+                      style={{ background: `color-mix(in srgb, ${lbl.color} 10%, transparent)` }}>
                       <span style={{ font: "700 8px var(--font-sans)", color: lbl.color }}>{lbl.th}</span>
                     </div>
                     <div className="min-w-0 flex-1">
