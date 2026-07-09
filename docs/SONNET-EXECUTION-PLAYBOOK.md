@@ -93,7 +93,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
 
 ## 3. Task queue
 
-### T1 — Strengthen the UI kit ☐
+### T1 — Strengthen the UI kit ☑ (done by Fable 2026-07-09; PageHeader skipped — AppBar already covers the need)
 
 Files: `web/src/components/ui/button.tsx`, new `list-item.tsx`, new `form-field.tsx`, new `page-header.tsx`, update `index.ts`.
 
