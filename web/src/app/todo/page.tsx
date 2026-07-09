@@ -109,7 +109,7 @@ export default function TodoPage() {
           <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>Todo &amp; Tasks</div>
         </div>
         <button type="button" onClick={() => setShowCreate(true)}
-          className="flex h-9 w-9 items-center justify-center rounded-full"
+          className="flex h-9 w-9 items-center justify-center rounded-full active:opacity-70"
           style={{ background: "var(--brand)", color: "#fff" }} aria-label="New task">
           <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round">
             <path d="M12 5v14M5 12h14" />
@@ -144,17 +144,21 @@ export default function TodoPage() {
                 className="flex items-start gap-3 rounded-2xl p-3.5"
                 style={{ background: "var(--surface)", border: "1px solid var(--line)", opacity: item.done ? 0.55 : 1 }}>
                 <button type="button" onClick={() => toggle(item)}
-                  className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
-                  style={{
-                    border: item.done ? "none" : "2px solid var(--line)",
-                    background: item.done ? "var(--brand)" : "transparent",
-                  }}
+                  className="-m-3 flex h-11 w-11 shrink-0 items-center justify-center active:opacity-70"
                   aria-label={item.done ? "Done" : "Mark done"}>
-                  {item.done && (
-                    <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M20 6L9 17l-5-5" />
-                    </svg>
-                  )}
+                  <span
+                    className="flex h-5 w-5 items-center justify-center rounded-full"
+                    style={{
+                      border: item.done ? "none" : "2px solid var(--line)",
+                      background: item.done ? "var(--brand)" : "transparent",
+                    }}
+                  >
+                    {item.done && (
+                      <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M20 6L9 17l-5-5" />
+                      </svg>
+                    )}
+                  </span>
                 </button>
                 <div className="min-w-0 flex-1">
                   <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.3, textDecoration: item.done ? "line-through" : "none" }}>
@@ -186,7 +190,7 @@ export default function TodoPage() {
       </div>
 
       <button type="button" onClick={() => setShowCreate(true)}
-        className="fixed bottom-20 right-5 flex h-14 w-14 items-center justify-center rounded-full shadow-lg"
+        className="fixed bottom-20 right-5 flex h-14 w-14 items-center justify-center rounded-full shadow-lg active:opacity-70"
         style={{ background: "var(--brand)", color: "#fff", zIndex: 50 }} aria-label="New task">
         <svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round">
           <path d="M12 5v14M5 12h14" />
@@ -205,6 +209,7 @@ export default function TodoPage() {
                 {t({ th: "สร้างงานใหม่", en: "Create task" })}
               </div>
               <button type="button" onClick={() => setShowCreate(false)}
+                className="-m-2.5 flex h-11 w-11 items-center justify-center active:opacity-70"
                 style={{ font: "500 20px var(--font-sans)", color: "var(--muted)", lineHeight: 1 }}>✕</button>
             </div>
 

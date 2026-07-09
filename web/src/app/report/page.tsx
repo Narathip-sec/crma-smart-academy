@@ -157,7 +157,7 @@ export default function ReportPage() {
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingPhoto}
-              className="relative w-full overflow-hidden rounded-2xl"
+              className="relative w-full overflow-hidden rounded-2xl active:opacity-70"
               style={{
                 minHeight: 100,
                 background: photoPreview ? "transparent" : "var(--tint)",
@@ -205,7 +205,7 @@ export default function ReportPage() {
               <button
                 type="button"
                 onClick={() => setShowMap(true)}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl py-3"
+                className="flex w-full items-center justify-center gap-2 rounded-2xl py-3 active:opacity-70"
                 style={{ background: "var(--tint)", border: "1.5px dashed var(--brand)" }}
               >
                 <span style={{ fontSize: 18 }}>🗺️</span>
@@ -240,6 +240,7 @@ export default function ReportPage() {
                         📍 {pinLocation.lat.toFixed(5)}, {pinLocation.lng.toFixed(5)}
                       </span>
                       <button type="button" onClick={() => setPinLocation(null)}
+                        className="active:opacity-70"
                         style={{ font: "600 11px var(--font-sans)", color: "var(--danger)", background: "none", border: "none", cursor: "pointer" }}>
                         {t({ th: "ลบหมุด", en: "Remove" })}
                       </button>
@@ -256,6 +257,7 @@ export default function ReportPage() {
                   {pinLocation.lat.toFixed(5)}, {pinLocation.lng.toFixed(5)}
                 </span>
                 <button type="button" onClick={() => setPinLocation(null)}
+                  className="active:opacity-70"
                   style={{ font: "600 11px var(--font-sans)", color: "var(--danger)", background: "none", border: "none", cursor: "pointer" }}>
                   ✕
                 </button>

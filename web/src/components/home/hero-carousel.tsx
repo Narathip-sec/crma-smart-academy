@@ -10,7 +10,7 @@ function AnnouncementCard({ item }: { item: Announcement }) {
   return (
     <Link
       href={`/announcements`}
-      className="flex flex-col justify-between rounded-2xl p-3.5"
+      className="flex flex-col justify-between rounded-2xl p-3.5 active:scale-[0.98]"
       style={{
         background: item.accentColor,
         minHeight: 120,

@@ -29,7 +29,7 @@ export default function Error({
       <button
         type="button"
         onClick={reset}
-        className="mt-2 inline-flex items-center justify-center rounded-xl px-5 py-2.5"
+        className="mt-2 inline-flex items-center justify-center rounded-xl px-5 py-2.5 active:opacity-70"
         style={{
           background: "var(--brand)",
           color: "#fff",

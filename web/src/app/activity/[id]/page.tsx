@@ -108,7 +108,7 @@ export default function ActivityDetailPage() {
     <div className="flex flex-1 flex-col overflow-y-auto" style={{ background: "var(--bg)" }}>
       <div style={{ background: "linear-gradient(135deg, var(--grad-from) 0%, var(--grad-to) 100%)", padding: "12px 16px 28px" }}>
         <button type="button" onClick={() => router.back()}
-          className="mb-4 flex h-9 w-9 items-center justify-center rounded-full"
+          className="mb-4 flex h-9 w-9 items-center justify-center rounded-full active:opacity-70"
           style={{ background: "rgba(255,255,255,.2)" }} aria-label="Back">
           <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
             <path d="M15 18l-6-6 6-6" />

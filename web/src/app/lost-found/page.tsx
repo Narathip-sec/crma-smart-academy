@@ -65,7 +65,7 @@ export default function LostFoundPage() {
           </ChipRow>
         </div>
         <Link href="/lost-found/new"
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full active:opacity-70"
           style={{ background: "var(--brand)" }} aria-label="Report lost/found">
           <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.5} strokeLinecap="round">
             <path d="M12 5v14M5 12h14" />

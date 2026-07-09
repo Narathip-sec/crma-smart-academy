@@ -19,7 +19,7 @@ export function TopBar({
       className="sticky top-0 z-30 flex h-14 items-center gap-3 px-4"
       style={{ background: "var(--bg)" }}
     >
-      <Link href="/profile" aria-label="Profile">
+      <Link href="/profile" aria-label="Profile" className="active:opacity-70">
         <Avatar name={name} src={pictureUrl} size={36} />
       </Link>
       <div className="flex-1 leading-tight">
@@ -33,7 +33,7 @@ export function TopBar({
       <Link
         href="/notifications"
         aria-label="Notifications"
-        className="relative flex h-9 w-9 items-center justify-center rounded-full"
+        className="relative flex h-9 w-9 items-center justify-center rounded-full active:opacity-70"
         style={{ background: "var(--surface)", border: "1px solid var(--line)" }}
       >
         <svg width={18} height={18} viewBox="0 0 24 24" fill="none"

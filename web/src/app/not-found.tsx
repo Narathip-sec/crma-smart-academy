@@ -22,7 +22,7 @@ export default function NotFound() {
       </div>
       <Link
         href="/"
-        className="mt-2 inline-flex items-center justify-center rounded-xl px-5 py-2.5"
+        className="mt-2 inline-flex items-center justify-center rounded-xl px-5 py-2.5 active:opacity-70"
         style={{
           background: "var(--brand)",
           color: "#fff",

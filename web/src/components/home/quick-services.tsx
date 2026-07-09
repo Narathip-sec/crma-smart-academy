@@ -63,7 +63,7 @@ export function QuickServices() {
           <Link
             key={s.href}
             href={s.href}
-            className="flex flex-col items-center gap-2 rounded-2xl py-3"
+            className="flex flex-col items-center gap-2 rounded-2xl py-3 active:scale-[0.98]"
             style={{ textDecoration: "none", background: "var(--surface)", border: "1px solid var(--line)" }}
           >
             <div

@@ -72,7 +72,7 @@ export default function AnnouncementsPage() {
       <div className="sticky top-0 z-30 flex h-14 items-center gap-3 px-4"
         style={{ background: "var(--bg)", borderBottom: "1px solid var(--line)" }}>
         <button type="button" onClick={() => router.back()}
-          className="flex h-9 w-9 items-center justify-center rounded-full"
+          className="flex h-9 w-9 items-center justify-center rounded-full active:opacity-70"
           style={{ background: "var(--surface)", border: "1px solid var(--line)" }} aria-label="Back">
           <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
             <path d="M15 18l-6-6 6-6" />

@@ -25,7 +25,7 @@ export function AppBar({ th, en, back, right }: Props) {
         <button
           type="button"
           onClick={() => router.back()}
-          className="-ml-1.5 flex h-6 w-6 items-center justify-center rounded"
+          className="-ml-1.5 flex h-6 w-6 items-center justify-center rounded active:opacity-70"
           aria-label="Back"
         >
           <svg

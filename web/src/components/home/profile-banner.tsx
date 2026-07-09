@@ -9,7 +9,7 @@ export function ProfileBanner() {
   return (
     <Link
       href="/profile"
-      className="mx-3 mt-2 flex items-center gap-3 rounded-2xl p-4"
+      className="mx-3 mt-2 flex items-center gap-3 rounded-2xl p-4 active:opacity-70"
       style={{
         background: "linear-gradient(135deg, var(--grad-from) 0%, var(--grad-to) 100%)",
         color: "#fff",

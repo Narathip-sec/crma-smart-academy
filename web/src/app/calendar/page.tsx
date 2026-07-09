@@ -114,7 +114,7 @@ export default function CalendarPage() {
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={prevMonth}
-            className="flex h-8 w-8 items-center justify-center rounded-full"
+            className="flex h-8 w-8 items-center justify-center rounded-full active:opacity-70"
             style={{ background: "var(--bg)" }}
           >
             <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
@@ -133,7 +133,7 @@ export default function CalendarPage() {
 
           <button
             onClick={nextMonth}
-            className="flex h-8 w-8 items-center justify-center rounded-full"
+            className="flex h-8 w-8 items-center justify-center rounded-full active:opacity-70"
             style={{ background: "var(--bg)" }}
           >
             <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
@@ -168,7 +168,7 @@ export default function CalendarPage() {
                 key={idx}
                 type="button"
                 onClick={() => setSelectedDay(day === selectedDay ? null : day)}
-                className="flex flex-col items-center pb-1 pt-0.5"
+                className="flex flex-col items-center pb-1 pt-0.5 active:opacity-70"
               >
                 <div
                   className="flex h-8 w-8 items-center justify-center rounded-full"

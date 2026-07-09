@@ -22,7 +22,7 @@ export function Seg<T extends string>({
             key={o.key}
             type="button"
             onClick={() => onChange(o.key)}
-            className="flex-1"
+            className="flex-1 active:opacity-70"
             style={{
               padding: "7px 8px",
               borderRadius: 9,

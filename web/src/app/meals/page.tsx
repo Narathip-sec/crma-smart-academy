@@ -95,7 +95,7 @@ export default function MealsPage() {
         style={{ background: "var(--surface)", borderBottom: "1px solid var(--line)" }}>
         <button type="button"
           onClick={() => { setWeekStart(w => addDays(w, -7)); setSelectedDay(0); }}
-          className="flex h-8 w-8 items-center justify-center rounded-full"
+          className="flex h-8 w-8 items-center justify-center rounded-full active:opacity-70"
           style={{ background: "var(--bg)" }}>
           <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
             <path d="M15 18l-6-6 6-6" />
@@ -111,7 +111,7 @@ export default function MealsPage() {
 
         <button type="button"
           onClick={() => { setWeekStart(w => addDays(w, 7)); setSelectedDay(0); }}
-          className="flex h-8 w-8 items-center justify-center rounded-full"
+          className="flex h-8 w-8 items-center justify-center rounded-full active:opacity-70"
           style={{ background: "var(--bg)" }}>
           <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
             <path d="M9 18l6-6-6-6" />
@@ -127,7 +127,7 @@ export default function MealsPage() {
           const active = selectedDay === i;
           return (
             <button key={i} type="button" onClick={() => setSelectedDay(i)}
-              className="flex flex-col items-center rounded-xl py-2.5"
+              className="flex flex-col items-center rounded-xl py-2.5 active:opacity-70"
               style={{
                 background: active ? "var(--brand)" : isToday ? "var(--tint)" : "var(--surface)",
                 border: `1.5px solid ${active ? "var(--brand)" : isToday ? "var(--brand)" : "var(--line)"}`,

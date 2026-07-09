@@ -141,7 +141,7 @@ export default function ActivityPage() {
       </div>
 
       <Link href="/activity/new"
-        className="fixed bottom-20 right-5 flex h-14 w-14 items-center justify-center rounded-full shadow-lg"
+        className="fixed bottom-20 right-5 flex h-14 w-14 items-center justify-center rounded-full shadow-lg active:opacity-70"
         style={{ background: "var(--brand)", color: "#fff", zIndex: 50 }} aria-label="Create activity">
         <svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round">
           <path d="M12 5v14M5 12h14" />

@@ -50,7 +50,7 @@ export default function ClassPage() {
           const lbl = DAY_LABELS[day];
           return (
             <button key={day} type="button" onClick={() => setSelectedDay(day)}
-              className="flex flex-1 flex-col items-center rounded-xl py-1.5"
+              className="flex flex-1 flex-col items-center rounded-xl py-1.5 active:opacity-70"
               style={{ background: active ? "var(--brand)" : "transparent", color: active ? "#fff" : "var(--muted)" }}>
               <span style={{ font: "700 13px var(--font-sans)" }}>{lbl.short}</span>
               <span style={{ font: "500 11px var(--font-sans)", marginTop: 1, opacity: .75 }}>{lbl.en.slice(0, 3)}</span>

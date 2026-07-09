@@ -49,6 +49,7 @@ export default function MyTicketsPage() {
           {tickets.length} {t({ th: "รายการ", en: "tickets" })}
         </span>
         <Link href="/report"
+          className="active:opacity-70"
           style={{ font: "600 13px var(--font-sans)", color: "var(--brand)", textDecoration: "none" }}>
           + {t({ th: "แจ้งใหม่", en: "New report" })}
         </Link>
@@ -71,7 +72,7 @@ export default function MyTicketsPage() {
             return (
               <div key={tk.id} className="rounded-2xl overflow-hidden"
                 style={{ border: "1px solid var(--line)", background: "var(--surface)" }}>
-                <button type="button" className="flex w-full items-start gap-3 p-3.5 text-left"
+                <button type="button" className="flex w-full items-start gap-3 p-3.5 text-left active:opacity-70"
                   onClick={() => setExpanded(open ? null : tk.id)}>
                   <div style={{ width: 10, height: 10, borderRadius: 999, background: cfg.color, marginTop: 4, flexShrink: 0 }} />
                   <div className="min-w-0 flex-1">

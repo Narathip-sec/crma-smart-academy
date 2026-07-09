@@ -22,7 +22,7 @@ type MeData = {
 function BackButton() {
   return (
     <button type="button" onClick={() => window.history.back()}
-      className="flex h-9 w-9 items-center justify-center rounded-full"
+      className="flex h-9 w-9 items-center justify-center rounded-full active:opacity-70"
       style={{ background: "rgba(255,255,255,.2)" }} aria-label="Back">
       <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
         <path d="M15 18l-6-6 6-6" />
@@ -55,7 +55,7 @@ export default function ProfilePage() {
         <div className="mb-4 flex items-center justify-between">
           <BackButton />
           <Link href="/settings"
-            className="flex h-9 w-9 items-center justify-center rounded-full"
+            className="flex h-9 w-9 items-center justify-center rounded-full active:opacity-70"
             style={{ background: "rgba(255,255,255,.2)" }} aria-label="Settings">
             <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="3" />

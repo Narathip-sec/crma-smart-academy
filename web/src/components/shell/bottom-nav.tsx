@@ -98,7 +98,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 mx-auto flex h-16 items-start pt-2"
+      className="fixed bottom-0 left-0 right-0 z-40 mx-auto flex h-16 items-stretch"
       style={{
         maxWidth: 420,
         background: "var(--surface)",
@@ -113,7 +113,7 @@ export function BottomNav() {
           <Link
             key={t.href}
             href={t.href}
-            className="flex flex-1 select-none flex-col items-center gap-1"
+            className="flex flex-1 select-none flex-col items-center justify-center gap-1 pt-1 active:opacity-70"
             style={{ color: active ? "var(--brand)" : "var(--muted)" }}
           >
             <NavIcon kind={t.icon} active={active} />

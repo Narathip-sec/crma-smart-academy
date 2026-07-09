@@ -20,6 +20,7 @@ export function Chip({
     <button
       type="button"
       onClick={onClick}
+      className={onClick ? "active:opacity-70" : undefined}
       style={{
         display: "inline-flex",
         alignItems: "center",

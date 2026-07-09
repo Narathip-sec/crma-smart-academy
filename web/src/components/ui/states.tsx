@@ -85,6 +85,7 @@ export function ErrorState({
         <button
           type="button"
           onClick={onRetry}
+          className="active:opacity-70"
           style={{ font: "600 12px var(--font-sans)", color: "var(--brand)", cursor: "pointer" }}
         >
           ลองอีกครั้ง · Retry

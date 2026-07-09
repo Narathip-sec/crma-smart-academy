@@ -114,6 +114,7 @@ export default function ServicePage() {
           />
           {trimmed && (
             <button type="button" onClick={() => setQuery("")}
+              className="active:opacity-70"
               style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex" }}>
               <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="var(--muted)" strokeWidth={2.5} strokeLinecap="round">
                 <path d="M18 6L6 18M6 6l12 12" />
@@ -155,7 +156,7 @@ export default function ServicePage() {
             { href: "/calendar",  th: "ปฏิทิน",     en: "Calendar",  icon: "📅" },
           ].map(r => (
             <Link key={r.href} href={r.href}
-              className="flex shrink-0 flex-col items-center gap-1.5 rounded-2xl px-4 py-3"
+              className="flex shrink-0 flex-col items-center gap-1.5 rounded-2xl px-4 py-3 active:scale-[0.98]"
               style={{ background: "var(--surface)", border: "1px solid var(--line)", textDecoration: "none", minWidth: 72 }}>
               <span style={{ fontSize: 22 }}>{r.icon}</span>
               <span style={{ font: "600 11px var(--font-sans)", color: "var(--ink)", textAlign: "center", lineHeight: 1.3 }}>
@@ -175,7 +176,7 @@ export default function ServicePage() {
             <Link
               key={p.href + p.th}
               href={p.href}
-              className="flex flex-col justify-between rounded-2xl p-4"
+              className="flex flex-col justify-between rounded-2xl p-4 active:scale-[0.98]"
               style={{ background: p.color, minHeight: 90, textDecoration: "none", position: "relative", overflow: "hidden" }}
             >
               <div style={{ position: "absolute", right: -10, bottom: -10, width: 60, height: 60, borderRadius: "50%", background: "rgba(255,255,255,.12)" }} />

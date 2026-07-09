@@ -36,7 +36,7 @@ function LangToggle() {
   const { lang, setLang } = useLang();
   return (
     <button type="button" onClick={() => setLang(lang === "th" ? "en" : "th")}
-      className="flex items-center gap-1 rounded-full px-3 py-1"
+      className="flex items-center gap-1 rounded-full px-3 py-1 active:opacity-70"
       style={{ background: "var(--tint)", font: "700 11px var(--font-sans)", color: "var(--brand)" }}>
       <span style={{ opacity: lang === "th" ? 1 : 0.4 }}>ไทย</span>
       <span style={{ color: "var(--muted)" }}>/</span>
@@ -54,7 +54,7 @@ function ThemeToggle() {
   }
   return (
     <button type="button" onClick={toggle}
-      className="rounded-full px-3 py-1"
+      className="rounded-full px-3 py-1 active:opacity-70"
       style={{ background: "var(--tint)", font: "700 11px var(--font-sans)", color: "var(--brand)" }}>
       {t({ th: "สลับ", en: "Toggle" })}
     </button>

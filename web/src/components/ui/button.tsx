@@ -25,6 +25,7 @@ export function Button({
   full,
   disabled,
   style,
+  className,
   ...rest
 }: {
   children: ReactNode;
@@ -38,6 +39,7 @@ export function Button({
     <button
       type="button"
       disabled={disabled}
+      className={`active:opacity-70 ${className ?? ""}`.trim()}
       {...rest}
       style={{
         display: "inline-flex",
