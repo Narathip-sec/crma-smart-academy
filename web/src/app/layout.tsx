@@ -18,10 +18,30 @@ const grotesk = Space_Grotesk({
   weight: ["400", "500", "600", "700"],
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://crma-smart-academy.vercel.app";
+
 export const metadata: Metadata = {
-  title: "CRMA Smart Academy",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "CRMA Smart Academy",
+    template: "%s · CRMA Smart Academy",
+  },
   description:
     "CRMA Smart Cadet Platform — one-stop digital service for Chulachomklao Royal Military Academy.",
+  openGraph: {
+    type: "website",
+    siteName: "CRMA Smart Academy",
+    title: "CRMA Smart Academy",
+    description:
+      "CRMA Smart Cadet Platform — one-stop digital service for Chulachomklao Royal Military Academy.",
+    locale: "th_TH",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CRMA Smart Academy",
+    description:
+      "CRMA Smart Cadet Platform — one-stop digital service for Chulachomklao Royal Military Academy.",
+  },
 };
 
 export const viewport: Viewport = {
