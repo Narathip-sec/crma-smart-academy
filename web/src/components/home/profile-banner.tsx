@@ -1,11 +1,31 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTx } from "@/components/shell/bilingual-label";
-import { CADET } from "@/lib/mock-data";
+
+type MeData = {
+  displayName: string;
+  cadetProfile: {
+    thaiName: string;
+    yearLevel: number;
+    battalion: string;
+    company: string;
+  } | null;
+};
 
 export function ProfileBanner() {
   const t = useTx();
+  const [me, setMe] = useState<MeData | null>(null);
+
+  useEffect(() => {
+    fetch("/api/me").then(r => r.json()).then((data: MeData) => setMe(data)).catch(() => {});
+  }, []);
+
+  const profile = me?.cadetProfile;
+  const displayThaiName = profile ? `นนร.${profile.thaiName}` : me?.displayName ?? "—";
+  const initials = profile ? profile.thaiName.slice(0, 2) : "นร";
+
   return (
     <Link
       href="/profile"
@@ -26,20 +46,22 @@ export function ProfileBanner() {
           letterSpacing: ".02em",
         }}
       >
-        {CADET.initials}
+        {initials}
       </div>
 
       {/* Info */}
       <div className="min-w-0 flex-1">
         <div style={{ font: "700 15px var(--font-sans)", color: "#fff", lineHeight: 1.2 }}>
-          {CADET.thaiName}
+          {displayThaiName}
         </div>
-        <div
-          className="mt-0.5"
-          style={{ font: "500 11px var(--font-sans)", color: "rgba(255,255,255,.8)" }}
-        >
-          {t({ th: `ชั้นปีที่ ${CADET.yearLevel} · รุ่น ${CADET.classYear}`, en: `Year ${CADET.yearLevel} · Class ${CADET.classYear}` })}
-        </div>
+        {profile && (
+          <div
+            className="mt-0.5"
+            style={{ font: "500 11px var(--font-sans)", color: "rgba(255,255,255,.8)" }}
+          >
+            {t({ th: `ชั้นปีที่ ${profile.yearLevel}`, en: `Year ${profile.yearLevel}` })}
+          </div>
+        )}
         <div className="mt-1.5 flex items-center gap-2">
           <span
             className="flex items-center gap-1 rounded-full px-2 py-0.5"
@@ -48,9 +70,11 @@ export function ProfileBanner() {
             <span style={{ width: 6, height: 6, borderRadius: 999, background: "#4cff91", display: "inline-block" }} />
             {t({ th: "อยู่ในคาบเรียน", en: "In class" })}
           </span>
-          <span style={{ font: "500 11px var(--font-sans)", color: "rgba(255,255,255,.75)" }}>
-            {CADET.platoon} {CADET.company}
-          </span>
+          {profile && (
+            <span style={{ font: "500 11px var(--font-sans)", color: "rgba(255,255,255,.75)" }}>
+              {profile.battalion} {profile.company}
+            </span>
+          )}
         </div>
       </div>
 

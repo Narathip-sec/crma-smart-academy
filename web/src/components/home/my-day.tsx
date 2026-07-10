@@ -3,7 +3,12 @@
 import { useState, useEffect } from "react";
 import { useTx } from "@/components/shell/bilingual-label";
 import { ListItem } from "@/components/ui";
-import { MY_DAY } from "@/lib/mock-data";
+
+type HomeData = {
+  nextClass: { courseName: string; startTime: string; room: string | null; category: string } | null;
+  todayLunch: { menuTh: string; menuEn: string | null; note: string | null } | null;
+  pendingTasks: number;
+};
 
 type ActivityItem = {
   id: string;
@@ -97,10 +102,12 @@ const ACTIVITY_ICON = (
 
 export function MyDay() {
   const t = useTx();
-  const d = MY_DAY;
+  const [home, setHome] = useState<HomeData | null>(null);
   const [featured, setFeatured] = useState<ActivityItem | null>(null);
 
   useEffect(() => {
+    fetch("/api/home").then(r => r.json()).then((data: HomeData) => setHome(data)).catch(() => {});
+
     const now = new Date();
     fetch("/api/activity?status=open")
       .then(r => r.json())
@@ -115,11 +122,11 @@ export function MyDay() {
   }, []);
 
   const activityHref  = featured ? `/activity/${featured.id}` : "/activity";
-  const activityTitle = featured ? featured.titleTh : d.nextActivity.titleTh;
-  const activityTitleEn = featured ? (featured.titleEn ?? featured.titleTh) : d.nextActivity.titleEn;
+  const activityTitle = featured ? featured.titleTh : "ยังไม่มีกิจกรรมเปิดรับ";
+  const activityTitleEn = featured ? (featured.titleEn ?? featured.titleTh) : "No open activities";
   const activitySub   = featured
     ? `${fmtDateTh(featured.startAt)} · ${fmtTime(featured.startAt)}${featured.category ? ` · ${featured.category.nameTh}` : ""}`
-    : `${d.nextActivity.dateTh} · ${d.nextActivity.time}`;
+    : "";
 
   return (
     <section className="px-3 pt-4">
@@ -136,10 +143,10 @@ export function MyDay() {
           icon={<svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M9 3v18" /></svg>}
           labelTh="คาบเรียนถัดไป · Next class"
           labelEn="Next class · คาบเรียนถัดไป"
-          titleTh={d.nextClass.subjectTh}
-          titleEn={d.nextClass.subjectEn}
-          subTh={`${d.nextClass.time} · ${d.nextClass.room}`}
-          subEn={`${d.nextClass.time} · ${d.nextClass.room}`}
+          titleTh={home?.nextClass?.courseName ?? "ไม่มีคาบเรียนวันนี้"}
+          titleEn={home?.nextClass?.courseName ?? "No class today"}
+          subTh={home?.nextClass ? `${home.nextClass.startTime}${home.nextClass.room ? ` · ${home.nextClass.room}` : ""}` : ""}
+          subEn={home?.nextClass ? `${home.nextClass.startTime}${home.nextClass.room ? ` · ${home.nextClass.room}` : ""}` : ""}
         />
 
         {/* Today's lunch */}
@@ -149,10 +156,10 @@ export function MyDay() {
           icon={<svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="var(--warning)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z" /><line x1="6" y1="1" x2="6" y2="4" /><line x1="10" y1="1" x2="10" y2="4" /><line x1="14" y1="1" x2="14" y2="4" /></svg>}
           labelTh="มื้อกลางวันนี้ · Today's lunch"
           labelEn="Today's lunch · มื้อกลางวันนี้"
-          titleTh={d.lunch.menuTh}
-          titleEn={d.lunch.menuEn}
-          subTh={`${d.lunch.time} · ${d.lunch.locationTh}`}
-          subEn={`${d.lunch.time} · ${d.lunch.locationEn}`}
+          titleTh={home?.todayLunch?.menuTh ?? "ยังไม่มีเมนู"}
+          titleEn={home?.todayLunch?.menuEn ?? home?.todayLunch?.menuTh ?? "No menu yet"}
+          subTh={home?.todayLunch?.note ?? (home?.todayLunch ? "โรงอาหารกลาง" : "")}
+          subEn={home?.todayLunch?.note ?? (home?.todayLunch ? "Central Mess Hall" : "")}
         />
 
         {/* Pending tasks */}
@@ -162,10 +169,10 @@ export function MyDay() {
           icon={<svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="var(--danger)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3 7-7" /><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" /></svg>}
           labelTh="งานค้าง · Pending tasks"
           labelEn="Pending tasks · งานค้าง"
-          titleTh={`${d.pendingTasks.count} งานที่ต้องทำ`}
-          titleEn={`${d.pendingTasks.count} tasks to do`}
-          subTh={`${d.pendingTasks.dueToday} งานครบกำหนดวันนี้`}
-          subEn={`${d.pendingTasks.dueToday} due today`}
+          titleTh={`${home?.pendingTasks ?? 0} งานที่ต้องทำ`}
+          titleEn={`${home?.pendingTasks ?? 0} tasks to do`}
+          subTh="แตะเพื่อดูรายการ"
+          subEn="Tap to view list"
         />
 
         {/* Featured activity */}
