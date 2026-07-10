@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTx } from "@/components/shell/bilingual-label";
 import { Chip, ListItem } from "@/components/ui";
-import { GRADES_BY_SEMESTER, SEMESTERS, CURRENT_SEMESTER, YEAR_RANK, gpaFor, type SemesterKey } from "@/lib/mock-data";
 
 type MeData = {
   displayName: string;
@@ -17,6 +16,15 @@ type MeData = {
     company: string;
     studentCode: string;
   } | null;
+};
+
+type GradeRow = { code: string; courseTh: string; courseEn: string | null; credits: number; grade: string | null };
+type GradesData = {
+  semesters: { label: string; isCurrent: boolean }[];
+  gradesBySemester: Record<string, GradeRow[]>;
+  gpax: string;
+  yearRank: number | null;
+  yearRankTotal: number | null;
 };
 
 function BackButton() {
@@ -32,17 +40,24 @@ function BackButton() {
 }
 
 export default function ProfilePage() {
-  const [sem, setSem] = useState<SemesterKey>(CURRENT_SEMESTER);
+  const [sem, setSem] = useState<string | null>(null);
   const [me, setMe] = useState<MeData | null>(null);
+  const [grades, setGrades] = useState<GradesData | null>(null);
   const t = useTx();
 
   useEffect(() => {
     fetch("/api/me").then(r => r.json()).then((data: MeData) => setMe(data)).catch(() => {});
+    fetch("/api/grades").then(r => r.json()).then((data: GradesData) => {
+      setGrades(data);
+      const current = data.semesters?.find(s => s.isCurrent) ?? data.semesters?.[0];
+      if (current) setSem(current.label);
+    }).catch(() => {});
   }, []);
 
-  const rows = GRADES_BY_SEMESTER[sem] ?? [];
-  const { gpax } = gpaFor(sem);
-  const isPending = sem === CURRENT_SEMESTER;
+  const semesters = grades?.semesters ?? [];
+  const rows = (sem ? grades?.gradesBySemester[sem] : undefined) ?? [];
+  const gpax = grades?.gpax ?? "—";
+  const isPending = !!semesters.find(s => s.label === sem)?.isCurrent;
 
   const profile = me?.cadetProfile;
   const thaiName = profile ? `นนร.${profile.thaiName}` : me?.displayName ?? "—";
@@ -97,8 +112,8 @@ export default function ProfilePage() {
         </div>
         <div className="rounded-2xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--line)" }}>
           <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>{t({ th: "อันดับในชั้นปี", en: "Year Rank" })}</div>
-          <div style={{ font: "700 28px var(--font-sans)", color: "var(--ink)", lineHeight: 1.1, marginTop: 4 }}>{YEAR_RANK.rank}</div>
-          <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginTop: 2 }}>{t({ th: `จาก ${YEAR_RANK.total} นาย`, en: `of ${YEAR_RANK.total} cadets` })}</div>
+          <div style={{ font: "700 28px var(--font-sans)", color: "var(--ink)", lineHeight: 1.1, marginTop: 4 }}>{grades?.yearRank ?? "—"}</div>
+          <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginTop: 2 }}>{t({ th: `จาก ${grades?.yearRankTotal ?? "—"} นาย`, en: `of ${grades?.yearRankTotal ?? "—"} cadets` })}</div>
         </div>
       </div>
 
@@ -108,9 +123,9 @@ export default function ProfilePage() {
         </div>
         <div className="pb-3">
           <div className="flex gap-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-            {SEMESTERS.map(s => (
-              <Chip key={s} active={s === sem} onClick={() => setSem(s)}>
-                {t({ th: `ภาค ${s}`, en: `Sem ${s}` })}
+            {semesters.map(s => (
+              <Chip key={s.label} active={s.label === sem} onClick={() => setSem(s.label)}>
+                {t({ th: `ภาค ${s.label}`, en: `Sem ${s.label}` })}
               </Chip>
             ))}
           </div>
@@ -128,7 +143,7 @@ export default function ProfilePage() {
           {rows.map(row => (
             <ListItem
               key={row.code}
-              title={t(row.course)}
+              title={t({ th: row.courseTh, en: row.courseEn ?? row.courseTh })}
               subtitle={`${row.code} · ${t({ th: `${row.credits} หน่วยกิต`, en: `${row.credits} cr` })}`}
               trailing={row.grade === null ? (
                 <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: 999, background: "var(--tint)", color: "var(--muted)", font: "600 11px var(--font-sans)" }}>

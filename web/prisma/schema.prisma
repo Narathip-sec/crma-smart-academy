@@ -107,20 +107,57 @@ model User {
 }
 
 model CadetProfile {
-  id          String @id @default(cuid())
-  userId      String @unique
-  studentCode String @unique // "67-0421"
-  thaiName    String
-  englishName String
-  rank        String // "2LT", "1LT"
-  yearLevel   Int    // 1..4 (ชั้นปี)
-  companyId   String
-  battalion   String // "BN-2"
+  id            String @id @default(cuid())
+  userId        String @unique
+  studentCode   String @unique // "67-0421"
+  thaiName      String
+  englishName   String
+  rank          String // "2LT", "1LT"
+  yearLevel     Int    // 1..4 (ชั้นปี)
+  companyId     String
+  battalion     String // "BN-2"
+  yearRank      Int?   // rank within cohort, e.g. 12
+  yearRankTotal Int?   // cohort size, e.g. 118
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   company Company @relation(fields: [companyId], references: [id])
+  grades  Grade[]
 
   @@index([companyId])
+}
+
+// ─── Academics ──────────────────────────────────────────────────────────────
+
+model Semester {
+  id        String   @id @default(cuid())
+  label     String   @unique // "1/2569"
+  order     Int      // sort key, higher = more recent
+  isCurrent Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  grades Grade[]
+
+  @@index([order])
+}
+
+model Grade {
+  id             String   @id @default(cuid())
+  cadetProfileId String
+  semesterId     String
+  courseCode     String
+  courseNameTh   String
+  courseNameEn   String?
+  credits        Int
+  grade          String?  // null = ผลยังไม่ประกาศ (pending)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  cadetProfile CadetProfile @relation(fields: [cadetProfileId], references: [id], onDelete: Cascade)
+  semester     Semester     @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+
+  @@unique([cadetProfileId, semesterId, courseCode])
+  @@index([cadetProfileId])
+  @@index([semesterId])
 }
 
 model LineAccount {

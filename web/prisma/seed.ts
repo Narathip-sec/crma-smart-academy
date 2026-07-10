@@ -2,6 +2,38 @@ import { PrismaClient, Role } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+const SEMESTERS = [
+  { label: "1/2568", order: 1, isCurrent: false },
+  { label: "2/2568", order: 2, isCurrent: false },
+  { label: "1/2569", order: 3, isCurrent: true },
+];
+
+const GRADES_BY_SEMESTER: Record<string, { code: string; th: string; en: string; credits: number; grade: string | null }[]> = {
+  "1/2568": [
+    { code: "MA 101", th: "คณิตศาสตร์วิศวกรรม 1",   en: "Engineering Mathematics 1", credits: 3, grade: "A-" },
+    { code: "GE 101", th: "การปรับตัว",              en: "Orientation",               credits: 1, grade: "A" },
+    { code: "EN 101", th: "ภาษาอังกฤษ 1",            en: "English 1",                 credits: 2, grade: "A" },
+  ],
+  "2/2568": [
+    { code: "MA 102", th: "คณิตศาสตร์วิศวกรรม 2",   en: "Engineering Mathematics 2", credits: 3, grade: "B+" },
+    { code: "CH 101", th: "เคมี 1",                  en: "Chemistry 1",               credits: 3, grade: "A-" },
+    { code: "EN 102", th: "ภาษาอังกฤษ 2",            en: "English 2",                 credits: 2, grade: "A" },
+    { code: "MS 102", th: "วิชาทหาร 2",              en: "Military Science 2",        credits: 3, grade: "B+" },
+  ],
+  "1/2569": [
+    { code: "PH 1001", th: "ฟิสิกส์ทั่วไป 1",          en: "General Physics 1",             credits: 4, grade: null },
+    { code: "PH 1002", th: "ปฏิบัติการฟิสิกส์ 1",      en: "Physics Laboratory 1",          credits: 1, grade: null },
+    { code: "MS 1001", th: "วิชาทหาร 1",               en: "Military Science 1",            credits: 3, grade: null },
+    { code: "LG 1001", th: "ภาษาไทย 1",                en: "Thai 1",                        credits: 2, grade: null },
+    { code: "LG 1101", th: "ภาษาอังกฤษ 1",             en: "English 1",                     credits: 2, grade: null },
+    { code: "SS 1201", th: "หลักรัฐศาสตร์",            en: "Principles of Political Science", credits: 3, grade: null },
+    { code: "IE 1701", th: "แนวคิดและทฤษฎีอาวุธ",      en: "Concept and Principle of Weapon", credits: 2, grade: null },
+    { code: "PC 1101", th: "จิตวิทยาเบื้องต้น",        en: "Introduction to Psychology",     credits: 3, grade: null },
+    { code: "HI 1001", th: "ประวัติศาสตร์ไทย",         en: "Thai History",                  credits: 2, grade: null },
+    { code: "PE 1001", th: "พลศึกษา 1",                en: "Physical Education 1",          credits: 1, grade: null },
+  ],
+};
+
 async function main() {
   // Companies (กองร้อย)
   const companies = await Promise.all(
@@ -159,6 +191,49 @@ async function main() {
     },
   });
   console.log(`✔ dev cadet: ${devUser.email}`);
+
+  // Semesters + grades (generated — pilot cadet has no real transcript yet)
+  const semesterRows = await Promise.all(
+    SEMESTERS.map((s) =>
+      prisma.semester.upsert({
+        where: { label: s.label },
+        update: { order: s.order, isCurrent: s.isCurrent },
+        create: s,
+      })
+    )
+  );
+  const semesterByLabel = new Map(semesterRows.map((s) => [s.label, s]));
+
+  const cadetProfile = await prisma.cadetProfile.findUnique({ where: { userId: devUser.id } });
+  if (cadetProfile) {
+    let gradeCount = 0;
+    for (const [label, rows] of Object.entries(GRADES_BY_SEMESTER)) {
+      const semester = semesterByLabel.get(label)!;
+      for (const row of rows) {
+        await prisma.grade.upsert({
+          where: { cadetProfileId_semesterId_courseCode: { cadetProfileId: cadetProfile.id, semesterId: semester.id, courseCode: row.code } },
+          update: { courseNameTh: row.th, courseNameEn: row.en, credits: row.credits, grade: row.grade },
+          create: {
+            cadetProfileId: cadetProfile.id,
+            semesterId: semester.id,
+            courseCode: row.code,
+            courseNameTh: row.th,
+            courseNameEn: row.en,
+            credits: row.credits,
+            grade: row.grade,
+          },
+        });
+        gradeCount++;
+      }
+    }
+    console.log(`✔ semesters: ${semesterRows.length}, grades: ${gradeCount}`);
+
+    await prisma.cadetProfile.update({
+      where: { id: cadetProfile.id },
+      data: { yearRank: 12, yearRankTotal: 118 },
+    });
+    console.log(`✔ cadet year rank set`);
+  }
 
   console.log("Seed complete.");
 }
