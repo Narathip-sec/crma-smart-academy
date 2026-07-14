@@ -2,6 +2,7 @@
 
 import { useTx } from "@/components/shell/bilingual-label";
 import { useLang } from "@/lib/i18n";
+import { useTheme } from "@/lib/theme";
 import { AppBar } from "@/components/shell/app-bar";
 import { ListItem } from "@/components/ui";
 
@@ -47,16 +48,14 @@ function LangToggle() {
 
 function ThemeToggle() {
   const t = useTx();
-  function toggle() {
-    const root = document.documentElement;
-    const current = root.getAttribute("data-theme");
-    root.setAttribute("data-theme", current === "dark" ? "light" : "dark");
-  }
+  const { theme, setTheme } = useTheme();
   return (
-    <button type="button" onClick={toggle}
-      className="rounded-full px-3 py-1 active:opacity-70"
+    <button type="button" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      className="flex items-center gap-1 rounded-full px-3 py-1 active:opacity-70"
       style={{ background: "var(--tint)", font: "700 11px var(--font-sans)", color: "var(--brand)" }}>
-      {t({ th: "สลับ", en: "Toggle" })}
+      <span style={{ opacity: theme === "light" ? 1 : 0.4 }}>{t({ th: "สว่าง", en: "Light" })}</span>
+      <span style={{ color: "var(--muted)" }}>/</span>
+      <span style={{ opacity: theme === "dark" ? 1 : 0.4 }}>{t({ th: "มืด", en: "Dark" })}</span>
     </button>
   );
 }

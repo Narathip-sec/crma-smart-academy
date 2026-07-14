@@ -9,6 +9,8 @@ const ThemeContext = createContext<{
   setTheme: (t: Theme) => void;
 }>({ theme: "light", setTheme: () => {} });
 
+const STORAGE_KEY = "crma-theme";
+
 export function ThemeProvider({
   children,
   initial = "light",
@@ -16,10 +18,21 @@ export function ThemeProvider({
   children: ReactNode;
   initial?: Theme;
 }) {
-  const [theme, setTheme] = useState<Theme>(initial);
+  const [theme, setThemeState] = useState<Theme>(() => {
+    if (typeof window === "undefined") return initial;
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored === "light" || stored === "dark" ? stored : initial;
+  });
+
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
+
+  function setTheme(t: Theme) {
+    setThemeState(t);
+    localStorage.setItem(STORAGE_KEY, t);
+  }
+
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
       {children}
