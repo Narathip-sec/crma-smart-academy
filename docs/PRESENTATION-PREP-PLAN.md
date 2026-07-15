@@ -20,10 +20,10 @@ Google Calendar เชื่อมแล้ว (`cdt.narathipch@gmail.com`) — 
 - OG metadata + branded icon + per-activity share card (แก้ font Thai-glyph bug ระหว่างทำด้วย)
 - Rich Menu: สร้างรูป + script พร้อมรัน (`npm run rich-menu:image` / `rich-menu:setup`) — **รอเลขที่จะสมัคร LINE OA เท่านั้น**
 - Deploy ขึ้น Vercel สำเร็จ, ตรวจ production แล้ว (`/opengraph-image`, `/icon` ตอบ 200, `/api/me` ตอบ 404 ถูกต้องตามที่ไม่มี session)
+- **Dark theme** — แก้บั๊กปุ่มสลับธีม (ไม่ persist) แล้ว, ทดสอบจริงบนมือถือแล้ว ไม่พบบั๊ก → เก็บฟีเจอร์นี้ไว้ ไม่ต้องถอด
 
 ## ⚠️ ยังไม่ได้ตรวจ / ไม่รู้สถานะ
 
-- **Dark theme** — ไม่ได้แตะเลยรอบนี้ ไม่รู้สมบูรณ์แค่ไหน. **เป็นความเสี่ยงสูง** เพราะกติกาเดิมบอกว่า "ถ้าไม่เสร็จสมบูรณ์ทุกหน้า ให้ถอดปุ่มสลับธีมออกเลย" — ต้องตัดสินใจเร็วๆ นี้
 - Rich Menu ยังไม่ได้ยิงจริงกับ LINE API (โค้ดพร้อม รอ token)
 - ยังไม่ได้ทดสอบบนอุปกรณ์จริง (iOS/Android ผ่านแอป LINE จริง)
 - ยังไม่ได้ทำ demo script / สไลด์นำเสนอ
@@ -35,7 +35,7 @@ Google Calendar เชื่อมแล้ว (`cdt.narathipch@gmail.com`) — 
 ### สัปดาห์นี้ (07-14 → 07-20)
 
 - [ ] **07-15 (Wed):** สมัครเบอร์ + LINE OA (ถ้ายังไม่ได้ทำ) → รัน `npm run rich-menu:setup`
-- [ ] **07-15/16:** ตรวจสอบ Dark theme ทุกหน้า (16 routes) — ถ้าไม่ผ่าน ให้ถอดปุ่มสลับธีมตามกติกาเดิม (ตัดสินใจภายในวันนี้ ไม่ปล่อยค้าง)
+- [x] **07-15/16:** ตรวจสอบ Dark theme ทุกหน้า — เสร็จแล้ว, ทดสอบจริงบนมือถือ ไม่พบบั๊ก
 - [ ] **07-16/17:** ทดสอบเปิดแอปผ่าน LINE จริงบนมือถือ (iOS + Android) — login flow, safe-area, คีย์บอร์ดบังฟอร์ม (report/lost-found/activity), อัปโหลดรูปจากคลังภาพ, ปุ่มย้อนกลับ
 - [ ] **07-17/18:** Edge cases — LIFF token หมดอายุ, user ไม่มี `CadetProfile`, การกดปุ่มซ้ำเร็วๆ (double-submit), เน็ตหลุดระหว่างโหลด (ต้องมีปุ่ม retry ทุกหน้า — ส่วนใหญ่ทำแล้วจาก T12 แต่ต้องทดสอบจริง)
 - [ ] **07-18/19:** Performance — dynamic import `CampusPinMap`/Leaflet (โหลดเฉพาะหน้า lost-found), บีบอัดรูป, เช็ค Lighthouse mobile score
