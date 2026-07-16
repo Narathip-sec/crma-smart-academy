@@ -21,11 +21,18 @@ Google Calendar เชื่อมแล้ว (`cdt.narathipch@gmail.com`) — 
 - Rich Menu: สร้างรูป + script พร้อมรัน (`npm run rich-menu:image` / `rich-menu:setup`) — **รอเลขที่จะสมัคร LINE OA เท่านั้น**
 - Deploy ขึ้น Vercel สำเร็จ, ตรวจ production แล้ว (`/opengraph-image`, `/icon` ตอบ 200, `/api/me` ตอบ 404 ถูกต้องตามที่ไม่มี session)
 - **Dark theme** — แก้บั๊กปุ่มสลับธีม (ไม่ persist) แล้ว, ทดสอบจริงบนมือถือแล้ว ไม่พบบั๊ก → เก็บฟีเจอร์นี้ไว้ ไม่ต้องถอด
+- **ทดสอบจริงบนมือถือผ่าน LINE (iOS)** — เจอ+แก้บั๊กจริง 4 จุด รอบเดียว:
+  - ของหาย/ของพบ: รูปไม่ขึ้น (API ไม่ include asset url) + list/detail ใช้ field ที่ไม่มีในสคีมาเลย (`type`, `locationFound`, status `"open"`) → badge ขึ้น "reported" ดิบๆ, ปุ่มขอรับของค้าง disabled ตลอด
+  - กิจกรรม: สร้างแล้วไม่ขึ้น list — moderation เข้า pending แต่ไม่มี moderator account/UI เลย → ตัดสินใจ auto-approve
+  - กิจกรรม: การ์ดไม่มีรูป (bug เดิมซ้ำ, API ไม่ include images) + ปุ่ม RSVP เช็ค `status === "approved"` ผิด enum (ต้องเป็น `"open"`) → RSVP ค้าง disabled ตลอดทุกกิจกรรม
+  - แจ้งซ่อม: list ไม่มีรูป/รายละเอียด/สถานที่ (API ไม่ include อีกเช่นกัน) + `ticketNumber` พิมพ์ผิด (field จริงคือ `ticketNo`) → เลขที่ตั๋ว blank
+  - Sweep ทั้งสคีมาแล้ว ยืนยันไม่มีจุดอื่นที่พลาด include แบบเดียวกัน
+- Activity list เปลี่ยนเป็น photo card (แนวตั้ง full-width) ตามที่ขอ
 
 ## ⚠️ ยังไม่ได้ตรวจ / ไม่รู้สถานะ
 
 - Rich Menu ยังไม่ได้ยิงจริงกับ LINE API (โค้ดพร้อม รอ token)
-- ยังไม่ได้ทดสอบบนอุปกรณ์จริง (iOS/Android ผ่านแอป LINE จริง)
+- Android ยังไม่ได้ทดสอบ (iOS ผ่านแล้ว)
 - ยังไม่ได้ทำ demo script / สไลด์นำเสนอ
 
 ---
@@ -36,9 +43,9 @@ Google Calendar เชื่อมแล้ว (`cdt.narathipch@gmail.com`) — 
 
 - [ ] **07-15 (Wed):** สมัครเบอร์ + LINE OA (ถ้ายังไม่ได้ทำ) → รัน `npm run rich-menu:setup`
 - [x] **07-15/16:** ตรวจสอบ Dark theme ทุกหน้า — เสร็จแล้ว, ทดสอบจริงบนมือถือ ไม่พบบั๊ก
-- [ ] **07-16/17:** ทดสอบเปิดแอปผ่าน LINE จริงบนมือถือ (iOS + Android) — login flow, safe-area, คีย์บอร์ดบังฟอร์ม (report/lost-found/activity), อัปโหลดรูปจากคลังภาพ, ปุ่มย้อนกลับ
-- [ ] **07-17/18:** Edge cases — LIFF token หมดอายุ, user ไม่มี `CadetProfile`, การกดปุ่มซ้ำเร็วๆ (double-submit), เน็ตหลุดระหว่างโหลด (ต้องมีปุ่ม retry ทุกหน้า — ส่วนใหญ่ทำแล้วจาก T12 แต่ต้องทดสอบจริง)
-- [ ] **07-18/19:** Performance — dynamic import `CampusPinMap`/Leaflet (โหลดเฉพาะหน้า lost-found), บีบอัดรูป, เช็ค Lighthouse mobile score
+- [x] **07-16/17:** ทดสอบเปิดแอปผ่าน LINE จริงบนมือถือ (iOS) — เจอ+แก้บั๊กจริงแล้ว 4 จุด (ดูรายละเอียดด้านบน). **Android ยังไม่ได้ทดสอบ**
+- [x] **07-17/18:** Edge cases — double-submit guard เช็คแล้วทุกฟอร์ม (มีอยู่แล้วจาก T11/T12), no-CadetProfile null-safe แล้ว, session cookie 30 วันเลยไม่ใช่ความเสี่ยงจริงในช่วง demo — ตัดสินใจไม่ทำ retry/refresh token เพิ่ม
+- [x] **07-18/19:** Performance — Leaflet dynamic import เช็คแล้ว (ทำไปแล้วจาก sweep ก่อนหน้า), เพิ่ม client-side image compression ก่อนอัปโหลด (ทดสอบ 17.3MB→877KB) — ยังไม่ได้เช็ค Lighthouse score
 - [ ] **07-20 (Mon):** เช็คพอยต์กลางสัปดาห์ — สรุปว่าเหลืออะไรก่อน 07-28
 
 ### สัปดาห์หน้า (07-21 → 07-28)
