@@ -28,6 +28,8 @@ export async function GET() {
     include: {
       category: true,
       team: true,
+      location: true,
+      attachments: { select: { asset: { select: { url: true } } } },
       statusEvents: { orderBy: { createdAt: "desc" }, take: 1 },
     },
     orderBy: { createdAt: "desc" },

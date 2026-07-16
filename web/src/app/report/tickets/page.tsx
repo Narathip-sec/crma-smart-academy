@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { AppBar } from "@/components/shell/app-bar";
 import { useTx } from "@/components/shell/bilingual-label";
-import { LoadingState, EmptyState, ErrorState } from "@/components/ui";
+import { LoadingState, EmptyState, ErrorState, Img } from "@/components/ui";
 
 const THAI_MONTHS_SHORT = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
 function fmtDate(iso: string): string {
@@ -14,9 +14,11 @@ function fmtDate(iso: string): string {
 
 type StatusEvent = { status: string; createdAt: string; note: string | null };
 type Ticket = {
-  id: string; ticketNumber: string; titleTh: string;
+  id: string; ticketNo: string; titleTh: string; descriptionTh: string;
   status: string; createdAt: string;
   category: { nameTh: string } | null;
+  location: { nameTh: string } | null;
+  attachments: { asset: { url: string } | null }[];
   statusEvents: StatusEvent[];
 };
 
@@ -82,7 +84,7 @@ export default function MyTicketsPage() {
                   <div className="min-w-0 flex-1">
                     <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.3 }}>{tk.titleTh}</div>
                     <div className="mt-1 flex items-center gap-2">
-                      <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>#{tk.ticketNumber}</span>
+                      <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>#{tk.ticketNo}</span>
                       <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${cfg.color} 10%, transparent)`, color: cfg.color, font: "600 11px var(--font-sans)" }}>
                         {cfg.th}
                       </span>
@@ -94,26 +96,50 @@ export default function MyTicketsPage() {
                     <path d="M9 18l6-6-6-6" />
                   </svg>
                 </button>
-                {open && tk.statusEvents.length > 0 && (
-                  <div style={{ borderTop: "1px solid var(--line)", padding: "12px 16px" }}>
-                    <div style={{ font: "700 11px var(--font-sans)", color: "var(--muted)", marginBottom: 8 }}>
-                      {t({ th: "ประวัติสถานะ", en: "Status history" })}
+                {open && (
+                  <div style={{ borderTop: "1px solid var(--line)", padding: "12px 16px" }} className="flex flex-col gap-3">
+                    {tk.attachments[0]?.asset?.url && (
+                      <Img src={tk.attachments[0].asset.url} alt={tk.titleTh} radius={12} ratio="4 / 3" />
+                    )}
+
+                    <div>
+                      <div style={{ font: "700 11px var(--font-sans)", color: "var(--muted)", marginBottom: 4 }}>
+                        {t({ th: "รายละเอียด", en: "Details" })}
+                      </div>
+                      <div style={{ font: "400 12px var(--font-sans)", color: "var(--ink)", lineHeight: 1.5 }}>{tk.descriptionTh}</div>
                     </div>
-                    <div className="flex flex-col gap-2">
-                      {tk.statusEvents.map((ev, i) => {
-                        const eCfg = STATUS_CONFIG[ev.status] ?? { th: ev.status, color: "var(--muted)" };
-                        return (
-                          <div key={i} className="flex items-start gap-2.5">
-                            <div style={{ width: 6, height: 6, borderRadius: 999, background: eCfg.color, marginTop: 5, flexShrink: 0 }} />
-                            <div>
-                              <span style={{ font: "600 11px var(--font-sans)", color: eCfg.color }}>{eCfg.th}</span>
-                              <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>{fmtDate(ev.createdAt)}</span>
-                              {ev.note && <div style={{ font: "400 11px var(--font-sans)", color: "var(--muted)", marginTop: 2 }}>{ev.note}</div>}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+
+                    {tk.location && (
+                      <div>
+                        <div style={{ font: "700 11px var(--font-sans)", color: "var(--muted)", marginBottom: 4 }}>
+                          {t({ th: "สถานที่", en: "Location" })}
+                        </div>
+                        <div style={{ font: "400 12px var(--font-sans)", color: "var(--ink)" }}>📍 {tk.location.nameTh}</div>
+                      </div>
+                    )}
+
+                    {tk.statusEvents.length > 0 && (
+                      <div>
+                        <div style={{ font: "700 11px var(--font-sans)", color: "var(--muted)", marginBottom: 8 }}>
+                          {t({ th: "ประวัติสถานะ", en: "Status history" })}
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          {tk.statusEvents.map((ev, i) => {
+                            const eCfg = STATUS_CONFIG[ev.status] ?? { th: ev.status, color: "var(--muted)" };
+                            return (
+                              <div key={i} className="flex items-start gap-2.5">
+                                <div style={{ width: 6, height: 6, borderRadius: 999, background: eCfg.color, marginTop: 5, flexShrink: 0 }} />
+                                <div>
+                                  <span style={{ font: "600 11px var(--font-sans)", color: eCfg.color }}>{eCfg.th}</span>
+                                  <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>{fmtDate(ev.createdAt)}</span>
+                                  {ev.note && <div style={{ font: "400 11px var(--font-sans)", color: "var(--muted)", marginTop: 2 }}>{ev.note}</div>}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
