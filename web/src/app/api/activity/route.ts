@@ -1,5 +1,6 @@
 // GET  /api/activity           → approved activity events (open/closed)
-// POST /api/activity           → create event (pending moderation; audit-logged)
+// POST /api/activity           → create event (auto-approved, no moderator UI exists
+//                                 to unblock a pending queue; audit-logged)
 
 import { prisma } from "@/lib/db";
 import { writeAuditLog, ipFrom } from "@/lib/audit";
@@ -78,8 +79,8 @@ export async function POST(req: NextRequest) {
       endAt: body.endAt ? new Date(body.endAt) : undefined,
       maxAttendees: body.maxAttendees,
       categoryId: body.categoryId,
-      status: ActivityStatus.draft,
-      modStatus: ModerationStatus.pending,
+      status: ActivityStatus.open,
+      modStatus: ModerationStatus.approved,
     },
   });
 
