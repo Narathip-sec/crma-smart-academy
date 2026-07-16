@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
     },
     include: {
       category: true,
+      images: { select: { url: true } },
       _count: { select: { attendees: true } },
     },
     orderBy: { startAt: "asc" },
@@ -40,6 +41,7 @@ export async function GET(req: NextRequest) {
       maxAttendees: e.maxAttendees,
       attendeeCount: e._count.attendees,
       status: e.status,
+      imageUrl: e.images[0]?.url ?? null,
       category: e.category ? { id: e.category.id, nameTh: e.category.nameTh, nameEn: e.category.nameEn } : null,
     }))
   );

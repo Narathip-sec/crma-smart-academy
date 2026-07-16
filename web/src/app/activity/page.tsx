@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useTx } from "@/components/shell/bilingual-label";
-import { Chip, ChipRow, ListItem, LoadingState, EmptyState, ErrorState } from "@/components/ui";
+import { Chip, ChipRow, Img, LoadingState, EmptyState, ErrorState } from "@/components/ui";
 
 type DbActivity = {
   id: string;
@@ -16,6 +16,7 @@ type DbActivity = {
   maxAttendees: number | null;
   attendeeCount: number;
   status: string;
+  imageUrl: string | null;
   category: { id: string; nameTh: string; nameEn: string | null } | null;
 };
 
@@ -30,45 +31,38 @@ function formatTime(iso: string): string {
   return new Date(iso).toTimeString().slice(0, 5);
 }
 
-function ActivityRow({ item }: { item: DbActivity }) {
+function ActivityCard({ item }: { item: DbActivity }) {
   const t = useTx();
   return (
-    <ListItem
+    <Link
       href={`/activity/${item.id}`}
-      chevron
-      style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--radius-card)", padding: "14px 16px" }}
-      icon={
-        <svg width={22} height={22} viewBox="0 0 24 24" fill="none"
-          stroke="rgba(255,255,255,.9)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-          <circle cx="9" cy="7" r="4" />
-          <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
-        </svg>
-      }
-      iconBg="var(--brand)"
-      title={
-        <>
-          {item.category && (
-            <span style={{
-              display: "inline-flex", alignItems: "center", gap: 3,
-              padding: "1px 8px", borderRadius: 999, marginBottom: 3,
-              background: "color-mix(in srgb, var(--brand) 10%, transparent)", color: "var(--brand)",
-              font: "600 11px var(--font-sans)",
-            }}>
-              ● {item.category.nameTh}
-            </span>
-          )}
-          <div>{t({ th: item.titleTh, en: item.titleEn ?? item.titleTh })}</div>
-        </>
-      }
-      subtitle={
-        <div className="flex flex-col gap-0.5">
+      className="flex flex-col overflow-hidden active:opacity-90"
+      style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--radius-card)", textDecoration: "none" }}
+    >
+      <div style={{ position: "relative" }}>
+        <Img src={item.imageUrl ?? undefined} alt={item.titleTh} radius={0} ratio="16 / 9" />
+        {item.category && (
+          <span style={{
+            position: "absolute", top: 10, left: 10,
+            padding: "3px 10px", borderRadius: 999,
+            background: "rgba(15,23,42,.55)", color: "#fff",
+            font: "600 11px var(--font-sans)", backdropFilter: "blur(4px)",
+          }}>
+            ● {item.category.nameTh}
+          </span>
+        )}
+      </div>
+      <div className="flex flex-col gap-1 p-3.5">
+        <div style={{ font: "700 15px var(--font-sans)", color: "var(--ink)", lineHeight: 1.3 }}>
+          {t({ th: item.titleTh, en: item.titleEn ?? item.titleTh })}
+        </div>
+        <div className="flex flex-col gap-0.5" style={{ font: "500 12px var(--font-sans)", color: "var(--muted)" }}>
           <span>📅 {formatDate(item.startAt)} · {formatTime(item.startAt)}</span>
           {item.location && <span>📍 {item.location}</span>}
           {item.maxAttendees && <span>👥 {item.attendeeCount}/{item.maxAttendees}</span>}
         </div>
-      }
-    />
+      </div>
+    </Link>
   );
 }
 
@@ -134,8 +128,8 @@ export default function ActivityPage() {
           ) : visible.length === 0 ? (
             <EmptyState title={t({ th: "ยังไม่มีกิจกรรม", en: "No activities yet" })} />
           ) : (
-            <div className="flex flex-col gap-2">
-              {visible.map(item => <ActivityRow key={item.id} item={item} />)}
+            <div className="flex flex-col gap-3">
+              {visible.map(item => <ActivityCard key={item.id} item={item} />)}
             </div>
           )}
         </div>

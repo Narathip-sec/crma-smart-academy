@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTx } from "@/components/shell/bilingual-label";
-import { Button, LoadingState, ErrorState } from "@/components/ui";
+import { Button, LoadingState, ErrorState, Img } from "@/components/ui";
 
 const THAI_MONTHS_SHORT = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
 const THAI_DAYS = ["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
@@ -25,16 +25,16 @@ type Event = {
   maxAttendees: number | null;
   status: string;
   category: { nameTh: string } | null;
+  imageUrl: string | null;
   _count: { attendees: number };
   attendees: { id: string; userId: string; status: string }[];
 };
 
 const STATUS_LABEL: Record<string, { th: string; color: string }> = {
-  draft:    { th: "ร่าง",           color: "var(--muted)" },
-  pending:  { th: "รอพิจารณา",     color: "var(--warning)" },
-  approved: { th: "อนุมัติแล้ว",   color: "var(--brand)" },
-  rejected: { th: "ปฏิเสธ",        color: "var(--danger)" },
-  cancelled:{ th: "ยกเลิก",        color: "var(--muted)" },
+  draft:    { th: "ร่าง",          color: "var(--muted)" },
+  open:     { th: "เปิดรับสมัคร",  color: "var(--brand)" },
+  closed:   { th: "ปิดรับสมัคร",   color: "var(--muted)" },
+  cancelled:{ th: "ยกเลิก",        color: "var(--danger)" },
 };
 
 function InfoRow({ icon, labelTh, labelEn, value, t }: {
@@ -103,7 +103,7 @@ export default function ActivityDetailPage() {
 
   const statusLbl = STATUS_LABEL[event.status] ?? { th: event.status, color: "var(--muted)" };
   const full = event.maxAttendees !== null && event._count.attendees >= event.maxAttendees;
-  const canRsvp = event.status === "approved" && !full && !rsvpDone;
+  const canRsvp = event.status === "open" && !full && !rsvpDone;
 
   return (
     <div className="flex flex-1 flex-col overflow-y-auto" style={{ background: "var(--bg)" }}>
@@ -128,6 +128,8 @@ export default function ActivityDetailPage() {
       </div>
 
       <div className="flex flex-col gap-4 px-4 pb-8 pt-5">
+        {event.imageUrl && <Img src={event.imageUrl} alt={event.titleTh} radius={16} ratio="16 / 9" />}
+
         <div className="flex gap-2">
           <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: 999, background: `color-mix(in srgb, ${statusLbl.color} 10%, transparent)`, color: statusLbl.color, font: "600 11px var(--font-sans)" }}>
             {statusLbl.th}
@@ -166,7 +168,7 @@ export default function ActivityDetailPage() {
               ? t({ th: "กำลังลงทะเบียน…", en: "Registering…" })
               : full
               ? t({ th: "ที่นั่งเต็ม", en: "Full" })
-              : event.status !== "approved"
+              : event.status !== "open"
               ? t({ th: "ยังไม่เปิดรับสมัคร", en: "Not open yet" })
               : t({ th: "ลงทะเบียนเข้าร่วม", en: "Register" })}
           </Button>

@@ -10,10 +10,11 @@ export async function GET(
     where: { id },
     include: {
       category: true,
+      images: { select: { url: true } },
       attendees: { select: { id: true, userId: true, attended: true } },
       _count: { select: { attendees: true } },
     },
   });
   if (!event) return NextResponse.json({ error: "not found" }, { status: 404 });
-  return NextResponse.json(event);
+  return NextResponse.json({ ...event, imageUrl: event.images[0]?.url ?? null });
 }
