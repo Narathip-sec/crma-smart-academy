@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTx } from "@/components/shell/bilingual-label";
-import { Button, LoadingState, ErrorState } from "@/components/ui";
+import { Button, LoadingState, ErrorState, Img } from "@/components/ui";
 
 const THAI_MONTHS_SHORT = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
 function fmtDate(iso: string): string {
@@ -12,18 +12,20 @@ function fmtDate(iso: string): string {
 }
 
 type LFItem = {
-  id: string; type: "lost" | "found"; titleTh: string;
-  descriptionTh: string | null; locationFound: string | null;
-  lostDate: string | null; status: string; createdAt: string;
+  id: string; titleTh: string;
+  descriptionTh: string | null; foundLocation: string | null;
+  foundAt: string | null; status: string; createdAt: string;
   category: { nameTh: string } | null;
   reporter: { displayName: string } | null;
-  claims: { id: string; claimantId: string; status: string; createdAt: string }[];
+  claims: { id: string; claimantId: string; note: string | null; claimedAt: string }[];
+  attachments: { asset: { url: string } | null }[];
 };
 
 const STATUS_CONFIG: Record<string, { th: string; color: string }> = {
-  open:    { th: "รับเรื่อง",  color: "var(--brand)" },
-  matched: { th: "จับคู่แล้ว", color: "var(--cat-notice)" },
-  closed:  { th: "ปิด",        color: "var(--muted)" },
+  reported: { th: "รับเรื่อง",  color: "var(--brand)" },
+  matched:  { th: "จับคู่แล้ว", color: "var(--cat-notice)" },
+  claimed:  { th: "รับคืนแล้ว", color: "var(--success)" },
+  closed:   { th: "ปิด",        color: "var(--muted)" },
 };
 
 function InfoRow({ icon, labelTh, labelEn, value, t }: {
@@ -90,10 +92,9 @@ export default function LostFoundDetailPage() {
     </div>
   );
 
-  const isLost = item.type === "lost";
-  const typeColor = isLost ? "var(--danger)" : "var(--brand)";
   const statusCfg = STATUS_CONFIG[item.status] ?? { th: item.status, color: "var(--muted)" };
-  const canClaim = item.status === "open" && !claimed;
+  const canClaim = item.status === "reported" && !claimed;
+  const photoUrl = item.attachments[0]?.asset?.url;
 
   return (
     <div className="flex flex-1 flex-col overflow-y-auto" style={{ background: "var(--bg)" }}>
@@ -108,14 +109,9 @@ export default function LostFoundDetailPage() {
         <div className="flex items-start gap-3">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl"
             style={{ background: "rgba(255,255,255,.2)" }}>
-            <span style={{ font: "700 28px var(--font-sans)", color: "#fff" }}>{isLost ? "?" : "✓"}</span>
+            <span style={{ fontSize: 28 }}>📦</span>
           </div>
           <div>
-            <div className="mb-1">
-              <span style={{ display: "inline-block", padding: "2px 10px", borderRadius: 999, background: "rgba(255,255,255,.25)", color: "#fff", font: "700 11px var(--font-sans)" }}>
-                {isLost ? t({ th: "ของหาย", en: "Lost" }) : t({ th: "ของพบ", en: "Found" })}
-              </span>
-            </div>
             <div style={{ font: "700 20px var(--font-sans)", color: "#fff", lineHeight: 1.25 }}>{item.titleTh}</div>
           </div>
         </div>
@@ -128,10 +124,12 @@ export default function LostFoundDetailPage() {
           </span>
         </div>
 
+        {photoUrl && <Img src={photoUrl} alt={item.titleTh} radius={16} ratio="4 / 3" />}
+
         <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--line)", background: "var(--surface)" }}>
           {item.category && <InfoRow icon="🏷" labelTh="ประเภท" labelEn="Category" value={item.category.nameTh} t={t} />}
-          {item.locationFound && <InfoRow icon="📍" labelTh="สถานที่" labelEn="Location" value={item.locationFound} t={t} />}
-          {item.lostDate && <InfoRow icon="📅" labelTh="วันที่หาย" labelEn="Date lost" value={fmtDate(item.lostDate)} t={t} />}
+          {item.foundLocation && <InfoRow icon="📍" labelTh="สถานที่" labelEn="Location" value={item.foundLocation} t={t} />}
+          {item.foundAt && <InfoRow icon="📅" labelTh="วันที่พบ" labelEn="Date found" value={fmtDate(item.foundAt)} t={t} />}
           <InfoRow icon="📋" labelTh="แจ้งเมื่อ" labelEn="Reported" value={fmtDate(item.createdAt)} t={t} />
         </div>
 
@@ -152,14 +150,12 @@ export default function LostFoundDetailPage() {
           <Button onClick={canClaim ? claim : undefined} disabled={!canClaim || claimLoading}
             size="lg" full
             style={canClaim
-              ? { background: typeColor, border: `1px solid ${typeColor}`, color: "#fff" }
+              ? { background: "var(--brand)", border: "1px solid var(--brand)", color: "#fff" }
               : { background: "var(--line)", color: "var(--muted)", border: "1px solid var(--line)" }}>
             {claimLoading
               ? t({ th: "กำลังส่ง…", en: "Submitting…" })
-              : item.status !== "open"
+              : item.status !== "reported"
               ? t({ th: "ปิดรับแล้ว", en: "Closed" })
-              : isLost
-              ? t({ th: "ฉันพบของชิ้นนี้ → แจ้งเพื่อจับคู่", en: "I found this → Report match" })
               : t({ th: "นี่คือของฉัน → ขอรับคืน", en: "This is mine → Claim" })}
           </Button>
         )}

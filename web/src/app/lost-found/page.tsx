@@ -13,21 +13,21 @@ function fmtDate(iso: string): string {
 }
 
 type LFItem = {
-  id: string; type: "lost" | "found"; titleTh: string;
-  locationFound: string | null; status: string;
-  lostDate: string | null; createdAt: string;
+  id: string; titleTh: string;
+  foundLocation: string | null; status: string;
+  foundAt: string | null; createdAt: string;
   category: { nameTh: string } | null;
+  attachments: { asset: { url: string } | null }[];
 };
 
-const TYPE_COLOR = { lost: "var(--danger)", found: "var(--brand)" };
-const TYPE_LABEL = { lost: { th: "หาย", en: "Lost" }, found: { th: "พบ", en: "Found" } };
 const STATUS_CONFIG: Record<string, { th: string; color: string }> = {
-  open:    { th: "รับเรื่อง",  color: "var(--brand)" },
-  matched: { th: "จับคู่แล้ว", color: "var(--cat-notice)" },
-  closed:  { th: "ปิด",        color: "var(--muted)" },
+  reported: { th: "รับเรื่อง",  color: "var(--brand)" },
+  matched:  { th: "จับคู่แล้ว", color: "var(--cat-notice)" },
+  claimed:  { th: "รับคืนแล้ว", color: "var(--success)" },
+  closed:   { th: "ปิด",        color: "var(--muted)" },
 };
 
-type Filter = "all" | "lost" | "found";
+type Filter = "all" | "reported" | "matched" | "claimed" | "closed";
 
 export default function LostFoundPage() {
   const t = useTx();
@@ -48,12 +48,13 @@ export default function LostFoundPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  const visible = items === null ? [] : filter === "all" ? items : items.filter(i => i.type === filter);
+  const visible = items === null ? [] : filter === "all" ? items : items.filter(i => i.status === filter);
 
   const filters: { key: Filter; labelTh: string; labelEn: string }[] = [
-    { key: "all",   labelTh: "ทั้งหมด", labelEn: "All" },
-    { key: "lost",  labelTh: "ของหาย",  labelEn: "Lost" },
-    { key: "found", labelTh: "ของพบ",   labelEn: "Found" },
+    { key: "all",      labelTh: "ทั้งหมด",   labelEn: "All" },
+    { key: "reported", labelTh: "รับเรื่อง",  labelEn: "Reported" },
+    { key: "matched",  labelTh: "จับคู่แล้ว", labelEn: "Matched" },
+    { key: "claimed",  labelTh: "รับคืนแล้ว", labelEn: "Claimed" },
   ];
 
   return (
@@ -88,23 +89,22 @@ export default function LostFoundPage() {
         ) : (
         <div className="flex flex-col gap-2">
           {visible.map(item => {
-            const typeColor = TYPE_COLOR[item.type];
-            const typeLbl = TYPE_LABEL[item.type];
             const statusCfg = STATUS_CONFIG[item.status] ?? { th: item.status, color: "var(--muted)" };
+            const photoUrl = item.attachments[0]?.asset?.url;
             return (
               <ListItem
                 key={item.id}
                 href={`/lost-found/${item.id}`}
                 chevron
-                style={{ background: "var(--surface)", border: "1px solid var(--line)", borderLeft: `3px solid ${typeColor}`, borderRadius: "var(--radius-card)", padding: "14px 16px" }}
-                icon={<span style={{ font: "700 20px var(--font-sans)", color: typeColor }}>{item.type === "lost" ? "?" : "✓"}</span>}
-                iconBg={`color-mix(in srgb, ${typeColor} 10%, transparent)`}
+                style={{ background: "var(--surface)", border: "1px solid var(--line)", borderLeft: `3px solid ${statusCfg.color}`, borderRadius: "var(--radius-card)", padding: "14px 16px" }}
+                icon={photoUrl
+                  // eslint-disable-next-line @next/next/no-img-element
+                  ? <img src={photoUrl} alt="" className="h-10 w-10 rounded-xl object-cover" />
+                  : <span style={{ fontSize: 18 }}>📦</span>}
+                iconBg={`color-mix(in srgb, ${statusCfg.color} 10%, transparent)`}
                 title={
                   <>
-                    <div className="mb-1 flex items-center gap-1.5">
-                      <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${typeColor} 10%, transparent)`, color: typeColor, font: "700 11px var(--font-sans)" }}>
-                        {t(typeLbl)}
-                      </span>
+                    <div className="mb-1">
                       <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${statusCfg.color} 10%, transparent)`, color: statusCfg.color, font: "600 11px var(--font-sans)" }}>
                         {statusCfg.th}
                       </span>
@@ -115,7 +115,7 @@ export default function LostFoundPage() {
                 subtitle={
                   <div className="flex flex-col gap-0.5">
                     {item.category && <span>{item.category.nameTh}</span>}
-                    <span>{item.locationFound && `📍 ${item.locationFound} · `}{fmtDate(item.createdAt)}</span>
+                    <span>{item.foundLocation && `📍 ${item.foundLocation} · `}{fmtDate(item.createdAt)}</span>
                   </div>
                 }
               />

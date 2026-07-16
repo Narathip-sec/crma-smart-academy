@@ -26,6 +26,7 @@ export async function GET(req: NextRequest) {
     },
     include: {
       category: true,
+      attachments: { select: { asset: { select: { url: true } } } },
       _count: { select: { claims: true } },
     },
     orderBy: { createdAt: "desc" },

@@ -12,7 +12,7 @@ export async function GET(
       category: true,
       reporter: { select: { displayName: true } },
       claims: { select: { id: true, claimantId: true, note: true, claimedAt: true } },
-      attachments: { select: { id: true, assetId: true } },
+      attachments: { select: { id: true, asset: { select: { url: true } } } },
     },
   });
   if (!item) return NextResponse.json({ error: "not found" }, { status: 404 });
