@@ -6,6 +6,7 @@ import { useTx } from "@/components/shell/bilingual-label";
 import { Button, Chip, ChipRow, FormField } from "@/components/ui";
 import { upload } from "@vercel/blob/client";
 import Image from "next/image";
+import { compressImage } from "@/lib/compress-image";
 
 type Category = { id: string; nameTh: string };
 
@@ -56,7 +57,8 @@ export default function CreateActivityPage() {
     setUploadingCover(true);
 
     try {
-      const blob = await upload(file.name, file, {
+      const compressed = await compressImage(file);
+      const blob = await upload(compressed.name, compressed, {
         access: "public",
         handleUploadUrl: "/api/upload",
       });

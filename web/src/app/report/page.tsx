@@ -9,6 +9,7 @@ import { Button, FormField } from "@/components/ui";
 import { upload } from "@vercel/blob/client";
 import Image from "next/image";
 import type { PinLocation } from "@/components/map/CampusPinMap";
+import { compressImage } from "@/lib/compress-image";
 
 const CampusPinMap = lazy(() =>
   import("@/components/map/CampusPinMap").then(m => ({ default: m.CampusPinMap }))
@@ -64,7 +65,8 @@ export default function ReportPage() {
     setUploadingPhoto(true);
 
     try {
-      const blob = await upload(file.name, file, {
+      const compressed = await compressImage(file);
+      const blob = await upload(compressed.name, compressed, {
         access: "public",
         handleUploadUrl: "/api/upload",
       });
