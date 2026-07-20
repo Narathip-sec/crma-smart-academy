@@ -3,10 +3,14 @@
 // GET /api/calendar?category=holiday      → filter by CalendarCategory
 
 import { prisma } from "@/lib/db";
+import { getCurrentUser } from "@/lib/auth";
 import { CalendarCategory, Prisma } from "@prisma/client";
 import type { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
+  const user = await getCurrentUser();
+  if (!user) return Response.json({ error: "unauthenticated" }, { status: 401 });
+
   const { searchParams } = req.nextUrl;
   const yearParam = searchParams.get("year");
   const academicYearParam = searchParams.get("academicYear");

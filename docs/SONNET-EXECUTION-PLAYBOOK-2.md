@@ -63,7 +63,7 @@
 Apply ใน POST routes: report / lost-found / activity / todo — title ≤ 200, description ≤ 2000, `maxAttendees` 1–10000, วันที่ต้อง valid, `photoUrl`/`coverImageUrl` ต้องผ่าน `isAllowedBlobUrl` ไม่งั้น 400 (ข้อความ error สองภาษา)
 **Accept:** POST photoUrl=`https://evil.tld/x.gif` → 400; maxAttendees=-1 → 400; title 5000 ตัว → 400; ของถูกต้องผ่านปกติ
 
-### S4 — Auth ทุก route + ปิด data leak ใน detail ☐
+### S4 — Auth ทุก route + ปิด data leak ใน detail ☑ (done — Sonnet 5, 2026-07-20: auth เพิ่มใน activity GET/[id]/meta, lost-found/[id]/meta, report/meta, calendar, class, meals. activity/[id] → attendeeCount+myRsvp แทน attendees array, lost-found/[id] → claimCount+myClaim แทน claims array, client pages 2 จุดต่อ field ใหม่แล้ว. Verified live: response shape ไม่มี array userId/claimantId หลงเหลือ)
 กติกาเดียว: **ทุก route ใต้ `/api` ยกเว้น `/api/auth/line` ต้องมี `getCurrentUser()` → 401 ถ้าไม่มี**. เพิ่มใน: `activity` GET, `activity/[id]`, `activity/meta`, `lost-found/[id]`, `lost-found/meta`, `report/meta`, `calendar`, `class`, `meals`
 พร้อมกันปิด leak:
 - `activity/[id]`: ตัด `attendees` array (userId ทั้งหมด) ออกจาก response → ส่ง `attendeeCount` + `myRsvp: boolean` (server เช็คจาก user ปัจจุบัน) แทน; client (`activity/[id]/page.tsx`) ตั้ง initial `rsvpDone = myRsvp` (แก้บั๊กรีโหลดแล้วปุ่มเด้งกลับด้วย)

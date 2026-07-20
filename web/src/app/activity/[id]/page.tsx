@@ -26,8 +26,8 @@ type Event = {
   status: string;
   category: { nameTh: string } | null;
   imageUrl: string | null;
-  _count: { attendees: number };
-  attendees: { id: string; userId: string; status: string }[];
+  attendeeCount: number;
+  myRsvp: boolean;
 };
 
 const STATUS_LABEL: Record<string, { th: string; color: string }> = {
@@ -70,7 +70,7 @@ export default function ActivityDetailPage() {
     fetch(`/api/activity/${id}`)
       .then(r => r.json())
       .then((data: Event) => {
-        if (data && data.id) { setEvent(data); setLoadError(""); }
+        if (data && data.id) { setEvent(data); setRsvpDone(data.myRsvp); setLoadError(""); }
         else setLoadError("ไม่พบกิจกรรม");
       })
       .catch(() => setLoadError("โหลดข้อมูลไม่สำเร็จ"));
@@ -102,7 +102,7 @@ export default function ActivityDetailPage() {
   );
 
   const statusLbl = STATUS_LABEL[event.status] ?? { th: event.status, color: "var(--muted)" };
-  const full = event.maxAttendees !== null && event._count.attendees >= event.maxAttendees;
+  const full = event.maxAttendees !== null && event.attendeeCount >= event.maxAttendees;
   const canRsvp = event.status === "open" && !full && !rsvpDone;
 
   return (
@@ -136,7 +136,7 @@ export default function ActivityDetailPage() {
           </span>
           {event.maxAttendees && (
             <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: 999, background: "var(--tint)", color: full ? "var(--danger)" : "var(--brand)", font: "600 11px var(--font-sans)" }}>
-              👥 {event._count.attendees}/{event.maxAttendees} {full ? t({ th: "เต็ม", en: "Full" }) : t({ th: "ที่นั่ง", en: "seats" })}
+              👥 {event.attendeeCount}/{event.maxAttendees} {full ? t({ th: "เต็ม", en: "Full" }) : t({ th: "ที่นั่ง", en: "seats" })}
             </span>
           )}
         </div>

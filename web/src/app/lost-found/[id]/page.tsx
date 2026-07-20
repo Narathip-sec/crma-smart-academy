@@ -17,7 +17,8 @@ type LFItem = {
   foundAt: string | null; status: string; createdAt: string;
   category: { nameTh: string } | null;
   reporter: { displayName: string } | null;
-  claims: { id: string; claimantId: string; note: string | null; claimedAt: string }[];
+  claimCount: number;
+  myClaim: boolean;
   attachments: { asset: { url: string } | null }[];
 };
 
@@ -61,7 +62,7 @@ export default function LostFoundDetailPage() {
     fetch(`/api/lost-found/${id}`)
       .then(r => r.json())
       .then((data: LFItem) => {
-        if (data?.id) { setItem(data); setLoadError(""); }
+        if (data?.id) { setItem(data); setClaimed(data.myClaim); setLoadError(""); }
         else setLoadError("ไม่พบรายการ");
       })
       .catch(() => setLoadError("โหลดไม่สำเร็จ"));

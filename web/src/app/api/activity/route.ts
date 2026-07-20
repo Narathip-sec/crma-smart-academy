@@ -11,6 +11,9 @@ import { boundedString, boundedStringOptional, validDate, intInRange, isAllowedB
 import type { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
+  const user = await getCurrentUser();
+  if (!user) return Response.json({ error: "unauthenticated" }, { status: 401 });
+
   const { searchParams } = req.nextUrl;
   const categoryId = searchParams.get("categoryId");
   const status = (searchParams.get("status") as ActivityStatus) ?? undefined;

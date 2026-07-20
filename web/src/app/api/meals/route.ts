@@ -3,9 +3,13 @@
 // GET /api/meals?from=YYYY-MM-DD&to=YYYY-MM-DD → rows in date range [from, to)
 
 import { prisma } from "@/lib/db";
+import { getCurrentUser } from "@/lib/auth";
 import type { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
+  const user = await getCurrentUser();
+  if (!user) return Response.json({ error: "unauthenticated" }, { status: 401 });
+
   const { searchParams } = req.nextUrl;
   const monthParam = searchParams.get("month"); // "2026-05"
   const dateParam  = searchParams.get("date");   // "2026-05-01"
