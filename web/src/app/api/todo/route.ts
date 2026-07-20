@@ -7,6 +7,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { hasRole } from "@/lib/rbac";
 import { writeAuditLog, ipFrom } from "@/lib/audit";
 import { Role } from "@prisma/client";
+import { boundedString, boundedStringOptional, validDate } from "@/lib/validate";
 import type { NextRequest } from "next/server";
 
 export async function GET() {
@@ -50,8 +51,14 @@ export async function POST(req: NextRequest) {
     assigneeIds?: string[];
   };
 
-  if (!body.titleTh) {
-    return Response.json({ error: "titleTh required" }, { status: 400 });
+  if (!boundedString(body.titleTh, 200)) {
+    return Response.json({ error: "titleTh required (≤200 chars)" }, { status: 400 });
+  }
+  if (!boundedStringOptional(body.descriptionTh, 2000)) {
+    return Response.json({ error: "descriptionTh too long" }, { status: 400 });
+  }
+  if (body.dueAt !== undefined && !validDate(body.dueAt)) {
+    return Response.json({ error: "dueAt must be a valid date" }, { status: 400 });
   }
 
   const canAssignOthers = hasRole(user.role, Role.instructor);

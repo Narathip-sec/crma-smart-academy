@@ -7,6 +7,7 @@ import { writeAuditLog, ipFrom } from "@/lib/audit";
 import { requireCadet } from "@/lib/rbac";
 import { getCurrentUser } from "@/lib/auth";
 import { ActivityStatus, ModerationStatus } from "@prisma/client";
+import { boundedString, boundedStringOptional, validDate, intInRange, isAllowedBlobUrl } from "@/lib/validate";
 import type { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -66,8 +67,20 @@ export async function POST(req: NextRequest) {
     coverImageUrl?: string;
   };
 
-  if (!body.titleTh || !body.startAt) {
-    return Response.json({ error: "titleTh and startAt required" }, { status: 400 });
+  if (!boundedString(body.titleTh, 200) || !validDate(body.startAt)) {
+    return Response.json({ error: "titleTh (≤200) and a valid startAt required" }, { status: 400 });
+  }
+  if (!boundedStringOptional(body.descriptionTh, 2000) || !boundedStringOptional(body.location, 200)) {
+    return Response.json({ error: "descriptionTh/location too long" }, { status: 400 });
+  }
+  if (body.endAt !== undefined && !validDate(body.endAt)) {
+    return Response.json({ error: "endAt must be a valid date" }, { status: 400 });
+  }
+  if (body.maxAttendees !== undefined && !intInRange(body.maxAttendees, 1, 10000)) {
+    return Response.json({ error: "maxAttendees must be an integer between 1 and 10000" }, { status: 400 });
+  }
+  if (body.coverImageUrl !== undefined && !isAllowedBlobUrl(body.coverImageUrl)) {
+    return Response.json({ error: "coverImageUrl must be an uploaded blob URL" }, { status: 400 });
   }
 
   const event = await prisma.activityEvent.create({

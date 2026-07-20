@@ -56,7 +56,7 @@
 - เพิ่ม `writeAuditLog` ให้ todo create + complete + rsvp (`activity/[id]/rsvp`) — ตอนนี้ 3 จุดนี้ไม่ log
 **Accept:** cadet A complete task ของ B → 404; cadet ส่ง assigneeIds คนอื่น → ถูก override เป็นตัวเอง; audit rows เพิ่มจริง
 
-### S3 — Input validation + blob URL allowlist ☐
+### S3 — Input validation + blob URL allowlist ☑ (done — Sonnet 5, 2026-07-20: `src/lib/validate.ts` + applied to report/lost-found/activity/todo POST. Verified live: evil photoUrl → 400, maxAttendees=-1 → 400, 5000-char title → 400, valid submit → 201)
 สร้าง `src/lib/validate.ts` (ไม่มี dep ใหม่ — plain functions):
 - `isAllowedBlobUrl(url)`: https + hostname ลงท้าย `.public.blob.vercel-storage.com`
 - `boundedString(v, max)`, `validDate(v)`, `intInRange(v, min, max)`

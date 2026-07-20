@@ -6,6 +6,7 @@ import { writeAuditLog, ipFrom } from "@/lib/audit";
 import { requireCadet, hasRole } from "@/lib/rbac";
 import { getCurrentUser } from "@/lib/auth";
 import { Role } from "@prisma/client";
+import { boundedString, boundedStringOptional, isAllowedBlobUrl } from "@/lib/validate";
 import type { NextRequest } from "next/server";
 
 async function nextTicketNo(): Promise<string> {
@@ -54,8 +55,14 @@ export async function POST(req: NextRequest) {
     photoUrl?: string;
   };
 
-  if (!body.titleTh || !body.descriptionTh) {
-    return Response.json({ error: "titleTh and descriptionTh required" }, { status: 400 });
+  if (!boundedString(body.titleTh, 200) || !boundedString(body.descriptionTh, 2000)) {
+    return Response.json({ error: "titleTh (≤200) and descriptionTh (≤2000) required" }, { status: 400 });
+  }
+  if (!boundedStringOptional(body.locationNameTh, 200)) {
+    return Response.json({ error: "locationNameTh too long" }, { status: 400 });
+  }
+  if (body.photoUrl !== undefined && !isAllowedBlobUrl(body.photoUrl)) {
+    return Response.json({ error: "photoUrl must be an uploaded blob URL" }, { status: 400 });
   }
 
   let locationId: string | undefined;
