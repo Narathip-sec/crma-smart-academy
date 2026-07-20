@@ -50,7 +50,7 @@
 **แก้:** เงื่อนไข fallback เพิ่ม `process.env.NODE_ENV !== "production"`. Production ที่ LIFF ไม่ config = return null (401) เสมอ
 **Accept:** โค้ด production path ไม่มีทางถึง DEV_EMAIL lookup; lint+tsc เขียว
 
-### S2 — Todo IDOR + role gate ☐
+### S2 — Todo IDOR + role gate ☑ (done — Sonnet 5, 2026-07-20: complete checks TaskAssignment ownership → 404; POST forces assigneeIds=[self] unless instructor+; audit logs added to todo create/complete + activity rsvp/rsvp_cancel. Verified live: IDOR 404 confirmed, assignee-override confirmed, audit rows confirmed)
 - `src/app/api/todo/[id]/complete/route.ts`: เช็ค `prisma.taskAssignment.findUnique({ where: { taskId_userId: { taskId: id, userId: user.id } } })` ก่อน upsert — ไม่มี assignment → 404
 - `src/app/api/todo/route.ts` POST: บังคับ `assigneeIds = [user.id]` เว้นแต่ `hasRole(user.role, Role.instructor)` จึงใช้ body.assigneeIds ได้ (ปิดช่อง assign งานให้คนอื่นเป็น cadet; คง flow สร้าง todo ตัวเองไว้ — demo ใช้)
 - เพิ่ม `writeAuditLog` ให้ todo create + complete + rsvp (`activity/[id]/rsvp`) — ตอนนี้ 3 จุดนี้ไม่ log

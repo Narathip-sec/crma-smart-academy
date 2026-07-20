@@ -3,6 +3,7 @@
 
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
+import { writeAuditLog, ipFrom } from "@/lib/audit";
 import { ActivityStatus, ModerationStatus } from "@prisma/client";
 import type { NextRequest } from "next/server";
 
@@ -30,6 +31,13 @@ export async function POST(
     await prisma.activityAttendee.deleteMany({
       where: { activityId: id, userId: user.id },
     });
+    await writeAuditLog({
+      actorId: user.id,
+      action: "activity.rsvp_cancel",
+      entityType: "ActivityEvent",
+      entityId: id,
+      ip: ipFrom(req),
+    });
     return Response.json({ registered: false });
   }
 
@@ -44,6 +52,14 @@ export async function POST(
     where: { activityId_userId: { activityId: id, userId: user.id } },
     update: {},
     create: { activityId: id, userId: user.id },
+  });
+
+  await writeAuditLog({
+    actorId: user.id,
+    action: "activity.rsvp",
+    entityType: "ActivityEvent",
+    entityId: id,
+    ip: ipFrom(req),
   });
 
   return Response.json({ registered: true, attendee });

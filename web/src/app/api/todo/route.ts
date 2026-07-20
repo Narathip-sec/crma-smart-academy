@@ -1,8 +1,12 @@
 // GET  /api/todo           → tasks assigned to current user
-// POST /api/todo           → create task (instructor/command only — P3-6 RBAC tightens this)
+// POST /api/todo           → create task. Cadets may only create self-assigned
+//                            todos; assigning to other users requires instructor+.
 
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
+import { hasRole } from "@/lib/rbac";
+import { writeAuditLog, ipFrom } from "@/lib/audit";
+import { Role } from "@prisma/client";
 import type { NextRequest } from "next/server";
 
 export async function GET() {
@@ -50,7 +54,8 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: "titleTh required" }, { status: 400 });
   }
 
-  const assigneeIds = body.assigneeIds ?? [user.id];
+  const canAssignOthers = hasRole(user.role, Role.instructor);
+  const assigneeIds = canAssignOthers && body.assigneeIds ? body.assigneeIds : [user.id];
 
   const task = await prisma.task.create({
     data: {
@@ -62,6 +67,14 @@ export async function POST(req: NextRequest) {
         create: assigneeIds.map((uid) => ({ userId: uid })),
       },
     },
+  });
+
+  await writeAuditLog({
+    actorId: user.id,
+    action: "todo.create",
+    entityType: "Task",
+    entityId: task.id,
+    ip: ipFrom(req),
   });
 
   return Response.json(task, { status: 201 });
