@@ -45,7 +45,7 @@
 
 ## Phase S — Security (ทำก่อนทุกอย่าง, S1–S2 critical)
 
-### S1 — ปิด dev-auth bypass ใน production ☐
+### S1 — ปิด dev-auth bypass ใน production ☑ (done — Sonnet 5, 2026-07-20: `DEV_FALLBACK_ALLOWED = NODE_ENV !== "production"` เพิ่มเข้าเงื่อนไข fallback)
 `src/lib/auth.ts:22-24`: fallback `DEV_USER_EMAIL` ทำงานเมื่อ `!NEXT_PUBLIC_LIFF_ID` โดยไม่เช็ค NODE_ENV → prod ที่ลืมตั้ง env = ทุก request กลายเป็น dev cadet
 **แก้:** เงื่อนไข fallback เพิ่ม `process.env.NODE_ENV !== "production"`. Production ที่ LIFF ไม่ config = return null (401) เสมอ
 **Accept:** โค้ด production path ไม่มีทางถึง DEV_EMAIL lookup; lint+tsc เขียว
