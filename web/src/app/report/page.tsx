@@ -1,293 +1,156 @@
 "use client";
 
-import { useState, useEffect, useRef, lazy, Suspense } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/shell/app-bar";
 import { useTx } from "@/components/shell/bilingual-label";
-import { Button, FormField } from "@/components/ui";
-import { upload } from "@vercel/blob/client";
-import Image from "next/image";
-import type { PinLocation } from "@/components/map/CampusPinMap";
-import { compressImage } from "@/lib/compress-image";
-import { sortOtherLast } from "@/lib/sort-other-last";
+import { LoadingState, EmptyState, ErrorState, Img } from "@/components/ui";
 
-const CampusPinMap = lazy(() =>
-  import("@/components/map/CampusPinMap").then(m => ({ default: m.CampusPinMap }))
-);
+const THAI_MONTHS_SHORT = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+function fmtDate(iso: string): string {
+  const d = new Date(iso);
+  return `${d.getDate()} ${THAI_MONTHS_SHORT[d.getMonth()]} ${String(d.getFullYear() + 543).slice(-2)}`;
+}
 
-type Category = { id: string; nameTh: string; nameEn: string | null };
-type MetaResponse = { categories?: Category[] };
+type StatusEvent = { status: string; createdAt: string; note: string | null };
+type Ticket = {
+  id: string; ticketNo: string; titleTh: string; descriptionTh: string;
+  status: string; createdAt: string;
+  category: { nameTh: string } | null;
+  location: { nameTh: string } | null;
+  attachments: { asset: { url: string } | null }[];
+  statusEvents: StatusEvent[];
+};
 
-const inputStyle: React.CSSProperties = {
-  width: "100%", padding: "12px 16px", borderRadius: "var(--radius-control)",
-  border: "1px solid var(--line)", background: "var(--surface)",
-  font: "500 13px var(--font-sans)", color: "var(--ink)", outline: "none",
+const STATUS_CONFIG: Record<string, { th: string; color: string }> = {
+  open:        { th: "รับเรื่อง",      color: "var(--brand)" },
+  in_progress: { th: "กำลังดำเนินการ", color: "var(--warning)" },
+  resolved:    { th: "แก้ไขแล้ว",     color: "var(--success)" },
+  closed:      { th: "ปิด",            color: "var(--muted)" },
+  rejected:    { th: "ปฏิเสธ",        color: "var(--danger)" },
 };
 
 export default function ReportPage() {
   const t = useTx();
-  const router = useRouter();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [tickets, setTickets] = useState<Ticket[] | null>(null);
+  const [error, setError] = useState(false);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
-  const [cats, setCats]               = useState<Category[]>([]);
-  const [titleTh, setTitleTh]         = useState("");
-  const [descriptionTh, setDescriptionTh] = useState("");
-  const [pinLocation, setPinLocation] = useState<PinLocation | null>(null);
-  const [roomDetail, setRoomDetail]   = useState("");
-  const [categoryId, setCategoryId]   = useState("");
-  const [submitting, setSubmitting]   = useState(false);
-  const [error, setError]             = useState("");
-  const [showMap, setShowMap]         = useState(false);
-
-  const [photoPreview, setPhotoPreview]     = useState<string | null>(null);
-  const [photoUrl, setPhotoUrl]             = useState<string | null>(null);
-  const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const [uploadError, setUploadError]       = useState("");
-
-  useEffect(() => {
-    fetch("/api/report/meta").then(r => r.json()).then((d: MetaResponse) => {
-      if (d.categories) setCats(d.categories);
-    }).catch(() => {});
+  const load = useCallback(() => {
+    fetch("/api/report")
+      .then(r => r.json())
+      .then((data: Ticket[]) => {
+        if (!Array.isArray(data)) throw new Error("bad response");
+        setTickets(data);
+        setError(false);
+      })
+      .catch(() => setError(true));
   }, []);
 
-  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const local = URL.createObjectURL(file);
-    setPhotoPreview(local);
-    setPhotoUrl(null);
-    setUploadError("");
-    setUploadingPhoto(true);
-
-    try {
-      const compressed = await compressImage(file);
-      const blob = await upload(compressed.name, compressed, {
-        access: "public",
-        handleUploadUrl: "/api/upload",
-      });
-      setPhotoUrl(blob.url);
-    } catch {
-      setUploadError(t({ th: "อัปโหลดรูปไม่สำเร็จ", en: "Upload failed" }));
-      setPhotoPreview(null);
-    } finally {
-      setUploadingPhoto(false);
-      e.target.value = "";
-    }
-  }
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!titleTh.trim() || !descriptionTh.trim()) return;
-    setSubmitting(true); setError("");
-
-    const locationParts: string[] = [];
-    if (pinLocation) locationParts.push(`${pinLocation.lat.toFixed(6)},${pinLocation.lng.toFixed(6)}`);
-    if (roomDetail)  locationParts.push(roomDetail);
-    const locationNameTh = locationParts.length > 0 ? locationParts.join(" · ") : undefined;
-
-    const res = await fetch("/api/report", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        titleTh,
-        descriptionTh,
-        locationNameTh,
-        categoryId: categoryId || undefined,
-        photoUrl: photoUrl || undefined,
-      }),
-    });
-    setSubmitting(false);
-    if (res.ok) {
-      router.push("/report/tickets");
-    } else {
-      const body = await res.json().catch(() => ({}));
-      setError((body as { error?: string }).error ?? "แจ้งซ่อมไม่สำเร็จ");
-    }
-  }
+  useEffect(() => { load(); }, [load]);
 
   return (
     <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
       <AppBar th="แจ้งซ่อม / เหตุ" en="Report / Fix" back />
-
-      <div className="flex items-center justify-between px-4 py-3"
+      <div className="flex items-center px-4 py-2.5"
         style={{ background: "var(--surface)", borderBottom: "1px solid var(--line)" }}>
-        <div style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
-          {t({ th: "แจ้งปัญหาซ่อมแซมหรือเหตุการณ์ผิดปกติ", en: "Report maintenance or incidents" })}
+        <span style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
+          {tickets?.length ?? 0} {t({ th: "รายการ", en: "tickets" })}
+        </span>
+      </div>
+      <div className="flex-1 overflow-y-auto px-3 pb-6 pt-3">
+        {error ? (
+          <ErrorState onRetry={load} />
+        ) : tickets === null ? (
+          <LoadingState label={t({ th: "กำลังโหลด…", en: "Loading…" })} />
+        ) : tickets.length === 0 ? (
+          <EmptyState title={t({ th: "ยังไม่มีรายการแจ้งซ่อม", en: "No tickets yet" })} />
+        ) : (
+        <div className="flex flex-col gap-2">
+          {tickets.map(tk => {
+            const cfg = STATUS_CONFIG[tk.status] ?? { th: tk.status, color: "var(--muted)" };
+            const open = expanded === tk.id;
+            return (
+              <div key={tk.id} className="rounded-2xl overflow-hidden"
+                style={{ border: "1px solid var(--line)", background: "var(--surface)" }}>
+                <button type="button" className="flex w-full items-start gap-3 p-3.5 text-left active:opacity-70"
+                  onClick={() => setExpanded(open ? null : tk.id)}>
+                  <div style={{ width: 10, height: 10, borderRadius: 999, background: cfg.color, marginTop: 4, flexShrink: 0 }} />
+                  <div className="min-w-0 flex-1">
+                    <div style={{ font: "600 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.3 }}>{tk.titleTh}</div>
+                    <div className="mt-1 flex items-center gap-2">
+                      <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>#{tk.ticketNo}</span>
+                      <span style={{ display: "inline-block", padding: "1px 8px", borderRadius: 999, background: `color-mix(in srgb, ${cfg.color} 10%, transparent)`, color: cfg.color, font: "600 11px var(--font-sans)" }}>
+                        {cfg.th}
+                      </span>
+                      <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>{fmtDate(tk.createdAt)}</span>
+                    </div>
+                  </div>
+                  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="var(--line)" strokeWidth={2} strokeLinecap="round"
+                    style={{ transform: open ? "rotate(90deg)" : "none", flexShrink: 0 }}>
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
+                </button>
+                {open && (
+                  <div style={{ borderTop: "1px solid var(--line)", padding: "12px 16px" }} className="flex flex-col gap-3">
+                    {tk.attachments[0]?.asset?.url && (
+                      <Img src={tk.attachments[0].asset.url} alt={tk.titleTh} radius={12} ratio="4 / 3" />
+                    )}
+
+                    <div>
+                      <div style={{ font: "700 11px var(--font-sans)", color: "var(--muted)", marginBottom: 4 }}>
+                        {t({ th: "รายละเอียด", en: "Details" })}
+                      </div>
+                      <div style={{ font: "400 12px var(--font-sans)", color: "var(--ink)", lineHeight: 1.5 }}>{tk.descriptionTh}</div>
+                    </div>
+
+                    {tk.location && (
+                      <div>
+                        <div style={{ font: "700 11px var(--font-sans)", color: "var(--muted)", marginBottom: 4 }}>
+                          {t({ th: "สถานที่", en: "Location" })}
+                        </div>
+                        <div style={{ font: "400 12px var(--font-sans)", color: "var(--ink)" }}>📍 {tk.location.nameTh}</div>
+                      </div>
+                    )}
+
+                    {tk.statusEvents.length > 0 && (
+                      <div>
+                        <div style={{ font: "700 11px var(--font-sans)", color: "var(--muted)", marginBottom: 8 }}>
+                          {t({ th: "ประวัติสถานะ", en: "Status history" })}
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          {tk.statusEvents.map((ev, i) => {
+                            const eCfg = STATUS_CONFIG[ev.status] ?? { th: ev.status, color: "var(--muted)" };
+                            return (
+                              <div key={i} className="flex items-start gap-2.5">
+                                <div style={{ width: 6, height: 6, borderRadius: 999, background: eCfg.color, marginTop: 5, flexShrink: 0 }} />
+                                <div>
+                                  <span style={{ font: "600 11px var(--font-sans)", color: eCfg.color }}>{eCfg.th}</span>
+                                  <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>{fmtDate(ev.createdAt)}</span>
+                                  {ev.note && <div style={{ font: "400 11px var(--font-sans)", color: "var(--muted)", marginTop: 2 }}>{ev.note}</div>}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
-        <Link href="/report/tickets"
-          style={{ font: "600 13px var(--font-sans)", color: "var(--brand)", textDecoration: "none", whiteSpace: "nowrap", marginLeft: 8 }}>
-          {t({ th: "รายการของฉัน →", en: "My tickets →" })}
-        </Link>
+        )}
       </div>
 
-      {/* Hidden file input */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/jpeg,image/png,image/webp,image/heic"
-        className="hidden"
-        onChange={handleFileChange}
-      />
-
-      <form onSubmit={submit} className="flex-1 overflow-y-auto px-4 pb-8 pt-4">
-        <div className="flex flex-col gap-5">
-
-          <FormField label={t({ th: "หัวข้อ", en: "Title" })} required>
-            <input type="text" value={titleTh} onChange={e => setTitleTh(e.target.value)}
-              placeholder={t({ th: "เช่น ไฟฟ้าดับห้อง 301…", en: "e.g. Power outage room 301…" })}
-              style={inputStyle} required />
-          </FormField>
-
-          <FormField label={t({ th: "รายละเอียด", en: "Details" })} required>
-            <textarea value={descriptionTh} onChange={e => setDescriptionTh(e.target.value)}
-              rows={3} placeholder={t({ th: "อธิบายปัญหาเพิ่มเติม…", en: "Describe the issue…" })}
-              style={{ ...inputStyle, resize: "none" }} />
-          </FormField>
-
-          {/* Photo */}
-          <FormField
-            label={t({ th: "แนบรูปภาพ (ไม่บังคับ)", en: "Attach photo (optional)" })}
-            error={uploadError || undefined}
-          >
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploadingPhoto}
-              className="relative w-full overflow-hidden rounded-2xl active:opacity-70"
-              style={{
-                minHeight: 100,
-                background: photoPreview ? "transparent" : "var(--tint)",
-                border: photoPreview ? "none" : "1.5px dashed var(--brand)",
-                display: "flex", flexDirection: "column",
-                alignItems: "center", justifyContent: "center", gap: 6,
-              }}
-            >
-              {photoPreview ? (
-                <>
-                  <Image src={photoPreview} alt="attachment" fill className="object-cover" unoptimized />
-                  <div className="absolute inset-0 flex items-center justify-center"
-                    style={{ background: "rgba(0,0,0,.35)" }}>
-                    <span style={{ font: "600 13px var(--font-sans)", color: "#fff" }}>
-                      {uploadingPhoto
-                        ? t({ th: "กำลังอัปโหลด…", en: "Uploading…" })
-                        : photoUrl
-                        ? t({ th: "✓ อัปโหลดสำเร็จ · แตะเพื่อเปลี่ยน", en: "✓ Uploaded · tap to change" })
-                        : t({ th: "แตะเพื่อเปลี่ยนภาพ", en: "Tap to change" })}
-                    </span>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
-                    <circle cx="12" cy="13" r="4" />
-                  </svg>
-                  <span style={{ font: "600 13px var(--font-sans)", color: "var(--brand)" }}>
-                    {t({ th: "ถ่ายหรือเลือกรูปภาพ", en: "Take or choose photo" })}
-                  </span>
-                </>
-              )}
-            </button>
-          </FormField>
-
-          {/* Map pin */}
-          <div className="flex flex-col gap-1.5">
-            <div style={{ font: "600 11px var(--font-sans)", color: "var(--muted)" }}>
-              {t({ th: "ปักหมุดสถานที่ (ไม่บังคับ)", en: "Pin location (optional)" })}
-            </div>
-
-            {/* Toggle map open */}
-            {!showMap ? (
-              <button
-                type="button"
-                onClick={() => setShowMap(true)}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl py-3 active:opacity-70"
-                style={{ background: "var(--tint)", border: "1.5px dashed var(--brand)" }}
-              >
-                <span style={{ fontSize: 18 }}>🗺️</span>
-                <span style={{ font: "600 13px var(--font-sans)", color: "var(--brand)" }}>
-                  {pinLocation
-                    ? t({ th: "แก้ไขหมุด", en: "Edit pin" })
-                    : t({ th: "เปิดแผนที่เพื่อปักหมุด", en: "Open map to pin" })}
-                </span>
-              </button>
-            ) : (
-              <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--line)" }}>
-                <Suspense fallback={
-                  <div className="flex h-60 items-center justify-center" style={{ background: "var(--surface)" }}>
-                    <span style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>
-                      {t({ th: "กำลังโหลดแผนที่…", en: "Loading map…" })}
-                    </span>
-                  </div>
-                }>
-                  <CampusPinMap
-                    value={pinLocation}
-                    onChange={loc => setPinLocation(loc)}
-                    height={260}
-                  />
-                </Suspense>
-                <div className="px-3 py-2" style={{ background: "var(--surface)", borderTop: "1px solid var(--line)" }}>
-                  <p style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginBottom: 6 }}>
-                    {t({ th: "แตะบนแผนที่เพื่อปักหมุด · ลากหมุดเพื่อย้าย", en: "Tap map to place pin · drag to move" })}
-                  </p>
-                  {pinLocation && (
-                    <div className="flex items-center justify-between">
-                      <span style={{ font: "600 11px var(--font-sans)", color: "var(--brand)" }}>
-                        📍 {pinLocation.lat.toFixed(5)}, {pinLocation.lng.toFixed(5)}
-                      </span>
-                      <button type="button" onClick={() => setPinLocation(null)}
-                        className="active:opacity-70"
-                        style={{ font: "600 11px var(--font-sans)", color: "var(--danger)", background: "none", border: "none", cursor: "pointer" }}>
-                        {t({ th: "ลบหมุด", en: "Remove" })}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {pinLocation && !showMap && (
-              <div className="mt-2 flex items-center gap-2 rounded-xl px-3 py-2" style={{ background: "var(--tint)" }}>
-                <span style={{ fontSize: 14 }}>📍</span>
-                <span style={{ font: "600 11px var(--font-sans)", color: "var(--brand)", flex: 1 }}>
-                  {pinLocation.lat.toFixed(5)}, {pinLocation.lng.toFixed(5)}
-                </span>
-                <button type="button" onClick={() => setPinLocation(null)}
-                  className="active:opacity-70"
-                  style={{ font: "600 11px var(--font-sans)", color: "var(--danger)", background: "none", border: "none", cursor: "pointer" }}>
-                  ✕
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Room detail */}
-          <FormField label={t({ th: "ห้อง / จุดเฉพาะ", en: "Room / Specific spot" })}>
-            <input type="text" value={roomDetail} onChange={e => setRoomDetail(e.target.value)}
-              placeholder={t({ th: "เช่น ชั้น 2 ห้อง 204, บันไดทางขวา…", en: "e.g. Floor 2 Rm 204, right stairway…" })}
-              style={inputStyle} />
-          </FormField>
-
-          {cats.length > 0 && (
-            <FormField label={t({ th: "ประเภทปัญหา", en: "Category" })}>
-              <select value={categoryId} onChange={e => setCategoryId(e.target.value)} style={inputStyle}>
-                <option value="">{t({ th: "— เลือกประเภท —", en: "— Select category —" })}</option>
-                {sortOtherLast(cats).map(c => <option key={c.id} value={c.id}>{c.nameTh}</option>)}
-              </select>
-            </FormField>
-          )}
-
-          {error && (
-            <div style={{ font: "500 13px var(--font-sans)", color: "var(--danger)" }}>{error}</div>
-          )}
-
-          <Button type="submit" size="lg" full disabled={submitting || uploadingPhoto || !titleTh.trim() || !descriptionTh.trim()}>
-            {submitting ? t({ th: "กำลังส่ง…", en: "Submitting…" }) : t({ th: "แจ้งซ่อม / เหตุ", en: "Submit Report" })}
-          </Button>
-        </div>
-      </form>
+      <Link href="/report/new"
+        className="fixed bottom-20 right-5 flex h-14 w-14 items-center justify-center rounded-full shadow-lg active:opacity-70"
+        style={{ background: "var(--brand)", color: "#fff", zIndex: 50 }} aria-label="New report">
+        <svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </Link>
     </div>
   );
 }

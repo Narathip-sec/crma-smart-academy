@@ -137,7 +137,7 @@ Rewire (คงหน้าตาเดิมเป๊ะ): `app/announcements/pa
 - สร้าง helper `sortOtherLast(items)` (เรียงให้ nameTh "อื่น ๆ" ท้ายสุด) ใช้ dropdown ประเภททั้ง report + lost-found + activity form
 **Accept:** submit โดยไม่กรอกรายละเอียดไม่ได้ตั้งแต่ client; ไม่มี dropdown ทีม; อื่น ๆ อยู่ท้ายทุกฟอร์ม
 
-### U3 — /report สลับเป็น list-first ☐
+### U3 — /report สลับเป็น list-first ☑ (done — Sonnet 5, 2026-07-21: report/tickets content moved to report/page.tsx (list, FAB→/report/new), old form moved to report/new/page.tsx, /report/tickets now redirects to /report, lost-found "+" button also converted to matching FAB, CLAUDE.md route list updated. Verified live: FAB→/report/new, submit→201→redirect→list shows new ticket, /report/tickets redirect confirmed. lint+tsc+build clean.)
 - ย้ายเนื้อหา `report/tickets/page.tsx` → `report/page.tsx` (list = default), ฟอร์มเดิม → `report/new/page.tsx`
 - ปุ่มแจ้งใหม่ = FAB style เดียวกับ activity; แก้ lost-found ให้ใช้ FAB ด้วย (consistency)
 - `/report/tickets` → redirect ไป `/report` (กัน deep link เก่า/rich menu script)

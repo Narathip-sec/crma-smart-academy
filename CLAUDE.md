@@ -56,8 +56,8 @@ Active routes:
 - `/profile`
 - `/calendar`
 - `/meals`
-- `/report`
-- `/report/tickets`
+- `/report` (list-first; `/report/tickets` now redirects here)
+- `/report/new`
 - `/lost-found`
 - `/lost-found/[id]`
 - `/lost-found/new`

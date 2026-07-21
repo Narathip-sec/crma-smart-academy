@@ -69,22 +69,13 @@ export default function LostFoundPage() {
       <AppBar th="ของหาย-ของพบ" en="Lost & Found" back />
       <div className="flex items-center gap-2 px-3 py-2.5"
         style={{ background: "var(--surface)", borderBottom: "1px solid var(--line)" }}>
-        <div className="flex-1">
-          <ChipRow>
-            {filters.map(f => (
-              <Chip key={f.key} active={filter === f.key} onClick={() => setFilter(f.key)}>
-                {t({ th: f.labelTh, en: f.labelEn })}
-              </Chip>
-            ))}
-          </ChipRow>
-        </div>
-        <Link href="/lost-found/new"
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full active:opacity-70"
-          style={{ background: "var(--brand)" }} aria-label="Report lost/found">
-          <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.5} strokeLinecap="round">
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-        </Link>
+        <ChipRow>
+          {filters.map(f => (
+            <Chip key={f.key} active={filter === f.key} onClick={() => setFilter(f.key)}>
+              {t({ th: f.labelTh, en: f.labelEn })}
+            </Chip>
+          ))}
+        </ChipRow>
       </div>
       <div className="flex-1 overflow-y-auto px-3 pb-6 pt-3">
         {error ? (
@@ -136,6 +127,14 @@ export default function LostFoundPage() {
         </div>
         )}
       </div>
+
+      <Link href="/lost-found/new"
+        className="fixed bottom-20 right-5 flex h-14 w-14 items-center justify-center rounded-full shadow-lg active:opacity-70"
+        style={{ background: "var(--brand)", color: "#fff", zIndex: 50 }} aria-label="Report lost/found">
+        <svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </Link>
     </div>
   );
 }
