@@ -78,13 +78,18 @@ export default function ActivityDetailPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  async function rsvp() {
+  async function postRsvp(action: "register" | "cancel") {
     setRsvpLoading(true);
-    const res = await fetch(`/api/activity/${id}/rsvp`, { method: "POST" });
-    if (res.ok) setRsvpDone(true);
+    setError("");
+    const res = await fetch(`/api/activity/${id}/rsvp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action }),
+    });
+    if (res.ok) load();
     else {
       const body = await res.json().catch(() => ({}));
-      setError((body as { error?: string }).error ?? "RSVP ไม่สำเร็จ");
+      setError((body as { error?: string }).error ?? (action === "cancel" ? "ยกเลิกไม่สำเร็จ" : "RSVP ไม่สำเร็จ"));
     }
     setRsvpLoading(false);
   }
@@ -157,11 +162,20 @@ export default function ActivityDetailPage() {
         {error && <div style={{ font: "500 13px var(--font-sans)", color: "var(--danger)", textAlign: "center" }}>{error}</div>}
 
         {rsvpDone ? (
-          <div className="rounded-2xl py-4 text-center" style={{ background: "var(--tint)", font: "600 15px var(--font-sans)", color: "var(--brand)" }}>
-            ✓ {t({ th: "ลงทะเบียนแล้ว", en: "Registered" })}
+          <div className="flex flex-col gap-2">
+            <div className="rounded-2xl py-4 text-center" style={{ background: "var(--tint)", font: "600 15px var(--font-sans)", color: "var(--brand)" }}>
+              ✓ {t({ th: "ลงทะเบียนแล้ว", en: "Registered" })}
+            </div>
+            <Button onClick={() => postRsvp("cancel")} disabled={rsvpLoading}
+              size="lg" full
+              style={{ background: "transparent", color: "var(--danger)", border: "1px solid var(--danger)" }}>
+              {rsvpLoading
+                ? t({ th: "กำลังยกเลิก…", en: "Cancelling…" })
+                : t({ th: "ยกเลิกลงทะเบียน", en: "Cancel registration" })}
+            </Button>
           </div>
         ) : (
-          <Button onClick={canRsvp ? rsvp : undefined} disabled={!canRsvp || rsvpLoading}
+          <Button onClick={canRsvp ? () => postRsvp("register") : undefined} disabled={!canRsvp || rsvpLoading}
             size="lg" full
             style={!canRsvp ? { background: "var(--line)", color: "var(--muted)", border: "1px solid var(--line)" } : undefined}>
             {rsvpLoading

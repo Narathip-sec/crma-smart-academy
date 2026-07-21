@@ -149,7 +149,7 @@ Rewire (คงหน้าตาเดิมเป๊ะ): `app/announcements/pa
 - หน้าใหม่ `src/app/settings/pdpa/page.tsx`: นโยบายย่อสองภาษา static (ข้อมูลที่เก็บ: LINE profile, ชื่อ-รหัส-สังกัด, รายการที่ผู้ใช้สร้าง; วัตถุประสงค์; สิทธิ์ผู้ใช้; ช่องทางติดต่อ) — AppBar back, token styling; แถว PDPA → href จริง
 **Accept:** settings แสดงสถานะ LINE ตรงจริง (dev = ยังไม่เชื่อม); กด PDPA เข้าเนื้อหาได้
 
-### U5 — Activity: ยกเลิกลงทะเบียน ☐ (หลัง S4 — ใช้ myRsvp)
+### U5 — Activity: ยกเลิกลงทะเบียน ☑ (done — Sonnet 5, 2026-07-21: activity/[id]/page.tsx — rsvp()→postRsvp(action) shared for register/cancel, sends JSON body {action}, re-fetches event on success (attendeeCount+myRsvp refresh). "ยกเลิกลงทะเบียน" ghost/danger-outline button under the "✓ ลงทะเบียนแล้ว" block, disabled while rsvpLoading. Verified live: register→1/500+cancel button shown, cancel→0/500+register button back, register again→1/500 — full loop confirmed via real DB. lint+tsc clean.)
 `activity/[id]/page.tsx`: หลังลงทะเบียน แสดง "✓ ลงทะเบียนแล้ว" + ปุ่มรอง "ยกเลิกลงทะเบียน" (ghost/muted, ยิง `action: "cancel"` — API รองรับแล้ว) → สำเร็จแล้ว refresh สถานะ + attendeeCount
 **Accept:** ลงทะเบียน → ยกเลิก → ลงใหม่ ครบ loop; จำนวนคนอัปเดต; double-tap มี disabled guard
 
