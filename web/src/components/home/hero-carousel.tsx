@@ -1,18 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTx } from "@/components/shell/bilingual-label";
-import { FEATURED, type Announcement } from "@/lib/data/announcements";
+import { tagColor, isRecent, formatDateTh } from "@/lib/announcement-ui";
+
+type Announcement = {
+  id: string;
+  titleTh: string;
+  titleEn: string | null;
+  tag: string | null;
+  pinned: boolean;
+  publishAt: string;
+};
 
 function AnnouncementCard({ item }: { item: Announcement }) {
   const t = useTx();
+  const color = tagColor(item.tag);
+  const showNew = !item.pinned && isRecent(item.publishAt);
   return (
     <Link
-      href={`/announcements`}
+      href={`/announcements/${item.id}`}
       className="flex flex-col justify-between rounded-2xl p-3.5 active:scale-[0.98]"
       style={{
-        background: item.accentColor,
+        background: color,
         minHeight: 120,
         flex: "0 0 64%",
         textDecoration: "none",
@@ -31,28 +42,30 @@ function AnnouncementCard({ item }: { item: Announcement }) {
       />
       {/* Priority + tag badges */}
       <div className="flex items-center gap-1.5">
-        {item.priority === "important" && (
+        {item.pinned && (
           <span
             className="rounded px-1.5 py-0.5"
-            style={{ background: "#fff", color: item.accentColor, font: "700 11px var(--font-sans)", letterSpacing: ".06em" }}
+            style={{ background: "#fff", color, font: "700 11px var(--font-sans)", letterSpacing: ".06em" }}
           >
             IMPORTANT
           </span>
         )}
-        {item.priority === "new" && (
+        {showNew && (
           <span
             className="rounded px-1.5 py-0.5"
-            style={{ background: "#fff", color: item.accentColor, font: "700 11px var(--font-sans)", letterSpacing: ".06em" }}
+            style={{ background: "#fff", color, font: "700 11px var(--font-sans)", letterSpacing: ".06em" }}
           >
             NEW
           </span>
         )}
-        <span
-          className="rounded-full px-2 py-0.5"
-          style={{ background: "rgba(255,255,255,.2)", font: "600 11px var(--font-sans)", color: "#fff" }}
-        >
-          ● {item.tag}
-        </span>
+        {item.tag && (
+          <span
+            className="rounded-full px-2 py-0.5"
+            style={{ background: "rgba(255,255,255,.2)", font: "600 11px var(--font-sans)", color: "#fff" }}
+          >
+            ● {item.tag}
+          </span>
+        )}
       </div>
       {/* Title + date */}
       <div>
@@ -62,10 +75,10 @@ function AnnouncementCard({ item }: { item: Announcement }) {
             display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as const, overflow: "hidden",
           }}
         >
-          {t({ th: item.titleTh, en: item.titleEn })}
+          {t({ th: item.titleTh, en: item.titleEn ?? item.titleTh })}
         </div>
         <div style={{ font: "500 11px var(--font-sans)", color: "rgba(255,255,255,.7)", marginTop: 4 }}>
-          📅 {item.dateTh}
+          📅 {formatDateTh(item.publishAt)}
         </div>
       </div>
     </Link>
@@ -75,6 +88,16 @@ function AnnouncementCard({ item }: { item: Announcement }) {
 export function HeroCarousel() {
   const t = useTx();
   const [active, setActive] = useState(0);
+  const [featured, setFeatured] = useState<Announcement[]>([]);
+
+  useEffect(() => {
+    fetch("/api/announcements")
+      .then(r => r.json())
+      .then((data: { featured?: Announcement[] }) => setFeatured(data.featured ?? []))
+      .catch(() => {});
+  }, []);
+
+  if (featured.length === 0) return null;
 
   return (
     <section className="pt-3">
@@ -95,10 +118,10 @@ export function HeroCarousel() {
         onScroll={(e) => {
           const el = e.currentTarget;
           const idx = Math.round(el.scrollLeft / (el.offsetWidth * 0.66));
-          setActive(Math.min(idx, FEATURED.length - 1));
+          setActive(Math.min(idx, featured.length - 1));
         }}
       >
-        {FEATURED.map((item) => (
+        {featured.map((item) => (
           <div key={item.id} style={{ scrollSnapAlign: "start", flexShrink: 0, width: "64%" }}>
             <AnnouncementCard item={item} />
           </div>
@@ -109,7 +132,7 @@ export function HeroCarousel() {
 
       {/* Dot indicator */}
       <div className="mt-2 flex justify-center gap-1">
-        {FEATURED.map((_, i) => (
+        {featured.map((_, i) => (
           <div
             key={i}
             style={{

@@ -1,8 +1,22 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTx } from "@/components/shell/bilingual-label";
-import { FEATURED, NEWS, TAG_COLOR } from "@/lib/data/announcements";
+import { LoadingState } from "@/components/ui";
+import { tagColor, formatDateTh, timeAgo } from "@/lib/announcement-ui";
+
+type Detail = {
+  id: string;
+  kind: "announcement" | "news";
+  titleTh: string;
+  titleEn: string | null;
+  bodyTh: string;
+  bodyEn: string | null;
+  tag: string | null;
+  pinned?: boolean;
+  publishAt: string;
+};
 
 const TAG_ICON: Record<string, string> = {
   "สอบ":     "📋",
@@ -18,32 +32,36 @@ export default function AnnouncementDetailPage() {
   const t = useTx();
   const id = params.id as string;
 
-  const isFeatured = id.startsWith("f");
-  const numId = Number(id.slice(1));
+  const [item, setItem] = useState<Detail | null>(null);
+  const [notFound, setNotFound] = useState(false);
 
-  const item = isFeatured
-    ? FEATURED.find(x => x.id === numId)
-    : NEWS.find(x => x.id === numId);
+  const load = useCallback(() => {
+    fetch(`/api/announcements/${id}`)
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then((data: Detail) => { setItem(data); setNotFound(false); })
+      .catch(() => setNotFound(true));
+  }, [id]);
 
-  if (!item) {
-    return (
-      <div className="flex flex-1 items-center justify-center" style={{ background: "var(--bg)" }}>
-        <div style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>ไม่พบประกาศ</div>
-      </div>
-    );
-  }
+  useEffect(() => { load(); }, [load]);
 
-  const tag = isFeatured
-    ? (item as typeof FEATURED[0]).tag
-    : (item as typeof NEWS[0]).tags[0];
-  const icon = TAG_ICON[tag] ?? "📢";
-  const accentColor = item.accentColor;
+  if (notFound) return (
+    <div className="flex flex-1 items-center justify-center" style={{ background: "var(--bg)" }}>
+      <div style={{ font: "500 13px var(--font-sans)", color: "var(--muted)" }}>ไม่พบประกาศ</div>
+    </div>
+  );
 
-  const bodyTh = item.bodyTh;
-  const bodyEn = item.bodyEn;
+  if (!item) return (
+    <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
+      <LoadingState label={t({ th: "กำลังโหลด…", en: "Loading…" })} />
+    </div>
+  );
+
+  const isFeatured = item.kind === "announcement";
+  const icon = TAG_ICON[item.tag ?? ""] ?? "📢";
+  const accentColor = tagColor(item.tag);
   const dateLine = isFeatured
-    ? `📅 ${(item as typeof FEATURED[0]).dateTh}`
-    : `⏱ ${t((item as typeof NEWS[0]).timeAgo)}`;
+    ? `📅 ${formatDateTh(item.publishAt)}`
+    : `⏱ ${t(timeAgo(item.publishAt))}`;
 
   return (
     <div className="flex flex-1 flex-col overflow-y-auto" style={{ background: "var(--bg)" }}>
@@ -81,23 +99,17 @@ export default function AnnouncementDetailPage() {
       <div className="flex flex-col gap-4 px-4 pb-10 pt-5">
 
         {/* Tags */}
-        <div className="flex flex-wrap gap-1.5">
-          {isFeatured ? (
+        {item.tag && (
+          <div className="flex flex-wrap gap-1.5">
             <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: 999, background: `color-mix(in srgb, ${accentColor} 10%, transparent)`, color: accentColor, font: "600 11px var(--font-sans)" }}>
-              {(item as typeof FEATURED[0]).tag}
+              {item.tag}
             </span>
-          ) : (
-            (item as typeof NEWS[0]).tags.map(tg => (
-              <span key={tg} style={{ display: "inline-block", padding: "3px 10px", borderRadius: 999, background: `color-mix(in srgb, ${TAG_COLOR[tg] ?? accentColor} 10%, transparent)`, color: TAG_COLOR[tg] ?? accentColor, font: "600 11px var(--font-sans)" }}>
-                {tg}
-              </span>
-            ))
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Title */}
         <div style={{ font: "700 20px var(--font-sans)", color: "var(--ink)", lineHeight: 1.3 }}>
-          {t({ th: item.titleTh, en: item.titleEn })}
+          {t({ th: item.titleTh, en: item.titleEn ?? item.titleTh })}
         </div>
 
         {/* Date */}
@@ -109,7 +121,7 @@ export default function AnnouncementDetailPage() {
         {/* Body */}
         <div className="rounded-2xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--line)" }}>
           <div style={{ font: "400 13px var(--font-sans)", color: "var(--ink)", lineHeight: 1.75, whiteSpace: "pre-line" }}>
-            {t({ th: bodyTh, en: bodyEn })}
+            {t({ th: item.bodyTh, en: item.bodyEn ?? item.bodyTh })}
           </div>
         </div>
 

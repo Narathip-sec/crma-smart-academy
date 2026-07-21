@@ -1,29 +1,33 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTx } from "@/components/shell/bilingual-label";
 import { ListItem } from "@/components/ui";
-import { NEWS, TAG_COLOR, type NewsItem } from "@/lib/data/announcements";
+import { tagColor, isRecent, timeAgo } from "@/lib/announcement-ui";
 
-function PriorityBadge({ priority }: { priority: NewsItem["priority"] }) {
-  if (priority === "important") return (
-    <span style={{ display: "inline-block", padding: "1px 6px", borderRadius: 4, background: "var(--danger)", color: "#fff", font: "700 11px var(--font-sans)", letterSpacing: ".06em" }}>
-      IMPORTANT
-    </span>
-  );
-  if (priority === "new") return (
+type NewsItem = {
+  id: string;
+  titleTh: string;
+  titleEn: string | null;
+  tag: string | null;
+  publishAt: string;
+};
+
+function NewNewsBadge() {
+  return (
     <span style={{ display: "inline-block", padding: "1px 6px", borderRadius: 4, background: "var(--brand)", color: "#fff", font: "700 11px var(--font-sans)", letterSpacing: ".06em" }}>
       NEW
     </span>
   );
-  return null;
 }
 
 function NewsCard({ item }: { item: NewsItem }) {
   const t = useTx();
+  const color = tagColor(item.tag);
   return (
     <ListItem
-      href={`/announcements/n${item.id}`}
+      href={`/announcements/${item.id}`}
       style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--radius-card)", padding: "14px 16px" }}
       icon={
         <svg width={22} height={22} viewBox="0 0 24 24" fill="none"
@@ -31,38 +35,46 @@ function NewsCard({ item }: { item: NewsItem }) {
           <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
         </svg>
       }
-      iconBg={item.accentColor}
+      iconBg={color}
       title={
         <>
           <div className="mb-1 flex flex-wrap items-center gap-1.5">
-            <PriorityBadge priority={item.priority} />
-            {item.tags.map((tag) => (
+            {isRecent(item.publishAt) && <NewNewsBadge />}
+            {item.tag && (
               <span
-                key={tag}
                 style={{
                   display: "inline-flex", alignItems: "center", gap: 3,
                   padding: "1px 7px", borderRadius: 999,
-                  background: `color-mix(in srgb, ${TAG_COLOR[tag]} 13%, transparent)`,
-                  color: TAG_COLOR[tag],
+                  background: `color-mix(in srgb, ${color} 13%, transparent)`,
+                  color,
                   font: "600 11px var(--font-sans)",
                 }}
               >
-                ● {tag}
+                ● {item.tag}
               </span>
-            ))}
+            )}
           </div>
           <div style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as const, overflow: "hidden" }}>
-            {t({ th: item.titleTh, en: item.titleEn })}
+            {t({ th: item.titleTh, en: item.titleEn ?? item.titleTh })}
           </div>
         </>
       }
-      subtitle={`⏱ ${t({ th: item.timeAgo.th, en: item.timeAgo.en })}`}
+      subtitle={`⏱ ${t(timeAgo(item.publishAt))}`}
     />
   );
 }
 
 export function NewsFeed() {
   const t = useTx();
+  const [news, setNews] = useState<NewsItem[]>([]);
+
+  useEffect(() => {
+    fetch("/api/announcements")
+      .then(r => r.json())
+      .then((data: { news?: NewsItem[] }) => setNews(data.news ?? []))
+      .catch(() => {});
+  }, []);
+
   return (
     <section className="px-3 pb-4 pt-4">
       <div className="mb-3 flex items-center justify-between">
@@ -70,12 +82,12 @@ export function NewsFeed() {
           {t({ th: "ข่าวสารและประกาศ", en: "News & Announcements" })}
           <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>News</span>
         </div>
-        <Link href="/notifications" style={{ font: "600 11px var(--font-sans)", color: "var(--brand)" }}>
+        <Link href="/announcements" style={{ font: "600 11px var(--font-sans)", color: "var(--brand)" }}>
           {t({ th: "ดูทั้งหมด", en: "See all" })}
         </Link>
       </div>
       <div className="flex flex-col gap-2">
-        {NEWS.map((item) => (
+        {news.map((item) => (
           <NewsCard key={item.id} item={item} />
         ))}
       </div>

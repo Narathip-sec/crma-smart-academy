@@ -113,7 +113,7 @@ Apply ใน POST routes: report / lost-found / activity / todo — title ≤ 20
 - **API ใหม่** `src/app/api/announcements/route.ts`: GET → `{ featured, news }` (featured = pinned + ยังไม่ expire เรียง publishAt desc; news = NewsItem เรียง publishAt desc) + auth ตามกติกา S4. `src/app/api/announcements/[id]/route.ts`: GET รายตัว — id format `a_<cuid>` / `n_<cuid>` แยก model (ใช้ format เดียวกันทั้ง list links + detail)
 **Accept:** migration ผ่าน แถวเดิมไม่พัง; `/api/announcements` คืนข้อมูล seed; lint+tsc เขียว
 
-### W2b — Announcements: rewire UI 4 จุด ☐ (หลัง W2a)
+### W2b — Announcements: rewire UI 4 จุด ☑ (done — Sonnet 5, 2026-07-21: new src/lib/announcement-ui.ts (tagColor/isRecent/timeAgo/formatDateTh), 4 files rewired (hero-carousel, news-feed, announcements list+detail). Priority derived: pinned→IMPORTANT (Announcement only, NewsItem has no pinned field so news only ever shows NEW/none), publishAt≤3d→NEW. Detail routing simplified — id already carries a_/n_ prefix end-to-end, no more manual f/n letter scheme. Bonus fix: news-feed "ดูทั้งหมด" linked to /notifications instead of /announcements. lib/data/announcements.ts deleted. Verified live: home carousel+feed, list page, and detail page all render real DB content correctly)
 Rewire (คงหน้าตาเดิมเป๊ะ): `app/announcements/page.tsx`, `app/announcements/[id]/page.tsx`, `components/home/hero-carousel.tsx`, `components/home/news-feed.tsx`
 - util ใหม่ `src/lib/announcement-ui.ts`: `TAG_COLOR` map (ย้ายจาก mock, fallback `--cat-notice`), `timeAgo(publishAt)` สองภาษา (นาที/ชม./วัน), `formatDateTh(publishAt)` (พ.ศ.)
 - `priority` derive: `pinned` → IMPORTANT badge; `publishAt` ≤ 3 วัน → NEW
