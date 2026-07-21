@@ -16,6 +16,7 @@
     "import:meals": "tsx scripts/import-meals.ts",
     "import:all": "npm run import:class && npm run import:calendar && npm run import:meals",
     "db:seed": "tsx prisma/seed.ts",
+    "demo:extend": "tsx scripts/extend-demo-data.ts",
     "rich-menu:image": "tsx scripts/generate-rich-menu-image.tsx",
     "rich-menu:setup": "tsx scripts/setup-rich-menu.ts"
   },

@@ -23,6 +23,10 @@ export async function GET() {
     return Response.json({ error: "user not found" }, { status: 404 });
   }
 
+  const unreadCount = await prisma.notification.count({
+    where: { userId: user.id, readAt: null },
+  });
+
   return Response.json({
     id: user.id,
     email: user.email,
@@ -41,5 +45,6 @@ export async function GET() {
         }
       : null,
     lineLinked: !!user.lineAccount,
+    unreadCount,
   });
 }

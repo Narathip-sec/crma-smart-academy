@@ -163,7 +163,7 @@ Rewire (คงหน้าตาเดิมเป๊ะ): `app/announcements/pa
 
 ## Phase D — Demo data + final sweep
 
-### D1 — Script clone ข้อมูลจริง → ส.ค. + notifications จริง ☐ (หลัง W2, ทำท้ายๆ)
+### D1 — Script clone ข้อมูลจริง → ส.ค. + notifications จริง ☑ (done — Sonnet 5, 2026-07-21: scripts/extend-demo-data.ts (npm run demo:extend), idempotent upserts — ClassPeriod week 06-22→26 cloned to 08-03 and 08-10 (17+17 rows), MealItem May cloned to August same day-of-month (93 rows), 8 AcademicCalendarEvent rows for 08-01→14 across academic/exam/military/activity/deadline/holiday, 3 Notification+NotificationDelivery(in_app) per user templated (class/activity/report deepLinks). unreadCount added to /api/me, wired into page.tsx TopBar badge (was hardcoded 0 from F1). New POST /api/notifications/[id]/read (ownership-checked) + notifications/page.tsx rows extracted to client component components/notifications/notification-row.tsx — click marks read + navigates to deepLink. Verified live: bell badge showed 3, ran demo:extend twice (2nd run created 0 new notifications, same clone counts — idempotent confirmed), clicked a notification → POST .../read 200 → navigated to /class deepLink → badge dropped to 2 via /api/me, /api/calendar?academicYear=2569&category=holiday returned the new 2026-08-12 row. lint+tsc+build clean.)
 `web/scripts/extend-demo-data.ts` (+ npm script `demo:extend`), idempotent (upsert โดย unique keys เดิม):
 - **ClassPeriod**: clone สัปดาห์ 2026-06-22→26 (17 แถว) ไปสัปดาห์ 08-03 และ 08-10 (คง dayTh/periodLabel/course/room, เปลี่ยน date)
 - **MealItem**: clone เมนู พ.ค. → ส.ค. วันเดียวกัน (@@unique[date, mealType] กัน dupe)

@@ -11,10 +11,12 @@ import { NewsFeed } from "@/components/home/news-feed";
 type MeResponse = {
   displayName?: string;
   cadetProfile?: { thaiName?: string } | null;
+  unreadCount?: number;
 };
 
 export default function HomePage() {
   const [name, setName] = useState("นนร.");
+  const [unread, setUnread] = useState(0);
 
   useEffect(() => {
     fetch("/api/me")
@@ -25,13 +27,14 @@ export default function HomePage() {
           ? `นนร.${d.cadetProfile.thaiName}`
           : d.displayName ?? "นนร.";
         setName(n);
+        setUnread(d.unreadCount ?? 0);
       })
       .catch(() => {});
   }, []);
 
   return (
     <>
-      <TopBar name={name} unread={0} />
+      <TopBar name={name} unread={unread} />
       <div className="flex flex-1 flex-col overflow-y-auto">
         <ProfileBanner />
         <HeroCarousel />
