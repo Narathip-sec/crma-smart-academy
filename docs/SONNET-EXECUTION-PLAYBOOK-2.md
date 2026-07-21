@@ -144,7 +144,7 @@ Rewire (คงหน้าตาเดิมเป๊ะ): `app/announcements/pa
 - อัปเดต route list ใน `CLAUDE.md` (+ `/report/new`, `/settings/pdpa`)
 **Accept:** เข้า /report เจอ list; แจ้งใหม่ผ่าน FAB → form → submit → เด้งกลับ list เห็นรายการ; ลิงก์เดิมจาก home/service ยังใช้ได้
 
-### U4 — Settings: LINE status จริง + หน้า PDPA ☐
+### U4 — Settings: LINE status จริง + หน้า PDPA ☑ (done — Sonnet 5, 2026-07-21: settings/page.tsx fetches /api/me → lineLinked, shows "เชื่อมต่อแล้ว ✓"/"ยังไม่เชื่อมต่อ" instead of "เร็วๆ นี้"; new settings/pdpa/page.tsx static bilingual policy page (data collected/purpose/rights/contact); PDPA row href="/settings/pdpa". Verified live: dev fallback shows "ยังไม่เชื่อมต่อ", PDPA page renders all 4 sections. lint+tsc+build clean.)
 - แถว "เชื่อมต่อ LINE": fetch `/api/me` → `lineLinked` (มีใน response แล้ว) → "เชื่อมต่อแล้ว ✓" (`--success`) หรือ "ยังไม่เชื่อมต่อ" — เลิกเขียน "เร็วๆ นี้"
 - หน้าใหม่ `src/app/settings/pdpa/page.tsx`: นโยบายย่อสองภาษา static (ข้อมูลที่เก็บ: LINE profile, ชื่อ-รหัส-สังกัด, รายการที่ผู้ใช้สร้าง; วัตถุประสงค์; สิทธิ์ผู้ใช้; ช่องทางติดต่อ) — AppBar back, token styling; แถว PDPA → href จริง
 **Accept:** settings แสดงสถานะ LINE ตรงจริง (dev = ยังไม่เชื่อม); กด PDPA เข้าเนื้อหาได้

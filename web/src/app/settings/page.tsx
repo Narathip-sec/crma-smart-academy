@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTx } from "@/components/shell/bilingual-label";
 import { useLang } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
@@ -62,6 +63,15 @@ function ThemeToggle() {
 
 export default function SettingsPage() {
   const t = useTx();
+  const [lineLinked, setLineLinked] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    fetch("/api/me")
+      .then(r => r.json())
+      .then((data: { lineLinked?: boolean }) => setLineLinked(!!data.lineLinked))
+      .catch(() => setLineLinked(false));
+  }, []);
+
   return (
     <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
       <AppBar th="ตั้งค่า" en="Settings" back />
@@ -75,7 +85,11 @@ export default function SettingsPage() {
         <div style={{ background: "var(--surface)", borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)" }}>
           <SettingRow icon="👤" labelTh="โปรไฟล์ของฉัน" labelEn="My profile" href="/profile" />
           <SettingRow icon="🔗" labelTh="เชื่อมต่อ LINE" labelEn="Link LINE account"
-            right={<span style={{ font: "600 11px var(--font-sans)", color: "var(--muted)" }}>{t({ th: "เร็วๆ นี้", en: "Coming soon" })}</span>} />
+            right={lineLinked === null
+              ? <span style={{ font: "600 11px var(--font-sans)", color: "var(--muted)" }}>…</span>
+              : lineLinked
+                ? <span style={{ font: "600 11px var(--font-sans)", color: "var(--success)" }}>{t({ th: "เชื่อมต่อแล้ว ✓", en: "Linked ✓" })}</span>
+                : <span style={{ font: "600 11px var(--font-sans)", color: "var(--muted)" }}>{t({ th: "ยังไม่เชื่อมต่อ", en: "Not linked" })}</span>} />
         </div>
         <SectionHeader label={t({ th: "การแจ้งเตือน", en: "Notifications" })} />
         <div style={{ background: "var(--surface)", borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)" }}>
@@ -83,8 +97,7 @@ export default function SettingsPage() {
         </div>
         <SectionHeader label={t({ th: "ข้อมูลและความเป็นส่วนตัว", en: "Privacy" })} />
         <div style={{ background: "var(--surface)", borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)" }}>
-          <SettingRow icon="🔒" labelTh="นโยบาย PDPA" labelEn="PDPA Policy"
-            right={<span style={{ font: "600 11px var(--font-sans)", color: "var(--muted)" }}>→</span>} />
+          <SettingRow icon="🔒" labelTh="นโยบาย PDPA" labelEn="PDPA Policy" href="/settings/pdpa" />
         </div>
         <div className="px-4 py-6 text-center" style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>
           CRMA Smart Academy LIFF · v0.1.0 · กรมยุทธศึกษาทหารบก
