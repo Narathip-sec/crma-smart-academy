@@ -97,7 +97,7 @@ Apply ใน POST routes: report / lost-found / activity / todo — title ≤ 20
 
 ## Phase W — Rewire mock → DB
 
-### W1 — `/class` ต่อ DB จริง ☐
+### W1 — `/class` ต่อ DB จริง ☑ (done — Sonnet 5, 2026-07-21: rewired to /api/class?dayTh=, cohort/USER_COHORT removed, DAYS/DAY_LABELS now Thai-keyed matching API directly (also fixes weekend badge bug: todayDay() null on Sat/Sun never matches any DAYS entry), CATEGORY_COLOR/LABEL cover all 5 enum values incl. self_study, room/instructor shown. lib/data/class.ts deleted. Verified live against real DB: today's real periods render correctly with course/room/instructor, active-period badge works)
 `src/app/class/page.tsx` เลิก import `lib/data/class.ts` ทั้งหมด:
 - Fetch `/api/class?dayTh=<วัน>` (route มีอยู่แล้ว, ส่ง ClassPeriod raw rows) ตาม pattern LoadingState/ErrorState+retry ของหน้าอื่น
 - Field map: `courseName` (แสดงหลัก), `courseCode` (บรรทัดรอง, nullable), `periodLabel` แทน periodOrder, เพิ่ม `room`/`instructor` (DB มี — ข้อมูลดีขึ้นกว่า mock), `startTime`/`endTime` เดิม
