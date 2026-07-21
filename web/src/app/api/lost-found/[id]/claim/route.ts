@@ -25,7 +25,7 @@ export async function POST(
     return Response.json({ error: "item already claimed or closed" }, { status: 409 });
   }
 
-  const body = (await req.json()) as { note?: string };
+  const body = (await req.json().catch(() => ({}))) as { note?: string };
 
   const [claim] = await prisma.$transaction([
     prisma.lostFoundClaim.create({

@@ -38,8 +38,14 @@ function addDays(d: Date, n: number): Date {
   return r;
 }
 
+// Local calendar date as YYYY-MM-DD — never use toISOString() here, it
+// converts to UTC first and rolls the date back a day for any timezone
+// ahead of UTC (e.g. Thailand, UTC+7) once the local time is near midnight.
 function toIso(d: Date): string {
-  return d.toISOString().slice(0, 10);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
 
 export default function MealsPage() {

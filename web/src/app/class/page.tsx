@@ -21,6 +21,9 @@ type ClassPeriod = {
 };
 
 const DAYS: DayOfWeek[] = ["จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์"];
+const DAY_OFFSET: Record<DayOfWeek, number> = {
+  "จันทร์": 0, "อังคาร": 1, "พุธ": 2, "พฤหัสบดี": 3, "ศุกร์": 4,
+};
 
 const DAY_LABELS: Record<DayOfWeek, { en: string; short: string }> = {
   "จันทร์":   { en: "Monday",    short: "จ" },
@@ -59,14 +62,45 @@ function nowStr(): string {
   return new Date().toTimeString().slice(0, 5);
 }
 
+// Monday of the relevant week — a Sunday rolls forward to next week's
+// Monday (matches the same convention used on /meals), a Saturday stays
+// in the week that's ending.
+function getMondayOf(d: Date): Date {
+  const day = d.getDay();
+  const diff = day === 0 ? 1 : 1 - day;
+  const m = new Date(d);
+  m.setDate(d.getDate() + diff);
+  m.setHours(0, 0, 0, 0);
+  return m;
+}
+
+function addDays(d: Date, n: number): Date {
+  const r = new Date(d);
+  r.setDate(r.getDate() + n);
+  return r;
+}
+
+// Local calendar date as YYYY-MM-DD — never use toISOString() here, it
+// converts to UTC first and rolls the date back a day for any timezone
+// ahead of UTC (e.g. Thailand, UTC+7) once the local time is near midnight.
+function toIsoLocal(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 export default function ClassPage() {
   const t = useTx();
   const [selectedDay, setSelectedDay] = useState<DayOfWeek>(todayDay() ?? "จันทร์");
   const [periods, setPeriods] = useState<ClassPeriod[] | null>(null);
   const [error, setError] = useState(false);
 
+  const selectedDate = addDays(getMondayOf(new Date()), DAY_OFFSET[selectedDay]);
+  const selectedIso = toIsoLocal(selectedDate);
+
   const load = useCallback(() => {
-    fetch(`/api/class?dayTh=${encodeURIComponent(selectedDay)}`)
+    fetch(`/api/class?date=${selectedIso}`)
       .then(r => r.json())
       .then((data: ClassPeriod[]) => {
         if (!Array.isArray(data)) throw new Error("bad response");
@@ -74,12 +108,12 @@ export default function ClassPage() {
         setError(false);
       })
       .catch(() => setError(true));
-  }, [selectedDay]);
+  }, [selectedIso]);
 
   useEffect(() => { load(); }, [load]);
 
   const now = nowStr();
-  const isToday = selectedDay === todayDay();
+  const isToday = selectedIso === toIsoLocal(new Date());
 
   function isActive(start: string, end: string) { return now >= start && now < end; }
   function isPast(end: string) { return now >= end; }
