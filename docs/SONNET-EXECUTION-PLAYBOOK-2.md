@@ -107,7 +107,7 @@ Apply ใน POST routes: report / lost-found / activity / todo — title ≤ 20
 - ลบ `src/lib/data/class.ts`
 **Accept:** เนื้อหาตรง DB (เทียบ 2-3 แถวกับ `/api/class?dayTh=จันทร์`); วันอาทิตย์ไม่มี badge วันนี้; build เขียว; ไฟล์ mock หาย
 
-### W2a — Announcements: schema + seed + API ☐
+### W2a — Announcements: schema + seed + API ☑ (done — Sonnet 5, 2026-07-21: `tag String?` added to both models + migration `add_announcement_tag` applied; seed migrates the old mock content with publishAt computed relative to seed-run-time (hoursAgo helper) instead of fixed calendar dates, so timeAgo always reads correctly whenever seeded — noted deviation from literal spec wording, same intent; new GET /api/announcements + /api/announcements/[id] (id-prefixed a_/n_ to disambiguate model). Verified live: 2 featured + 4 news returned, detail lookup works)
 - **Schema**: เพิ่ม `tag String?` ทั้ง `Announcement` และ `NewsItem` + migration `add_announcement_tag` (`npx prisma migrate dev`)
 - **Seed**: เพิ่มใน `prisma/seed.ts` — ย้ายเนื้อหา 2 FEATURED + 4 NEWS จาก `lib/data/announcements.ts` ลง DB (upsert กัน dupe — Announcement/NewsItem ไม่มี unique ธรรมชาติ ใช้ findFirst by titleTh + create เฉพาะเมื่อไม่มี), `pinned: true` สำหรับ featured, `publishAt` วันจริงช่วงปลาย ก.ค./ต้น ส.ค., `tag` ตามเดิม (สอบ/วิชาการ/ทหาร/กิจกรรม/ประกาศ) — รัน seed จริง
 - **API ใหม่** `src/app/api/announcements/route.ts`: GET → `{ featured, news }` (featured = pinned + ยังไม่ expire เรียง publishAt desc; news = NewsItem เรียง publishAt desc) + auth ตามกติกา S4. `src/app/api/announcements/[id]/route.ts`: GET รายตัว — id format `a_<cuid>` / `n_<cuid>` แยก model (ใช้ format เดียวกันทั้ง list links + detail)

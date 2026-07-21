@@ -195,6 +195,7 @@ model Announcement {
   titleEn   String?
   bodyTh    String
   bodyEn    String?
+  tag       String?
   pinned    Boolean  @default(false)
   publishAt DateTime @default(now())
   expiresAt DateTime?
@@ -210,6 +211,7 @@ model NewsItem {
   titleEn   String?
   bodyTh    String
   bodyEn    String?
+  tag       String?
   imageUrl  String?
   publishAt DateTime @default(now())
   createdAt DateTime @default(now())
