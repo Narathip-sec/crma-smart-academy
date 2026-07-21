@@ -88,7 +88,7 @@ Apply ใน POST routes: report / lost-found / activity / todo — title ≤ 20
 - `src/app/service/page.tsx:31-34`: ตัด sub ปลอม ("GPAX 3.62", "5 กิจกรรม", "1 รายการ", "มื้อวันนี้") → เหลือชื่อบริการ; ตัด section "ใช้ล่าสุด Recent" ทั้งก้อน (static ปลอม)
 **Accept:** grep "3.62|unread={3}|อยู่ในคาบเรียน" ไม่เหลือ; หน้า home + service เปิดดูแล้วไม่มีตัวเลขปลอม
 
-### F2 — /api/home nextClass ตามเวลาจริง + ตัด fetch ซ้ำใน My Day ☐
+### F2 — /api/home nextClass ตามเวลาจริง + ตัด fetch ซ้ำใน My Day ☑ (done — Sonnet 5, 2026-07-21: nextClass filter startTime>=now "HH:MM"; my-day.tsx ใช้ nextActivity จาก /api/home แทน fetch+scoreActivity แยก, เหลือ fetch เดียว. Verified live: response ถูก, UI empty states ถูก, ไม่มี fetch ซ้ำ)
 - `src/app/api/home/route.ts`: nextClass เพิ่มเงื่อนไข `startTime >= เวลาปัจจุบัน "HH:MM"` (string compare ใช้ได้กับ format นี้) — ถ้าหมดวันแล้ว → null
 - `src/components/home/my-day.tsx`: ใช้ `nextActivity` จาก `/api/home` (มีอยู่แล้วใน response) แทน fetch `/api/activity?status=open` + `scoreActivity` client-side — ลบ logic ซ้ำซ้อนทิ้ง
 **Accept:** เหลือ fetch เดียวใน my-day; การ์ดกิจกรรมยังโชว์ข้อมูลถูก; lint set-state-in-effect ไม่แตก

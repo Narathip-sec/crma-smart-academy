@@ -11,10 +11,11 @@ export async function GET() {
 
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const nowHHMM = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 
   const [nextClass, todayLunch, pendingTasks, nextActivity] = await Promise.all([
     prisma.classPeriod.findFirst({
-      where: { date: todayStart },
+      where: { date: todayStart, startTime: { gte: nowHHMM } },
       orderBy: { startTime: "asc" },
     }),
 

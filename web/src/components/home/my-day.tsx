@@ -8,18 +8,7 @@ type HomeData = {
   nextClass: { courseName: string; startTime: string; room: string | null; category: string } | null;
   todayLunch: { menuTh: string; menuEn: string | null; note: string | null } | null;
   pendingTasks: number;
-};
-
-type ActivityItem = {
-  id: string;
-  titleTh: string;
-  titleEn: string | null;
-  startAt: string;
-  endAt: string | null;
-  maxAttendees: number | null;
-  attendeeCount: number;
-  status: string;
-  category: { nameTh: string } | null;
+  nextActivity: { id: string; titleTh: string; startAt: string; location: string | null; categoryTh: string | null } | null;
 };
 
 const THAI_MONTHS_SHORT = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
@@ -32,29 +21,6 @@ function fmtTime(iso: string): string {
 function fmtDateTh(iso: string): string {
   const d = new Date(iso);
   return `${d.getDate()} ${THAI_MONTHS_SHORT[d.getMonth()]}`;
-}
-
-function scoreActivity(a: ActivityItem, now: Date): number {
-  let score = 0;
-  const start = new Date(a.startAt);
-  const end   = a.endAt ? new Date(a.endAt) : null;
-
-  // Ongoing right now — highest priority
-  if (start <= now && (!end || end >= now)) {
-    score += 100;
-  // Starts today
-  } else if (start.toDateString() === now.toDateString()) {
-    score += 80;
-  }
-
-  // Urgency: <30% seats left → boost
-  if (a.maxAttendees && a.maxAttendees > 0) {
-    const remaining = a.maxAttendees - a.attendeeCount;
-    if (remaining / a.maxAttendees < 0.3) score += 20;
-    else if (remaining / a.maxAttendees < 0.5) score += 10;
-  }
-
-  return score;
 }
 
 type RowProps = {
@@ -103,29 +69,17 @@ const ACTIVITY_ICON = (
 export function MyDay() {
   const t = useTx();
   const [home, setHome] = useState<HomeData | null>(null);
-  const [featured, setFeatured] = useState<ActivityItem | null>(null);
 
   useEffect(() => {
     fetch("/api/home").then(r => r.json()).then((data: HomeData) => setHome(data)).catch(() => {});
-
-    const now = new Date();
-    fetch("/api/activity?status=open")
-      .then(r => r.json())
-      .then((data: ActivityItem[]) => {
-        if (!Array.isArray(data) || data.length === 0) return;
-        // Score each, keep only today/ongoing (score > 0), else top by earliest startAt
-        const scored = data.map(a => ({ a, s: scoreActivity(a, now) }));
-        scored.sort((x, y) => y.s - x.s || new Date(x.a.startAt).getTime() - new Date(y.a.startAt).getTime());
-        setFeatured(scored[0].a);
-      })
-      .catch(() => {});
   }, []);
 
+  const featured = home?.nextActivity ?? null;
   const activityHref  = featured ? `/activity/${featured.id}` : "/activity";
   const activityTitle = featured ? featured.titleTh : "ยังไม่มีกิจกรรมเปิดรับ";
-  const activityTitleEn = featured ? (featured.titleEn ?? featured.titleTh) : "No open activities";
+  const activityTitleEn = featured ? featured.titleTh : "No open activities";
   const activitySub   = featured
-    ? `${fmtDateTh(featured.startAt)} · ${fmtTime(featured.startAt)}${featured.category ? ` · ${featured.category.nameTh}` : ""}`
+    ? `${fmtDateTh(featured.startAt)} · ${fmtTime(featured.startAt)}${featured.categoryTh ? ` · ${featured.categoryTh}` : ""}`
     : "";
 
   return (
