@@ -153,7 +153,7 @@ Rewire (คงหน้าตาเดิมเป๊ะ): `app/announcements/pa
 `activity/[id]/page.tsx`: หลังลงทะเบียน แสดง "✓ ลงทะเบียนแล้ว" + ปุ่มรอง "ยกเลิกลงทะเบียน" (ghost/muted, ยิง `action: "cancel"` — API รองรับแล้ว) → สำเร็จแล้ว refresh สถานะ + attendeeCount
 **Accept:** ลงทะเบียน → ยกเลิก → ลงใหม่ ครบ loop; จำนวนคนอัปเดต; double-tap มี disabled guard
 
-### U6 — Meals: weekend + empty state ☐
+### U6 — Meals: weekend + empty state ☑ (done — Sonnet 5, 2026-07-21: getMondayOf diff = day===0 ? 1 : 1-day (Sunday now computes next week's Monday instead of current/past). Added EmptyState (meals.length===0, i.e. whole fetched week has zero MealItem rows) instead of the bare "—" table. Verified: node calc confirms Sun 07-19→Mon 07-20 (not 07-13); live current week (07-21, no data yet — MealItem only seeded through May, D1 extends to Aug) renders EmptyState "ยังไม่มีเมนูสำหรับช่วงนี้ / No menu for this period"; week with partial data (Apr27-May1) still renders the table. Noted but out of scope: pre-existing local-timezone offset in toIso()/date filtering can misalign which calendar day a UTC-midnight-stored meal falls into — not part of U6's spec (weekend calc + empty state), not touched. lint+tsc clean.)
 `meals/page.tsx`:
 - `getMondayOf`: อาทิตย์ → สัปดาห์ถัดไป (`diff = day === 0 ? 1 : 1 - day`)
 - สัปดาห์ที่ fetch แล้วรวม 0 items → `EmptyState` "ยังไม่มีเมนูสำหรับช่วงนี้ · No menu for this period" แทนตาราง "—" ล้วน (คง pattern cancelled+keyed fetch เดิมตามคอมเมนต์ในไฟล์)

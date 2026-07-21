@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AppBar } from "@/components/shell/app-bar";
-import { LoadingState, ErrorState } from "@/components/ui";
+import { LoadingState, ErrorState, EmptyState } from "@/components/ui";
 
 type MealRow = {
   id: string;
@@ -25,7 +25,7 @@ const MONTH_SHORT = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.
 
 function getMondayOf(d: Date): Date {
   const day = d.getDay();
-  const diff = day === 0 ? -6 : 1 - day;
+  const diff = day === 0 ? 1 : 1 - day;
   const m = new Date(d);
   m.setDate(d.getDate() + diff);
   m.setHours(0, 0, 0, 0);
@@ -155,6 +155,8 @@ export default function MealsPage() {
           <ErrorState onRetry={() => setRetryTick(n => n + 1)} />
         ) : meals === null ? (
           <LoadingState label="กำลังโหลด…" />
+        ) : meals.length === 0 ? (
+          <EmptyState title="ยังไม่มีเมนูสำหรับช่วงนี้" hint="No menu for this period" />
         ) : (
           <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--line)", background: "var(--surface)" }}>
 
