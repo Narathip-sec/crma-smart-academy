@@ -28,11 +28,18 @@ Google Calendar เชื่อมแล้ว (`cdt.narathipch@gmail.com`) — 
   - แจ้งซ่อม: list ไม่มีรูป/รายละเอียด/สถานที่ (API ไม่ include อีกเช่นกัน) + `ticketNumber` พิมพ์ผิด (field จริงคือ `ticketNo`) → เลขที่ตั๋ว blank
   - Sweep ทั้งสคีมาแล้ว ยืนยันไม่มีจุดอื่นที่พลาด include แบบเดียวกัน
 - Activity list เปลี่ยนเป็น photo card (แนวตั้ง full-width) ตามที่ขอ
+- **Playbook 2 (`docs/SONNET-EXECUTION-PLAYBOOK-2.md`) เสร็จครบ 14/14 task — 2026-07-21:**
+  - Security: dev-auth bypass ปิดใน production, todo IDOR แก้, input validation + blob URL allowlist ทุก POST, auth ครบทุก API route + ปิด attendee/claimant leak, LINE token aud/exp re-check
+  - ลบ hardcode ปลอมทั้งหมด (unread badge, GPAX, "อยู่ในคาบเรียน", recent section ปลอม)
+  - `/class` และ announcements ต่อ DB จริงทั้งระบบ (เลิกใช้ mock)
+  - UX: lost/found type จริง, ฟอร์มแจ้งซ่อมตัด team dropdown, `/report` เป็น list-first, settings แสดงสถานะ LINE จริง + หน้า PDPA, ยกเลิกลงทะเบียนกิจกรรมได้, เมนูอาหารแก้บั๊กวันหยุดสุดสัปดาห์ + empty state
+  - Demo data: script `npm run demo:extend` clone ตารางเรียน/เมนูอาหารจริงไปช่วง ส.ค. + ปฏิทิน ส.ค. + notification จริงพร้อม unread badge ใช้งานได้
+  - D2 final sweep: lint/tsc/build เขียว, ~20 route ผ่านหมด (light+dark), security re-check ยืนยัน 401/400/404 ถูกต้องทุกจุด (เจอ+แก้บั๊ก `/api/me` เดิมตอบ 404 แทน 401 ระหว่างสวีป), guardrail (hex/font-scale/lib-data) ผ่าน
 
 ## ⚠️ ยังไม่ได้ตรวจ / ไม่รู้สถานะ
 
 - Rich Menu ยังไม่ได้ยิงจริงกับ LINE API (โค้ดพร้อม รอ token)
-- Android ยังไม่ได้ทดสอบ (iOS ผ่านแล้ว)
+- Android ยังไม่ได้ทดสอบ (iOS ผ่านแล้ว) — ควรทดสอบซ้ำอีกรอบหลัง Playbook 2 ก่อน dev freeze
 - ยังไม่ได้ทำ demo script / สไลด์นำเสนอ
 
 ---

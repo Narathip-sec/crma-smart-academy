@@ -65,5 +65,6 @@ Active routes:
 - `/announcements/[id]`
 - `/notifications`
 - `/settings`
+- `/settings/pdpa`
 
 Keep bilingual Thai/English UI, LIFF-first mobile layout, PDPA-aware data handling, and the approved Academy Teal visual direction.

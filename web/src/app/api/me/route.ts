@@ -8,7 +8,7 @@ import { getCurrentUser } from "@/lib/auth";
 export async function GET() {
   const identity = await getCurrentUser();
   if (!identity) {
-    return Response.json({ error: "user not found" }, { status: 404 });
+    return Response.json({ error: "unauthenticated" }, { status: 401 });
   }
 
   const user = await prisma.user.findUnique({

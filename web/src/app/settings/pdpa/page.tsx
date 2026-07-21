@@ -10,7 +10,7 @@ function Section({ th, en, children }: { th: string; en: string; children: React
       <div style={{ font: "700 13px var(--font-sans)", color: "var(--ink)", marginBottom: 6 }}>
         {t({ th, en })}
       </div>
-      <div style={{ font: "400 12px var(--font-sans)", color: "var(--muted)", lineHeight: 1.6 }}>
+      <div style={{ font: "400 13px var(--font-sans)", color: "var(--muted)", lineHeight: 1.6 }}>
         {children}
       </div>
     </div>

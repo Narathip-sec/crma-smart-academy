@@ -33,6 +33,16 @@
 ### ❌ ตัดออก — ไม่ทำก่อนนำเสนอ
 - **Rich Menu** — ตัดสินใจข้าม ไม่ใช่ scope หลักตามวัตถุประสงค์วิจัย 3 ข้อ (`RESEARCH-OBJECTIVE-ALIGNMENT-2026-06-29.md`) ไม่กระทบแอปหลัก. โค้ด/รูปพร้อมอยู่แล้ว (`npm run rich-menu:image` / `rich-menu:setup`) ถ้าจะทำทีหลังแค่รอ LINE OA Channel Access Token. ในสไลด์ให้ใช้รูป `web/assets/rich-menu.png` (ของจริง ไม่ใช่ mockup) พูดว่า "เตรียมโครงสร้างไว้แล้ว อยู่ในแผนต่อยอดหลัง publish OA จริง"
 
+### 🔒 Known Limitations — ตัดสินใจเลื่อนออกจากขอบเขต ไม่ใช่บั๊กที่พลาด
+
+รายการนี้เป็นข้อจำกัดที่ทีมรับทราบและตัดสินใจไม่ทำก่อนนำเสนอ (Playbook 2, `docs/SONNET-EXECUTION-PLAYBOOK-2.md`) เพราะต้องมี infra เพิ่มหรือไม่กระทบ scope วิจัยหลัก — ใช้ประกอบสไลด์หัวข้อ "ข้อจำกัด + แผนต่อยอด":
+
+- **Rate limiting** — API ยังไม่มีการจำกัดจำนวนคำขอต่อผู้ใช้/ต่อ IP ต้องมี infra เพิ่ม (เช่น Redis/Upstash) จึงเลื่อนไปหลังนำเสนอ
+- **Session revocation / logout** — session cookie ปัจจุบันอายุ 30 วัน ไม่มีกลไก logout หรือเพิกถอน session จาก server ฝั่งเดียว (ประเมินแล้วว่าไม่ใช่ความเสี่ยงจริงในช่วง demo ระยะสั้น)
+- **Activity auto-approve** — กิจกรรมที่สร้างใหม่ถูกอนุมัติอัตโนมัติทันที (ข้าม moderation queue) เพราะยังไม่มี UI/บัญชี moderator ให้อนุมัติจริง — บันทึกเป็นการตัดสินใจจงใจ (`PRESENTATION-PREP-PLAN.md` บรรทัด "กิจกรรม: สร้างแล้วไม่ขึ้น list")
+- **Upload-to-record binding** — ไฟล์ที่อัปโหลดผ่าน `/api/upload` ยังไม่ผูกกับ record ที่สร้างจริงในขั้นตอนเดียว (ตรวจแค่ auth + ชนิด/ขนาดไฟล์) เป็นความเสี่ยงเล็กน้อย (orphaned blob) ไม่ใช่ช่องโหว่ security
+- **Zod schema validation แบบเต็มรูปแบบ** — ตอนนี้ใช้ helper ธรรมดาใน `src/lib/validate.ts` (bounded string, date, int range, blob URL allowlist) ครอบคลุมทุก POST route ที่จำเป็นแล้ว แต่ยังไม่ใช่ schema library เต็มรูปแบบ
+
 ---
 
 ## 2. สไลด์นำเสนอ
