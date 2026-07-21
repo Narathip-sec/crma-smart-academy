@@ -6,6 +6,7 @@ import { useTx } from "@/components/shell/bilingual-label";
 import { Button, FormField, Chip } from "@/components/ui";
 import { upload } from "@vercel/blob/client";
 import { compressImage } from "@/lib/compress-image";
+import { sortOtherLast } from "@/lib/sort-other-last";
 import Image from "next/image";
 
 type Category = { id: string; nameTh: string };
@@ -225,7 +226,7 @@ export default function LostFoundNewPage() {
             <FormField label={t({ th: "ประเภท", en: "Category" })}>
               <select value={categoryId} onChange={e => setCategoryId(e.target.value)} style={inputStyle}>
                 <option value="">{t({ th: "— เลือกประเภท —", en: "— Select category —" })}</option>
-                {cats.map(c => <option key={c.id} value={c.id}>{c.nameTh}</option>)}
+                {sortOtherLast(cats).map(c => <option key={c.id} value={c.id}>{c.nameTh}</option>)}
               </select>
             </FormField>
           )}

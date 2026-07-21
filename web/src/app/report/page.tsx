@@ -10,14 +10,14 @@ import { upload } from "@vercel/blob/client";
 import Image from "next/image";
 import type { PinLocation } from "@/components/map/CampusPinMap";
 import { compressImage } from "@/lib/compress-image";
+import { sortOtherLast } from "@/lib/sort-other-last";
 
 const CampusPinMap = lazy(() =>
   import("@/components/map/CampusPinMap").then(m => ({ default: m.CampusPinMap }))
 );
 
 type Category = { id: string; nameTh: string; nameEn: string | null };
-type Team = { id: string; nameTh: string };
-type MetaResponse = { categories?: Category[]; teams?: Team[] };
+type MetaResponse = { categories?: Category[] };
 
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "12px 16px", borderRadius: "var(--radius-control)",
@@ -31,13 +31,11 @@ export default function ReportPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [cats, setCats]               = useState<Category[]>([]);
-  const [teams, setTeams]             = useState<Team[]>([]);
   const [titleTh, setTitleTh]         = useState("");
   const [descriptionTh, setDescriptionTh] = useState("");
   const [pinLocation, setPinLocation] = useState<PinLocation | null>(null);
   const [roomDetail, setRoomDetail]   = useState("");
   const [categoryId, setCategoryId]   = useState("");
-  const [teamId, setTeamId]           = useState("");
   const [submitting, setSubmitting]   = useState(false);
   const [error, setError]             = useState("");
   const [showMap, setShowMap]         = useState(false);
@@ -50,7 +48,6 @@ export default function ReportPage() {
   useEffect(() => {
     fetch("/api/report/meta").then(r => r.json()).then((d: MetaResponse) => {
       if (d.categories) setCats(d.categories);
-      if (d.teams)      setTeams(d.teams);
     }).catch(() => {});
   }, []);
 
@@ -82,7 +79,7 @@ export default function ReportPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!titleTh.trim()) return;
+    if (!titleTh.trim() || !descriptionTh.trim()) return;
     setSubmitting(true); setError("");
 
     const locationParts: string[] = [];
@@ -95,10 +92,9 @@ export default function ReportPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         titleTh,
-        descriptionTh: descriptionTh || undefined,
+        descriptionTh,
         locationNameTh,
         categoryId: categoryId || undefined,
-        teamId: teamId || undefined,
         photoUrl: photoUrl || undefined,
       }),
     });
@@ -144,7 +140,7 @@ export default function ReportPage() {
               style={inputStyle} required />
           </FormField>
 
-          <FormField label={t({ th: "รายละเอียด", en: "Details" })}>
+          <FormField label={t({ th: "รายละเอียด", en: "Details" })} required>
             <textarea value={descriptionTh} onChange={e => setDescriptionTh(e.target.value)}
               rows={3} placeholder={t({ th: "อธิบายปัญหาเพิ่มเติม…", en: "Describe the issue…" })}
               style={{ ...inputStyle, resize: "none" }} />
@@ -278,16 +274,7 @@ export default function ReportPage() {
             <FormField label={t({ th: "ประเภทปัญหา", en: "Category" })}>
               <select value={categoryId} onChange={e => setCategoryId(e.target.value)} style={inputStyle}>
                 <option value="">{t({ th: "— เลือกประเภท —", en: "— Select category —" })}</option>
-                {cats.map(c => <option key={c.id} value={c.id}>{c.nameTh}</option>)}
-              </select>
-            </FormField>
-          )}
-
-          {teams.length > 0 && (
-            <FormField label={t({ th: "ส่งให้ทีม", en: "Assign to team" })}>
-              <select value={teamId} onChange={e => setTeamId(e.target.value)} style={inputStyle}>
-                <option value="">{t({ th: "— เลือกทีม (ไม่บังคับ) —", en: "— Assign team (optional) —" })}</option>
-                {teams.map(tm => <option key={tm.id} value={tm.id}>{tm.nameTh}</option>)}
+                {sortOtherLast(cats).map(c => <option key={c.id} value={c.id}>{c.nameTh}</option>)}
               </select>
             </FormField>
           )}
@@ -296,7 +283,7 @@ export default function ReportPage() {
             <div style={{ font: "500 13px var(--font-sans)", color: "var(--danger)" }}>{error}</div>
           )}
 
-          <Button type="submit" size="lg" full disabled={submitting || uploadingPhoto}>
+          <Button type="submit" size="lg" full disabled={submitting || uploadingPhoto || !titleTh.trim() || !descriptionTh.trim()}>
             {submitting ? t({ th: "กำลังส่ง…", en: "Submitting…" }) : t({ th: "แจ้งซ่อม / เหตุ", en: "Submit Report" })}
           </Button>
         </div>

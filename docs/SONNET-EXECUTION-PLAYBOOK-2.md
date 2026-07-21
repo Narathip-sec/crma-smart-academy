@@ -131,7 +131,7 @@ Rewire (คงหน้าตาเดิมเป๊ะ): `app/announcements/pa
 - Detail (`lost-found/[id]/page.tsx`): ปุ่ม claim ตาม type — lost: "ฉันพบของชิ้นนี้ → แจ้งเพื่อจับคู่" / found: "นี่คือของฉัน → ขอรับคืน"
 **Accept:** แจ้งของหายแล้วขึ้น badge หาย filter ได้ถูกกลุ่ม; ปุ่ม claim label ตรง type; แถวเก่าใน DB ยังแสดงปกติ (found)
 
-### U2 — ฟอร์มแจ้งซ่อม: ตัด team dropdown + validation ☐ (ทำก่อน U3)
+### U2 — ฟอร์มแจ้งซ่อม: ตัด team dropdown + validation ☑ (done — Sonnet 5, 2026-07-21: team dropdown+state ลบออกจาก UI (field teamId ใน API/DB คงไว้), รายละเอียดใส่ * + เข้า disable condition (server บังคับอยู่แล้วจาก S3, แค่ sync client ให้ตรง), sortOtherLast helper ใหม่ ใช้ทั้ง report/lost-found/activity category dropdown. Verified live: ทีมหาย, * ขึ้นถูก, ปุ่ม submit disabled ตอนฟอร์มว่าง, "อื่น ๆ" อยู่ท้ายทุกที่)
 - ตัด dropdown "ส่งให้ทีม" ออกจาก UI (field `teamId` ใน API/DB คงไว้ให้เจ้าหน้าที่ assign ทีหลัง)
 - "รายละเอียด" ใส่ `*` + เพิ่มใน disable เงื่อนไขปุ่ม submit (`!descriptionTh.trim()`) — pattern เดียวกับ lost-found form
 - สร้าง helper `sortOtherLast(items)` (เรียงให้ nameTh "อื่น ๆ" ท้ายสุด) ใช้ dropdown ประเภททั้ง report + lost-found + activity form

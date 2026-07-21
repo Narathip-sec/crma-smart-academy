@@ -7,6 +7,7 @@ import { Button, Chip, ChipRow, FormField } from "@/components/ui";
 import { upload } from "@vercel/blob/client";
 import Image from "next/image";
 import { compressImage } from "@/lib/compress-image";
+import { sortOtherLast } from "@/lib/sort-other-last";
 
 type Category = { id: string; nameTh: string };
 
@@ -206,7 +207,7 @@ export default function CreateActivityPage() {
           {/* Category chips */}
           <FormField label={t({ th: "หมวดหมู่", en: "Category" })} required>
             <ChipRow>
-              {cats.map(c => (
+              {sortOtherLast(cats).map(c => (
                 <Chip key={c.id} active={categoryId === c.id} onClick={() => setCategoryId(c.id)}>
                   {c.nameTh}
                 </Chip>
