@@ -11,8 +11,10 @@ function fmtDate(iso: string): string {
   return `${d.getDate()} ${THAI_MONTHS_SHORT[d.getMonth()]} ${d.getFullYear() + 543}`;
 }
 
+type LFType = "lost" | "found";
+
 type LFItem = {
-  id: string; titleTh: string;
+  id: string; type: LFType; titleTh: string;
   descriptionTh: string | null; foundLocation: string | null;
   foundAt: string | null; status: string; createdAt: string;
   category: { nameTh: string } | null;
@@ -27,6 +29,12 @@ const STATUS_CONFIG: Record<string, { th: string; color: string }> = {
   matched:  { th: "จับคู่แล้ว", color: "var(--cat-notice)" },
   claimed:  { th: "รับคืนแล้ว", color: "var(--success)" },
   closed:   { th: "ปิด",        color: "var(--muted)" },
+};
+
+const TYPE_COLOR: Record<LFType, string> = { lost: "var(--danger)", found: "var(--brand)" };
+const TYPE_LABEL: Record<LFType, { th: string; en: string }> = {
+  lost:  { th: "ของหาย", en: "Lost" },
+  found: { th: "ของพบ",  en: "Found" },
 };
 
 function InfoRow({ icon, labelTh, labelEn, value, t }: {
@@ -96,6 +104,8 @@ export default function LostFoundDetailPage() {
   const statusCfg = STATUS_CONFIG[item.status] ?? { th: item.status, color: "var(--muted)" };
   const canClaim = item.status === "reported" && !claimed;
   const photoUrl = item.attachments[0]?.asset?.url;
+  const typeColor = TYPE_COLOR[item.type];
+  const typeLbl = TYPE_LABEL[item.type];
 
   return (
     <div className="flex flex-1 flex-col overflow-y-auto" style={{ background: "var(--bg)" }}>
@@ -110,16 +120,24 @@ export default function LostFoundDetailPage() {
         <div className="flex items-start gap-3">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl"
             style={{ background: "rgba(255,255,255,.2)" }}>
-            <span style={{ fontSize: 28 }}>📦</span>
+            <span style={{ fontSize: 28 }}>{item.type === "lost" ? "❓" : "📦"}</span>
           </div>
           <div>
+            <div className="mb-1">
+              <span style={{ display: "inline-block", padding: "2px 10px", borderRadius: 999, background: "rgba(255,255,255,.25)", color: "#fff", font: "700 11px var(--font-sans)" }}>
+                {t(typeLbl)}
+              </span>
+            </div>
             <div style={{ font: "700 20px var(--font-sans)", color: "#fff", lineHeight: 1.25 }}>{item.titleTh}</div>
           </div>
         </div>
       </div>
 
       <div className="flex flex-col gap-4 px-4 pb-8 pt-4">
-        <div>
+        <div className="flex gap-2">
+          <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: 999, background: `color-mix(in srgb, ${typeColor} 10%, transparent)`, color: typeColor, font: "600 11px var(--font-sans)" }}>
+            {t(typeLbl)}
+          </span>
           <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: 999, background: `color-mix(in srgb, ${statusCfg.color} 10%, transparent)`, color: statusCfg.color, font: "600 11px var(--font-sans)" }}>
             {statusCfg.th}
           </span>
@@ -151,12 +169,14 @@ export default function LostFoundDetailPage() {
           <Button onClick={canClaim ? claim : undefined} disabled={!canClaim || claimLoading}
             size="lg" full
             style={canClaim
-              ? { background: "var(--brand)", border: "1px solid var(--brand)", color: "#fff" }
+              ? { background: typeColor, border: `1px solid ${typeColor}`, color: "#fff" }
               : { background: "var(--line)", color: "var(--muted)", border: "1px solid var(--line)" }}>
             {claimLoading
               ? t({ th: "กำลังส่ง…", en: "Submitting…" })
               : item.status !== "reported"
               ? t({ th: "ปิดรับแล้ว", en: "Closed" })
+              : item.type === "lost"
+              ? t({ th: "ฉันพบของชิ้นนี้ → แจ้งเพื่อจับคู่", en: "I found this → Report match" })
               : t({ th: "นี่คือของฉัน → ขอรับคืน", en: "This is mine → Claim" })}
           </Button>
         )}

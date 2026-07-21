@@ -3,12 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTx } from "@/components/shell/bilingual-label";
-import { Button, FormField } from "@/components/ui";
+import { Button, FormField, Chip } from "@/components/ui";
 import { upload } from "@vercel/blob/client";
 import { compressImage } from "@/lib/compress-image";
 import Image from "next/image";
 
 type Category = { id: string; nameTh: string };
+type LFType = "lost" | "found";
 
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "12px 16px", borderRadius: "var(--radius-control)",
@@ -22,6 +23,7 @@ export default function LostFoundNewPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [cats, setCats]               = useState<Category[]>([]);
+  const [type, setType]               = useState<LFType>("found");
   const [titleTh, setTitleTh]         = useState("");
   const [descriptionTh, setDescriptionTh] = useState("");
   const [foundLocation, setFoundLocation] = useState("");
@@ -76,6 +78,7 @@ export default function LostFoundNewPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        type,
         titleTh,
         descriptionTh,
         categoryId: categoryId || undefined,
@@ -120,6 +123,20 @@ export default function LostFoundNewPage() {
       />
 
       <form onSubmit={submit} className="flex-1 overflow-y-auto pb-8">
+
+        {/* Type */}
+        <div className="px-4 pt-4">
+          <FormField label={t({ th: "ประเภทการแจ้ง", en: "Report type" })} required>
+            <div className="flex gap-2">
+              <Chip active={type === "lost"} onClick={() => setType("lost")}>
+                {t({ th: "ของหาย", en: "Lost" })}
+              </Chip>
+              <Chip active={type === "found"} onClick={() => setType("found")}>
+                {t({ th: "ของพบ", en: "Found" })}
+              </Chip>
+            </div>
+          </FormField>
+        </div>
 
         {/* Photo upload */}
         <div className="px-4 pt-4">

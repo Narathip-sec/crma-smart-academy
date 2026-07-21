@@ -124,7 +124,7 @@ Rewire (คงหน้าตาเดิมเป๊ะ): `app/announcements/pa
 
 ## Phase U — UX fixes
 
-### U1 — Lost & Found: เพิ่ม type ของหาย/ของพบ ☐
+### U1 — Lost & Found: เพิ่ม type ของหาย/ของพบ ☑ (done — Sonnet 5, 2026-07-21: enum LostFoundType + column @default(found) + migration add_lostfound_type applied against real DB (existing rows default found). Form: Chip radio required. List: filter chips restored to type-based, badge type+status ทั้งคู่, border-left = type color. Detail: claim label ตาม type. Verified live: type flows POST→list→detail correctly, invalid type→400, existing seeded rows unaffected)
 - Schema: `enum LostFoundType { lost, found }` + column `type LostFoundType @default(found)` บน `LostFoundItem` → migration `add_lostfound_type` (default found — ตรงกับแถว demo เดิม)
 - Form (`lost-found/new/page.tsx`): radio 2 ปุ่มบนสุด (Chip active style) "ของหาย / Lost" | "ของพบ / Found" — required, ส่ง `type` ใน body; API POST validate ค่า
 - List (`lost-found/page.tsx`): filter chips ทั้งหมด/ของหาย/ของพบ (filter จาก field จริง), badge type (หาย=`--danger`, พบ=`--brand`) คู่กับ badge status เดิม, border-left ตามสี type

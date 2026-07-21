@@ -69,6 +69,11 @@ enum LostFoundStatus {
   closed
 }
 
+enum LostFoundType {
+  lost
+  found
+}
+
 enum NotificationChannel {
   in_app
   line_push
@@ -545,6 +550,7 @@ model LostFoundItem {
   id           String          @id @default(cuid())
   reporterId   String
   categoryId   String?
+  type         LostFoundType   @default(found)
   titleTh      String
   descriptionTh String
   foundAt      DateTime?       @db.Date

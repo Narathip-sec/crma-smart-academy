@@ -5,7 +5,7 @@ import { prisma } from "@/lib/db";
 import { writeAuditLog, ipFrom } from "@/lib/audit";
 import { requireCadet, hasRole } from "@/lib/rbac";
 import { getCurrentUser } from "@/lib/auth";
-import { Role } from "@prisma/client";
+import { Role, LostFoundType } from "@prisma/client";
 import { boundedString, boundedStringOptional, validDate, isAllowedBlobUrl } from "@/lib/validate";
 import type { NextRequest } from "next/server";
 
@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
   if (denied) return denied;
 
   const body = (await req.json()) as {
+    type?: string;
     titleTh: string;
     descriptionTh: string;
     categoryId?: string;
@@ -54,6 +55,9 @@ export async function POST(req: NextRequest) {
 
   if (!boundedString(body.titleTh, 200) || !boundedString(body.descriptionTh, 2000)) {
     return Response.json({ error: "titleTh (≤200) and descriptionTh (≤2000) required" }, { status: 400 });
+  }
+  if (body.type !== undefined && body.type !== LostFoundType.lost && body.type !== LostFoundType.found) {
+    return Response.json({ error: "type must be lost or found" }, { status: 400 });
   }
   if (!boundedStringOptional(body.foundLocation, 200)) {
     return Response.json({ error: "foundLocation too long" }, { status: 400 });
@@ -69,6 +73,7 @@ export async function POST(req: NextRequest) {
     data: {
       reporterId: user.id,
       categoryId: body.categoryId,
+      type: (body.type as LostFoundType) ?? LostFoundType.found,
       titleTh: body.titleTh,
       descriptionTh: body.descriptionTh,
       foundAt: body.foundAt ? new Date(body.foundAt) : undefined,
