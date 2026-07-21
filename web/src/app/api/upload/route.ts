@@ -46,11 +46,10 @@ export async function POST(request: NextRequest): Promise<Response> {
           tokenPayload: JSON.stringify({ pathname, userId: user.id }),
         };
       },
-      onUploadCompleted: async ({ blob }) => {
+      onUploadCompleted: async () => {
         // Fires only when the app is reachable on a public URL (i.e. on
         // Vercel, not localhost). Persist blob.url to the owning record here,
         // e.g. lost_found_attachment / report_attachment / activity_image.
-        console.log("[blob] upload completed:", blob.url);
       },
     });
 

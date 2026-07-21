@@ -39,6 +39,10 @@ export async function POST(request: NextRequest): Promise<Response> {
 
   const verified = (await verifyRes.json()) as LineVerifyResponse;
 
+  if (verified.aud !== CHANNEL_ID || verified.exp * 1000 <= Date.now()) {
+    return Response.json({ error: "invalid id token" }, { status: 401 });
+  }
+
   const lineAccount = await prisma.lineAccount.findUnique({
     where: { lineUserId: verified.sub },
     include: { user: true },

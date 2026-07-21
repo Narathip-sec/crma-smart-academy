@@ -70,7 +70,7 @@ Apply ใน POST routes: report / lost-found / activity / todo — title ≤ 20
 - `lost-found/[id]`: ตัด `claimantId` รายตัว → ส่ง `claimCount` + `myClaim: boolean`
 **Accept:** curl ไม่มี cookie → 401 ทุก route ยกเว้น auth/line; response detail ไม่มี userId คนอื่น; RSVP/claim ที่เคยกดแล้ว รีโหลดหน้า สถานะยังถูก
 
-### S5 — Auth/line hardening + housekeeping ☐
+### S5 — Auth/line hardening + housekeeping ☑ (done — Sonnet 5, 2026-07-21: aud+exp re-asserted after LINE verify, console.log removed from upload route, dead `src/lib/data/todo.ts` deleted. lint+tsc+build green; login flow not exercisable locally — LIFF unconfigured in dev, matches this task's own accept note)
 - `api/auth/line/route.ts`: หลัง verify สำเร็จ assert `verified.aud === CHANNEL_ID` และ `verified.exp * 1000 > Date.now()`
 - `api/upload/route.ts`: ลบ `console.log` blob URL
 - ลบไฟล์ตาย `src/lib/data/todo.ts`
