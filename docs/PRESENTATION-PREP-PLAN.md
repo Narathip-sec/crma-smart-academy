@@ -18,7 +18,7 @@ Google Calendar เชื่อมแล้ว (`cdt.narathipch@gmail.com`) — 
 - `mock-data.ts` ลบทิ้งแล้ว (ไม่มีไฟล์ไหนอ้างอิงอีก)
 - Import ข้อมูลจริง: ตารางเรียน 17 แถว, ปฏิทินการศึกษา 31 แถว, เมนูอาหาร 93 แถว
 - OG metadata + branded icon + per-activity share card (แก้ font Thai-glyph bug ระหว่างทำด้วย)
-- Rich Menu: สร้างรูป + script พร้อมรัน (`npm run rich-menu:image` / `rich-menu:setup`) — **รอเลขที่จะสมัคร LINE OA เท่านั้น**
+- **Rich Menu: ยิงจริงกับ LINE API แล้ว (2026-07-21)** — สมัคร Messaging API channel เสร็จ, `LINE_CHANNEL_ACCESS_TOKEN` + `NEXT_PUBLIC_LIFF_ID` ใส่ใน `.env` แล้ว, รัน `npm run rich-menu:setup` สำเร็จ (สร้าง+อัปโหลดรูป+ตั้งเป็น default), ยืนยันผ่าน LINE API ตรง (`GET /v2/bot/user/all/richmenu` + `/v2/bot/richmenu/list`) ว่ามี rich menu เดียว ตั้งเป็น default ถูกต้อง
 - Deploy ขึ้น Vercel สำเร็จ, ตรวจ production แล้ว (`/opengraph-image`, `/icon` ตอบ 200, `/api/me` ตอบ 404 ถูกต้องตามที่ไม่มี session)
 - **Dark theme** — แก้บั๊กปุ่มสลับธีม (ไม่ persist) แล้ว, ทดสอบจริงบนมือถือแล้ว ไม่พบบั๊ก → เก็บฟีเจอร์นี้ไว้ ไม่ต้องถอด
 - **ทดสอบจริงบนมือถือผ่าน LINE (iOS)** — เจอ+แก้บั๊กจริง 4 จุด รอบเดียว:
@@ -38,7 +38,6 @@ Google Calendar เชื่อมแล้ว (`cdt.narathipch@gmail.com`) — 
 
 ## ⚠️ ยังไม่ได้ตรวจ / ไม่รู้สถานะ
 
-- Rich Menu ยังไม่ได้ยิงจริงกับ LINE API (โค้ดพร้อม รอ token)
 - Android ยังไม่ได้ทดสอบ (iOS ผ่านแล้ว) — ควรทดสอบซ้ำอีกรอบหลัง Playbook 2 ก่อน dev freeze
 - ยังไม่ได้ทำ demo script / สไลด์นำเสนอ
 
