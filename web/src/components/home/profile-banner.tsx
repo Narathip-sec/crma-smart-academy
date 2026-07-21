@@ -62,20 +62,13 @@ export function ProfileBanner() {
             {t({ th: `ชั้นปีที่ ${profile.yearLevel}`, en: `Year ${profile.yearLevel}` })}
           </div>
         )}
-        <div className="mt-1.5 flex items-center gap-2">
-          <span
-            className="flex items-center gap-1 rounded-full px-2 py-0.5"
-            style={{ background: "rgba(255,255,255,.2)", font: "600 11px var(--font-sans)", color: "#fff" }}
-          >
-            <span style={{ width: 6, height: 6, borderRadius: 999, background: "#4cff91", display: "inline-block" }} />
-            {t({ th: "อยู่ในคาบเรียน", en: "In class" })}
-          </span>
-          {profile && (
+        {profile && (
+          <div className="mt-1.5 flex items-center gap-2">
             <span style={{ font: "500 11px var(--font-sans)", color: "rgba(255,255,255,.75)" }}>
               {profile.battalion} {profile.company}
             </span>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Chevron */}

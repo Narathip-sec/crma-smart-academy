@@ -82,7 +82,7 @@ Apply ใน POST routes: report / lost-found / activity / todo — title ≤ 20
 
 ## Phase F — ปิดค่าปลอม (เล็ก, ทำรวดเดียว)
 
-### F1 — Kill hardcodes ☐
+### F1 — Kill hardcodes ☑ (done — Sonnet 5, 2026-07-21: unread=0, "อยู่ในคาบเรียน" removed, service page Popular subs + entire Recent section removed. Verified live: home + service render clean)
 - `src/app/page.tsx:34`: `unread={3}` → `0` (ซ่อน badge จนกว่าจะมีระบบ notification จริงจาก D1)
 - `src/components/home/profile-banner.tsx:71`: ตัดป้าย "อยู่ในคาบเรียน" ออก (static ขัดข้อมูลจริง) — เหลือ battalion/company
 - `src/app/service/page.tsx:31-34`: ตัด sub ปลอม ("GPAX 3.62", "5 กิจกรรม", "1 รายการ", "มื้อวันนี้") → เหลือชื่อบริการ; ตัด section "ใช้ล่าสุด Recent" ทั้งก้อน (static ปลอม)

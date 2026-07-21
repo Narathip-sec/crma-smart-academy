@@ -28,10 +28,10 @@ const SUPPORT: ServiceRow[] = [
 ];
 
 const POPULAR = [
-  { href: "/profile",  th: "ผลการเรียน", en: "Grades",      sub: "GPAX 3.62", color: "var(--cat-academic)" },
-  { href: "/meals",    th: "เมนูอาหาร",  en: "Meals",       sub: "มื้อวันนี้",  color: "var(--warning)" },
-  { href: "/activity", th: "ศูนย์กิจกรรม", en: "Activities", sub: "5 กิจกรรม", color: "var(--brand)" },
-  { href: "/report",   th: "แจ้งซ่อม",   en: "Reports",     sub: "1 รายการ",   color: "var(--danger)" },
+  { href: "/profile",  th: "ผลการเรียน", en: "Grades",      color: "var(--cat-academic)" },
+  { href: "/meals",    th: "เมนูอาหาร",  en: "Meals",       color: "var(--warning)" },
+  { href: "/activity", th: "ศูนย์กิจกรรม", en: "Activities", color: "var(--brand)" },
+  { href: "/report",   th: "แจ้งซ่อม",   en: "Reports",     color: "var(--danger)" },
 ];
 
 function ServiceListRow({ item }: { item: ServiceRow }) {
@@ -143,31 +143,8 @@ export default function ServicePage() {
         {/* Normal layout — hidden when searching */}
         {searchResults === null && <>
 
-        {/* Recent */}
-        <div style={{ marginTop: 16, marginBottom: 8, font: "700 15px var(--font-sans)", color: "var(--ink)" }}>
-          {t({ th: "ใช้ล่าสุด", en: "Recent" })}
-          <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>Recent</span>
-        </div>
-        <div className="flex gap-3 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
-          {[
-            { href: "/profile",   th: "ผลการเรียน", en: "Grades",    icon: "🎓" },
-            { href: "/meals",     th: "เมนูอาหาร",   en: "Meals",     icon: "🍽" },
-            { href: "/report",    th: "แจ้งซ่อม",   en: "Report",    icon: "⚠️" },
-            { href: "/calendar",  th: "ปฏิทิน",     en: "Calendar",  icon: "📅" },
-          ].map(r => (
-            <Link key={r.href} href={r.href}
-              className="flex shrink-0 flex-col items-center gap-1.5 rounded-2xl px-4 py-3 active:scale-[0.98]"
-              style={{ background: "var(--surface)", border: "1px solid var(--line)", textDecoration: "none", minWidth: 72 }}>
-              <span style={{ fontSize: 22 }}>{r.icon}</span>
-              <span style={{ font: "600 11px var(--font-sans)", color: "var(--ink)", textAlign: "center", lineHeight: 1.3 }}>
-                {t({ th: r.th, en: r.en })}
-              </span>
-            </Link>
-          ))}
-        </div>
-
         {/* Popular 2×2 grid */}
-        <div style={{ marginTop: 16, marginBottom: 4, font: "700 15px var(--font-sans)", color: "var(--ink)" }}>
+        <div style={{ marginTop: 20, marginBottom: 4, font: "700 15px var(--font-sans)", color: "var(--ink)" }}>
           {t({ th: "บริการยอดนิยม", en: "Popular" })}
           <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)", marginLeft: 6 }}>Popular</span>
         </div>
@@ -182,9 +159,6 @@ export default function ServicePage() {
               <div style={{ position: "absolute", right: -10, bottom: -10, width: 60, height: 60, borderRadius: "50%", background: "rgba(255,255,255,.12)" }} />
               <div style={{ font: "700 13px var(--font-sans)", color: "#fff" }}>
                 {t({ th: p.th, en: p.en })}
-              </div>
-              <div style={{ font: "500 11px var(--font-sans)", color: "rgba(255,255,255,.75)" }}>
-                {p.sub}
               </div>
             </Link>
           ))}
