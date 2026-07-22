@@ -10,6 +10,10 @@ function fmtDate(iso: string): string {
   const d = new Date(iso);
   return `${d.getDate()} ${THAI_MONTHS_SHORT[d.getMonth()]} ${d.getFullYear() + 543}`;
 }
+function fmtDateTime(iso: string): string {
+  const d = new Date(iso);
+  return `${d.getDate()} ${THAI_MONTHS_SHORT[d.getMonth()]} · ${d.toTimeString().slice(0, 5)} น.`;
+}
 
 type LFType = "lost" | "found";
 
@@ -18,9 +22,11 @@ type LFItem = {
   descriptionTh: string | null; foundLocation: string | null;
   foundAt: string | null; status: string; createdAt: string;
   category: { nameTh: string } | null;
-  reporter: { displayName: string } | null;
+  reporterName: string;
   claimCount: number;
   myClaim: boolean;
+  isOwner: boolean;
+  claimantList?: { name: string; claimedAt: string }[];
   attachments: { asset: { url: string } | null }[];
 };
 
@@ -150,7 +156,30 @@ export default function LostFoundDetailPage() {
           {item.foundLocation && <InfoRow icon="📍" labelTh="สถานที่" labelEn="Location" value={item.foundLocation} t={t} />}
           {item.foundAt && <InfoRow icon="📅" labelTh="วันที่พบ" labelEn="Date found" value={fmtDate(item.foundAt)} t={t} />}
           <InfoRow icon="📋" labelTh="แจ้งเมื่อ" labelEn="Reported" value={fmtDate(item.createdAt)} t={t} />
+          <InfoRow icon="👤" labelTh="แจ้งโดย" labelEn="Reported by" value={item.reporterName} t={t} />
         </div>
+
+        {item.isOwner && item.claimantList && (
+          <div className="rounded-2xl p-4" style={{ border: "1px solid var(--line)", background: "var(--surface)" }}>
+            <div style={{ font: "700 15px var(--font-sans)", color: "var(--ink)", marginBottom: 8 }}>
+              {t({ th: `รายชื่อผู้ขอรับ (${item.claimantList.length})`, en: `Claim requests (${item.claimantList.length})` })}
+            </div>
+            {item.claimantList.length === 0 ? (
+              <div style={{ font: "400 13px var(--font-sans)", color: "var(--muted)" }}>
+                {t({ th: "ยังไม่มีผู้ขอรับ", en: "No claims yet" })}
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {item.claimantList.map((c, i) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <span style={{ font: "500 13px var(--font-sans)", color: "var(--ink)" }}>{c.name}</span>
+                    <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>{fmtDateTime(c.claimedAt)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {item.descriptionTh && (
           <div className="rounded-2xl p-4" style={{ border: "1px solid var(--line)", background: "var(--surface)" }}>

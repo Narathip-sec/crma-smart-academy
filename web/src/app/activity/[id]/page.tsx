@@ -14,6 +14,11 @@ function formatDateTime(iso: string): string {
   return `${THAI_DAYS[d.getDay()]} ${d.getDate()} ${THAI_MONTHS_SHORT[d.getMonth()]} ${be} · ${d.toTimeString().slice(0, 5)} น.`;
 }
 
+function formatShortDateTime(iso: string): string {
+  const d = new Date(iso);
+  return `${d.getDate()} ${THAI_MONTHS_SHORT[d.getMonth()]} · ${d.toTimeString().slice(0, 5)} น.`;
+}
+
 type Event = {
   id: string;
   titleTh: string;
@@ -28,6 +33,9 @@ type Event = {
   imageUrl: string | null;
   attendeeCount: number;
   myRsvp: boolean;
+  creatorName: string;
+  isOwner: boolean;
+  attendeeList?: { name: string; registeredAt: string }[];
 };
 
 const STATUS_LABEL: Record<string, { th: string; color: string }> = {
@@ -150,7 +158,30 @@ export default function ActivityDetailPage() {
           <InfoRow icon="📅" labelTh="วันเวลา" labelEn="Date & Time" value={formatDateTime(event.startAt)} t={t} />
           {event.endAt && <InfoRow icon="🔚" labelTh="สิ้นสุด" labelEn="End" value={formatDateTime(event.endAt)} t={t} />}
           {event.location && <InfoRow icon="📍" labelTh="สถานที่" labelEn="Location" value={event.location} t={t} />}
+          <InfoRow icon="👤" labelTh="จัดโดย" labelEn="Organized by" value={event.creatorName} t={t} />
         </div>
+
+        {event.isOwner && event.attendeeList && (
+          <div className="rounded-2xl p-4" style={{ border: "1px solid var(--line)", background: "var(--surface)" }}>
+            <div style={{ font: "700 15px var(--font-sans)", color: "var(--ink)", marginBottom: 8 }}>
+              {t({ th: `รายชื่อผู้ลงทะเบียน (${event.attendeeList.length})`, en: `Registered (${event.attendeeList.length})` })}
+            </div>
+            {event.attendeeList.length === 0 ? (
+              <div style={{ font: "400 13px var(--font-sans)", color: "var(--muted)" }}>
+                {t({ th: "ยังไม่มีผู้ลงทะเบียน", en: "No registrations yet" })}
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {event.attendeeList.map((a, i) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <span style={{ font: "500 13px var(--font-sans)", color: "var(--ink)" }}>{a.name}</span>
+                    <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>{formatShortDateTime(a.registeredAt)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {event.descriptionTh && (
           <div className="rounded-2xl p-4" style={{ border: "1px solid var(--line)", background: "var(--surface)" }}>

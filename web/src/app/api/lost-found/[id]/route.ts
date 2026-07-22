@@ -14,7 +14,7 @@ export async function GET(
     where: { id },
     include: {
       category: true,
-      reporter: { select: { displayName: true } },
+      reporter: { select: { displayName: true, cadetProfile: { select: { thaiName: true } } } },
       claims: { where: { claimantId: user.id }, select: { id: true } },
       attachments: { select: { id: true, asset: { select: { url: true } } } },
       _count: { select: { claims: true } },
@@ -22,10 +22,31 @@ export async function GET(
   });
   if (!item) return NextResponse.json({ error: "not found" }, { status: 404 });
 
-  const { claims, _count, ...rest } = item;
+  const isOwner = item.reporterId === user.id;
+
+  let claimantList: { name: string; claimedAt: Date }[] | undefined;
+  if (isOwner) {
+    const rows = await prisma.lostFoundClaim.findMany({
+      where: { itemId: id },
+      orderBy: { claimedAt: "asc" },
+      select: {
+        claimedAt: true,
+        claimant: { select: { displayName: true, cadetProfile: { select: { thaiName: true } } } },
+      },
+    });
+    claimantList = rows.map(r => ({
+      name: r.claimant.cadetProfile?.thaiName ?? r.claimant.displayName,
+      claimedAt: r.claimedAt,
+    }));
+  }
+
+  const { claims, _count, reporter, ...rest } = item;
   return NextResponse.json({
     ...rest,
     claimCount: _count.claims,
     myClaim: claims.length > 0,
+    reporterName: reporter.cadetProfile?.thaiName ?? reporter.displayName,
+    isOwner,
+    claimantList,
   });
 }

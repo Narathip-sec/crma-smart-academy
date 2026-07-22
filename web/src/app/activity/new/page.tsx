@@ -20,8 +20,7 @@ const inputStyle: React.CSSProperties = {
 export default function CreateActivityPage() {
   const t = useTx();
   const router = useRouter();
-  const cameraInputRef = useRef<HTMLInputElement>(null);
-  const galleryInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [cats, setCats] = useState<Category[]>([]);
   const [titleTh, setTitleTh] = useState("");
@@ -123,18 +122,11 @@ export default function CreateActivityPage() {
         </div>
       </div>
 
-      {/* Hidden file inputs — separate camera/gallery triggers since capture
-          is treated as exclusive (camera-only) in LINE's Android in-app browser. */}
+      {/* Hidden file input — no capture attribute, so the OS shows its own
+          combined chooser (camera + gallery + files). Adding capture makes
+          some Android in-app browsers (e.g. LINE) go camera-only. */}
       <input
-        ref={cameraInputRef}
-        type="file"
-        accept="image/jpeg,image/png,image/webp,image/heic"
-        capture="environment"
-        className="hidden"
-        onChange={handleFileChange}
-      />
-      <input
-        ref={galleryInputRef}
+        ref={fileInputRef}
         type="file"
         accept="image/jpeg,image/png,image/webp,image/heic"
         className="hidden"
@@ -144,60 +136,62 @@ export default function CreateActivityPage() {
       <form onSubmit={submit} className="flex-1 overflow-y-auto pb-8">
 
         {/* Cover image */}
-        {coverPreview && (
-          <div className="relative mx-4 mt-4 w-[calc(100%-2rem)] overflow-hidden rounded-2xl" style={{ minHeight: 140 }}>
-            <Image
-              src={coverPreview}
-              alt="cover"
-              fill
-              className="object-cover"
-              unoptimized
-            />
-            <div className="absolute inset-0 flex items-center justify-center"
-              style={{ background: "rgba(0,0,0,.35)" }}>
-              <div style={{ font: "600 13px var(--font-sans)", color: "#fff" }}>
-                {uploadingCover
-                  ? t({ th: "กำลังอัปโหลด…", en: "Uploading…" })
-                  : coverImageUrl
-                  ? t({ th: "✓ อัปโหลดสำเร็จ", en: "✓ Uploaded" })
-                  : ""}
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploadingCover}
+          className="relative mx-4 mt-4 w-[calc(100%-2rem)] overflow-hidden rounded-2xl active:opacity-70"
+          style={{
+            minHeight: 140,
+            background: coverPreview ? "transparent" : "var(--tint)",
+            border: coverPreview ? "none" : "1.5px dashed var(--brand)",
+            display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center", gap: 8,
+          }}
+        >
+          {coverPreview ? (
+            <>
+              <Image
+                src={coverPreview}
+                alt="cover"
+                fill
+                className="object-cover"
+                unoptimized
+              />
+              <div className="absolute inset-0 flex items-center justify-center"
+                style={{ background: "rgba(0,0,0,.35)" }}>
+                {uploadingCover ? (
+                  <div style={{ font: "600 13px var(--font-sans)", color: "#fff" }}>
+                    {t({ th: "กำลังอัปโหลด…", en: "Uploading…" })}
+                  </div>
+                ) : (
+                  <div style={{ font: "600 13px var(--font-sans)", color: "#fff" }}>
+                    {coverImageUrl
+                      ? t({ th: "✓ อัปโหลดสำเร็จ · แตะเพื่อเปลี่ยน", en: "✓ Uploaded · tap to change" })
+                      : t({ th: "แตะเพื่อเปลี่ยนภาพ", en: "Tap to change" })}
+                  </div>
+                )}
               </div>
-            </div>
-          </div>
-        )}
-        <div className="mx-4 flex gap-2" style={{ marginTop: coverPreview ? 8 : 16 }}>
-          <button
-            type="button"
-            onClick={() => cameraInputRef.current?.click()}
-            disabled={uploadingCover}
-            className="flex flex-1 items-center justify-center gap-2 rounded-2xl py-3.5 active:opacity-70"
-            style={{ background: "var(--tint)", border: "1.5px dashed var(--brand)" }}
-          >
-            <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-              <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
-              <circle cx="12" cy="13" r="4" />
-            </svg>
-            <span style={{ font: "600 13px var(--font-sans)", color: "var(--brand)" }}>
-              {t({ th: coverPreview ? "ถ่ายใหม่" : "ถ่ายรูป", en: coverPreview ? "Retake" : "Camera" })}
-            </span>
-          </button>
-          <button
-            type="button"
-            onClick={() => galleryInputRef.current?.click()}
-            disabled={uploadingCover}
-            className="flex flex-1 items-center justify-center gap-2 rounded-2xl py-3.5 active:opacity-70"
-            style={{ background: "var(--tint)", border: "1.5px dashed var(--brand)" }}
-          >
-            <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <circle cx="8.5" cy="8.5" r="1.5" />
-              <path d="M21 15l-5-5L5 21" />
-            </svg>
-            <span style={{ font: "600 13px var(--font-sans)", color: "var(--brand)" }}>
-              {t({ th: "เลือกจากคลัง", en: "Gallery" })}
-            </span>
-          </button>
-        </div>
+            </>
+          ) : (
+            <>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl"
+                style={{ background: "color-mix(in srgb, var(--brand) 10%, transparent)" }}>
+                <svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <path d="M21 15l-5-5L5 21" />
+                </svg>
+              </div>
+              <div style={{ font: "600 13px var(--font-sans)", color: "var(--brand)" }}>
+                {t({ th: "เพิ่มภาพปก", en: "Add cover image" })}
+              </div>
+              <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>
+                {t({ th: "แตะเพื่ออัปโหลด · JPG, PNG สูงสุด 5MB", en: "Tap to upload · JPG, PNG max 5MB" })}
+              </div>
+            </>
+          )}
+        </button>
         {uploadError && (
           <div className="mx-4 mt-2" style={{ font: "500 11px var(--font-sans)", color: "var(--danger)" }}>
             {uploadError}
