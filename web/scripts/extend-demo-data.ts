@@ -62,7 +62,9 @@ async function cloneClassWeek(sourceMonday: Date, targetMonday: Date) {
   return count;
 }
 
-async function cloneMealsMayToAugust() {
+async function cloneMealsMayTo(targetMonth: number) {
+  // targetMonth: 0-indexed (6 = July, 7 = August) — source is May (31 days),
+  // both target months also have 31 days so day-of-month maps 1:1.
   const rows = await prisma.mealItem.findMany({
     where: { date: { gte: new Date("2026-05-01"), lte: new Date("2026-05-31") } },
   });
@@ -70,7 +72,7 @@ async function cloneMealsMayToAugust() {
   let count = 0;
   for (const row of rows) {
     const dayOfMonth = row.date.getUTCDate();
-    const newDate = new Date(Date.UTC(2026, 7, dayOfMonth)); // month 7 = August
+    const newDate = new Date(Date.UTC(2026, targetMonth, dayOfMonth));
 
     await prisma.mealItem.upsert({
       where: { date_mealType: { date: newDate, mealType: row.mealType } },
@@ -179,15 +181,24 @@ async function seedNotifications() {
   return count;
 }
 
+// Bridge weeks between the original seeded week and presentation day
+// (2026-08-10) — keeps /class showing real data on whatever day someone
+// actually tests on, not just the two original demo weeks.
+const TARGET_CLASS_WEEKS = ["2026-07-20", "2026-07-27", "2026-08-03", "2026-08-10"];
+
 async function main() {
-  const classCountAug3 = await cloneClassWeek(new Date("2026-06-22"), new Date("2026-08-03"));
-  const classCountAug10 = await cloneClassWeek(new Date("2026-06-22"), new Date("2026-08-10"));
-  const mealCount = await cloneMealsMayToAugust();
+  let classCounts = "";
+  for (const monday of TARGET_CLASS_WEEKS) {
+    const n = await cloneClassWeek(new Date("2026-06-22"), new Date(monday));
+    classCounts += `${monday}: ${n}, `;
+  }
+  const mealCountJul = await cloneMealsMayTo(6);
+  const mealCountAug = await cloneMealsMayTo(7);
   const calendarCount = await seedAugustCalendar();
   const notifCount = await seedNotifications();
 
-  console.log(`ClassPeriod cloned → week of 08-03: ${classCountAug3}, week of 08-10: ${classCountAug10}`);
-  console.log(`MealItem cloned May→Aug: ${mealCount}`);
+  console.log(`ClassPeriod cloned → ${classCounts}`);
+  console.log(`MealItem cloned May→Jul: ${mealCountJul}, May→Aug: ${mealCountAug}`);
   console.log(`AcademicCalendarEvent seeded: ${calendarCount}`);
   console.log(`Notification rows created (new only): ${notifCount}`);
 }

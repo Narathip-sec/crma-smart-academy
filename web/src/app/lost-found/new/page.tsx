@@ -21,7 +21,8 @@ const inputStyle: React.CSSProperties = {
 export default function LostFoundNewPage() {
   const t = useTx();
   const router = useRouter();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const [cats, setCats]               = useState<Category[]>([]);
   const [type, setType]               = useState<LFType>("found");
@@ -114,12 +115,20 @@ export default function LostFoundNewPage() {
         </div>
       </div>
 
-      {/* Hidden file input */}
+      {/* Hidden file inputs — separate camera/gallery triggers since capture
+          is treated as exclusive (camera-only) in LINE's Android in-app browser. */}
       <input
-        ref={fileInputRef}
+        ref={cameraInputRef}
         type="file"
         accept="image/jpeg,image/png,image/webp,image/heic"
         capture="environment"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+      <input
+        ref={galleryInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/heic"
         className="hidden"
         onChange={handleFileChange}
       />
@@ -151,53 +160,54 @@ export default function LostFoundNewPage() {
             }
             error={uploadError || undefined}
           >
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploadingPhoto}
-            className="relative w-full overflow-hidden rounded-2xl active:opacity-70"
-            style={{
-              minHeight: 120,
-              background: photoPreview ? "transparent" : "var(--tint)",
-              border: photoPreview ? "none" : "1.5px dashed var(--brand)",
-              display: "flex", flexDirection: "column",
-              alignItems: "center", justifyContent: "center", gap: 6,
-            }}
-          >
-            {photoPreview ? (
-              <>
-                <Image src={photoPreview} alt="photo" fill className="object-cover" unoptimized />
-                <div className="absolute inset-0 flex items-center justify-center"
-                  style={{ background: "rgba(0,0,0,.35)" }}>
-                  {uploadingPhoto ? (
-                    <span style={{ font: "600 13px var(--font-sans)", color: "#fff" }}>
-                      {t({ th: "กำลังอัปโหลด…", en: "Uploading…" })}
-                    </span>
-                  ) : (
-                    <span style={{ font: "600 13px var(--font-sans)", color: "#fff" }}>
-                      {photoUrl
-                        ? t({ th: "✓ อัปโหลดสำเร็จ · แตะเพื่อเปลี่ยน", en: "✓ Uploaded · tap to change" })
-                        : t({ th: "แตะเพื่อเปลี่ยนภาพ", en: "Tap to change" })}
-                    </span>
-                  )}
-                </div>
-              </>
-            ) : (
-              <>
-                <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="2" />
-                  <circle cx="8.5" cy="8.5" r="1.5" />
-                  <path d="M21 15l-5-5L5 21" />
-                </svg>
-                <span style={{ font: "600 13px var(--font-sans)", color: "var(--brand)" }}>
-                  {t({ th: "เพิ่มรูปภาพ", en: "Add photo" })}
+          {photoPreview && (
+            <div className="relative w-full overflow-hidden rounded-2xl" style={{ minHeight: 120 }}>
+              <Image src={photoPreview} alt="photo" fill className="object-cover" unoptimized />
+              <div className="absolute inset-0 flex items-center justify-center"
+                style={{ background: "rgba(0,0,0,.35)" }}>
+                <span style={{ font: "600 13px var(--font-sans)", color: "#fff" }}>
+                  {uploadingPhoto
+                    ? t({ th: "กำลังอัปโหลด…", en: "Uploading…" })
+                    : photoUrl
+                    ? t({ th: "✓ อัปโหลดสำเร็จ", en: "✓ Uploaded" })
+                    : ""}
                 </span>
-                <span style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>
-                  {t({ th: "แตะเพื่ออัปโหลด · JPG, PNG", en: "Tap to upload · JPG, PNG" })}
-                </span>
-              </>
-            )}
-          </button>
+              </div>
+            </div>
+          )}
+          <div className="flex gap-2" style={{ marginTop: photoPreview ? 8 : 0 }}>
+            <button
+              type="button"
+              onClick={() => cameraInputRef.current?.click()}
+              disabled={uploadingPhoto}
+              className="flex flex-1 items-center justify-center gap-2 rounded-2xl py-3 active:opacity-70"
+              style={{ background: "var(--tint)", border: "1.5px dashed var(--brand)" }}
+            >
+              <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
+                <circle cx="12" cy="13" r="4" />
+              </svg>
+              <span style={{ font: "600 13px var(--font-sans)", color: "var(--brand)" }}>
+                {t({ th: photoPreview ? "ถ่ายใหม่" : "ถ่ายรูป", en: photoPreview ? "Retake" : "Camera" })}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => galleryInputRef.current?.click()}
+              disabled={uploadingPhoto}
+              className="flex flex-1 items-center justify-center gap-2 rounded-2xl py-3 active:opacity-70"
+              style={{ background: "var(--tint)", border: "1.5px dashed var(--brand)" }}
+            >
+              <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <path d="M21 15l-5-5L5 21" />
+              </svg>
+              <span style={{ font: "600 13px var(--font-sans)", color: "var(--brand)" }}>
+                {t({ th: "เลือกจากคลัง", en: "Gallery" })}
+              </span>
+            </button>
+          </div>
           </FormField>
         </div>
 
