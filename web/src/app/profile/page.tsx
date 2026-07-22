@@ -6,6 +6,7 @@ import { Chip, ListItem } from "@/components/ui";
 
 type MeData = {
   displayName: string;
+  avatarUrl: string | null;
   cadetProfile: {
     thaiName: string;
     englishName: string;
@@ -16,6 +17,17 @@ type MeData = {
     studentCode: string;
   } | null;
 };
+
+// "BN-1" → "1", "Co-A" → "1" (A=1..E=5) — matches the ป.4 ร้อย.1 shorthand
+// used around camp, instead of the raw BN-/Co- codes.
+const COMPANY_LETTER_TO_NUM: Record<string, string> = { A: "1", B: "2", C: "3", D: "4", E: "5" };
+
+function formatUnit(battalion: string, company: string): string {
+  const bn = battalion.match(/(\d+)/)?.[1] ?? battalion;
+  const letter = company.match(/Co-([A-Za-z])/)?.[1]?.toUpperCase();
+  const co = letter ? (COMPANY_LETTER_TO_NUM[letter] ?? letter) : company;
+  return `พัน.${bn} ร้อย.${co}`;
+}
 
 type GradeRow = { code: string; courseTh: string; courseEn: string | null; credits: number; grade: string | null };
 type GradesData = {
@@ -70,9 +82,13 @@ export default function ProfilePage() {
           <BackButton />
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full"
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full"
             style={{ background: "rgba(255,255,255,.25)", font: "700 20px var(--font-sans)", color: "#fff" }}>
-            {initials}
+            {me?.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={me.avatarUrl} alt={thaiName} width={64} height={64}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            ) : initials}
           </div>
           <div>
             <div style={{ font: "700 20px var(--font-sans)", color: "#fff", lineHeight: 1.2 }}>{thaiName}</div>
@@ -81,11 +97,10 @@ export default function ProfilePage() {
             )}
           </div>
         </div>
-        <div className="mt-4 grid grid-cols-3 gap-2" style={{ borderTop: "1px solid rgba(255,255,255,.2)", paddingTop: 12 }}>
+        <div className="mt-4 grid grid-cols-2 gap-2" style={{ borderTop: "1px solid rgba(255,255,255,.2)", paddingTop: 12 }}>
           {[
             { labelTh: "ชั้นปี", labelEn: "Year", value: profile ? String(profile.yearLevel) : "—" },
-            { labelTh: "รหัส", labelEn: "Code", value: profile?.studentCode ?? "—" },
-            { labelTh: "หน่วย", labelEn: "Unit", value: profile ? `${profile.battalion} / ${profile.company}` : "—" },
+            { labelTh: "สังกัด", labelEn: "Affiliation", value: profile ? formatUnit(profile.battalion, profile.company) : "—" },
           ].map(s => (
             <div key={s.labelTh} className="text-center">
               <div style={{ font: "600 11px var(--font-sans)", color: "rgba(255,255,255,.65)" }}>{t({ th: s.labelTh, en: s.labelEn })}</div>
