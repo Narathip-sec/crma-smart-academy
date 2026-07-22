@@ -10,12 +10,14 @@ import { NewsFeed } from "@/components/home/news-feed";
 
 type MeResponse = {
   displayName?: string;
+  avatarUrl?: string | null;
   cadetProfile?: { thaiName?: string } | null;
   unreadCount?: number;
 };
 
 export default function HomePage() {
   const [name, setName] = useState("นนร.");
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
   const [unread, setUnread] = useState(0);
 
   useEffect(() => {
@@ -27,6 +29,7 @@ export default function HomePage() {
           ? `นนร.${d.cadetProfile.thaiName}`
           : d.displayName ?? "นนร.";
         setName(n);
+        setAvatarUrl(d.avatarUrl ?? undefined);
         setUnread(d.unreadCount ?? 0);
       })
       .catch(() => {});
@@ -34,7 +37,7 @@ export default function HomePage() {
 
   return (
     <>
-      <TopBar name={name} unread={unread} />
+      <TopBar name={name} pictureUrl={avatarUrl} unread={unread} />
       <div className="flex flex-1 flex-col overflow-y-auto">
         <ProfileBanner />
         <HeroCarousel />

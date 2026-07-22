@@ -6,6 +6,7 @@ import { useTx } from "@/components/shell/bilingual-label";
 
 type MeData = {
   displayName: string;
+  avatarUrl: string | null;
   cadetProfile: {
     thaiName: string;
     yearLevel: number;
@@ -38,7 +39,7 @@ export function ProfileBanner() {
     >
       {/* Avatar */}
       <div
-        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
+        className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full"
         style={{
           background: "rgba(255,255,255,.25)",
           font: "700 15px var(--font-sans)",
@@ -46,7 +47,11 @@ export function ProfileBanner() {
           letterSpacing: ".02em",
         }}
       >
-        {initials}
+        {me?.avatarUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={me.avatarUrl} alt={displayThaiName} width={48} height={48}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        ) : initials}
       </div>
 
       {/* Info */}
