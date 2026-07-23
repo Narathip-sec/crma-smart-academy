@@ -2,17 +2,12 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Avatar } from "@/components/ui/avatar";
 
-// Home-style top bar: avatar · "Smart Academy" · notification bell.
+// Home-style top bar: crest logo · "Smart Academy" · notification bell.
 // Push/detail screens use <AppBar> (with back) instead.
 export function TopBar({
-  name,
-  pictureUrl,
   unread = 0,
 }: {
-  name?: string;
-  pictureUrl?: string;
   unread?: number;
 }) {
   return (
@@ -20,9 +15,6 @@ export function TopBar({
       className="sticky top-0 z-30 flex h-14 items-center gap-3 px-4"
       style={{ background: "var(--bg)" }}
     >
-      <Link href="/profile" aria-label="Profile" className="active:opacity-70">
-        <Avatar name={name} src={pictureUrl} size={36} />
-      </Link>
       <Link href="/" aria-label="Home" className="flex flex-1 items-center gap-2 leading-tight active:opacity-70">
         <Image src="/crma-crest.png" alt="" width={28} height={28} className="shrink-0" style={{ height: 28, width: "auto" }} />
         <div>
