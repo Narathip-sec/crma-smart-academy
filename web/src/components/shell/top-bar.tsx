@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Avatar } from "@/components/ui/avatar";
 
 // Home-style top bar: avatar · "Smart Academy" · notification bell.
@@ -22,14 +23,17 @@ export function TopBar({
       <Link href="/profile" aria-label="Profile" className="active:opacity-70">
         <Avatar name={name} src={pictureUrl} size={36} />
       </Link>
-      <div className="flex-1 leading-tight">
-        <div style={{ font: "700 15px var(--font-sans)", color: "var(--brand)" }}>
-          Smart Academy
+      <Link href="/" aria-label="Home" className="flex flex-1 items-center gap-2 leading-tight active:opacity-70">
+        <Image src="/crma-crest.png" alt="" width={28} height={28} className="shrink-0" style={{ height: 28, width: "auto" }} />
+        <div>
+          <div style={{ font: "700 15px var(--font-sans)", color: "var(--brand)" }}>
+            Smart Academy
+          </div>
+          <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>
+            โรงเรียนนายร้อยพระจุลจอมเกล้า
+          </div>
         </div>
-        <div style={{ font: "500 11px var(--font-sans)", color: "var(--muted)" }}>
-          โรงเรียนนายร้อยพระจุลจอมเกล้า
-        </div>
-      </div>
+      </Link>
       <Link
         href="/notifications"
         aria-label="Notifications"

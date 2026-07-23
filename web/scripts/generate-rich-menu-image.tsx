@@ -1,4 +1,5 @@
-// Generates the LINE Rich Menu background image (2500x843, "compact" size).
+// Generates the LINE Rich Menu background image (2500x1686, "large" size —
+// bumped up from "compact" 843 because tiles were too small to tap reliably).
 // Run: npx tsx scripts/generate-rich-menu-image.ts
 // Output: assets/rich-menu.png — consumed by scripts/setup-rich-menu.ts.
 
@@ -7,7 +8,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 const WIDTH = 2500;
-const HEIGHT = 843;
+const HEIGHT = 1686;
 
 // 2 rows x 3 cols — must match TILES in setup-rich-menu.ts (tap areas + LIFF paths).
 const TILES = [
@@ -51,9 +52,9 @@ async function main() {
               borderBottom: i < 3 ? "2px solid rgba(255,255,255,.18)" : "none",
             }}
           >
-            <div style={{ display: "flex", fontSize: 96, marginBottom: 18 }}>{tile.icon}</div>
-            <div style={{ display: "flex", fontSize: 44, fontWeight: 700, color: "#fff" }}>{tile.th}</div>
-            <div style={{ display: "flex", fontSize: 26, color: "rgba(255,255,255,.8)", marginTop: 4 }}>
+            <div style={{ display: "flex", fontSize: 168, marginBottom: 28 }}>{tile.icon}</div>
+            <div style={{ display: "flex", fontSize: 62, fontWeight: 700, color: "#fff" }}>{tile.th}</div>
+            <div style={{ display: "flex", fontSize: 36, color: "rgba(255,255,255,.8)", marginTop: 6 }}>
               {tile.en}
             </div>
           </div>

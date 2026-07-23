@@ -8,11 +8,10 @@
 //   NEXT_PUBLIC_LIFF_ID — already in .env; used to build the liff.line.me deep links.
 //
 // Prereq: run `npx tsx scripts/generate-rich-menu-image.tsx` first to produce
-// assets/rich-menu.png (2500x843). This script uploads that file as-is.
+// assets/rich-menu.png (2500x1686). This script uploads that file as-is.
 //
-// Idempotent-ish: re-running creates a NEW rich menu and re-points the default;
-// it does not delete old ones. Clean up stale menus with the LINE Rich Menu API
-// (GET/DELETE https://api.line.me/v2/bot/richmenu/list) if you re-run this often.
+// Idempotent: re-running creates a new rich menu, sets it as default, then
+// deletes every other rich menu on the channel so stale ones don't pile up.
 
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -21,7 +20,7 @@ const ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 const LIFF_ID = process.env.NEXT_PUBLIC_LIFF_ID;
 
 const WIDTH = 2500;
-const HEIGHT = 843;
+const HEIGHT = 1686;
 const COLS = 3;
 const ROWS = 2;
 
@@ -106,7 +105,16 @@ async function main() {
     console.error("Set-default failed:", setDefaultRes.status, await setDefaultRes.text());
     process.exit(1);
   }
-  console.log(`✔ set as default rich menu. Done: ${richMenuId}`);
+  console.log(`✔ set as default rich menu: ${richMenuId}`);
+
+  console.log("Cleaning up stale rich menus...");
+  const listRes = await fetch("https://api.line.me/v2/bot/richmenu/list", { headers: authHeaders });
+  const { richmenus } = (await listRes.json()) as { richmenus: { richMenuId: string }[] };
+  const stale = richmenus.filter(m => m.richMenuId !== richMenuId);
+  for (const m of stale) {
+    await fetch(`https://api.line.me/v2/bot/richmenu/${m.richMenuId}`, { method: "DELETE", headers: authHeaders });
+  }
+  console.log(`✔ deleted ${stale.length} stale rich menu(s). Done: ${richMenuId}`);
 }
 
 main().catch((e) => {
